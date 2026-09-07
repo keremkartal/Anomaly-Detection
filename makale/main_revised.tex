@@ -1,0 +1,1007 @@
+% =====================================================================
+%  REVIZE SURUM — 02.08.2026
+%  Degisiklik kaydi: DEGISIKLIK_KAYDI.md
+%  Tum sayilar tek bir dogrulanmis deney setinden gelir (results/*.json).
+%  Onceki surumde farkli kosulardan gelen sayilar ayni tabloda karisiyordu.
+% =====================================================================
+\documentclass[journal]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{placeins}
+\usepackage{tabularx}
+\usepackage{stfloats}
+\usepackage[english]{babel}
+\usepackage{microtype}
+\emergencystretch=2em
+
+\makeatletter
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\fnum@table}{Table \thetable.}
+\long\def\@makecaption#1#2{%
+\ifx\@captype\@IEEEtablestring%
+\footnotesize\bgroup%
+\setbox\@tempboxa\hbox{\normalfont\footnotesize {#1}\nobreakspace #2}%
+\ifdim \wd\@tempboxa >\hsize%
+\setbox\@tempboxa\hbox{\normalfont\footnotesize {#1}\nobreakspace}%
+\parbox[t]{\hsize}{\normalfont\footnotesize\noindent\unhbox\@tempboxa#2}%
+\else%
+\hbox to\hsize{\normalfont\footnotesize\box\@tempboxa\hfil}%
+\fi%
+\par\addvspace{0.5\baselineskip}\egroup%
+\@IEEEtablecaptionsepspace%
+\else%
+\@IEEEfigurecaptionsepspace%
+\setbox\@tempboxa\hbox{\normalfont\footnotesize {#1.}\nobreakspace\nobreakspace #2}%
+\ifdim \wd\@tempboxa >\hsize%
+\setbox\@tempboxa\hbox{\normalfont\footnotesize {#1.}\nobreakspace\nobreakspace}%
+\parbox[t]{\hsize}{\normalfont\footnotesize\noindent\unhbox\@tempboxa#2}%
+\else%
+\hbox to\hsize{\normalfont\footnotesize\box\@tempboxa\hfil}%
+\fi%
+\fi}
+\makeatother
+
+% =====================================================================
+% ARTEFAKT ADRESLERI — TEK YERDE.
+% Depo acilip Zenodo surumu yayinlandiktan sonra yalnizca bu iki satir
+% duzenlenir. `makale/_verify_numbers.py` asagidaki varsayilan degerleri
+% "yer tutucu" olarak yakalar ve doldurulana kadar dogrulama gecmez.
+% =====================================================================
+\newcommand{\repourl}{https://github.com/PENDING-REPO/stanet-traffic-anomaly}
+\newcommand{\zenododoi}{PENDING-DOI}
+
+\begin{document}
+\raggedbottom
+
+% BASLIK NOTU: v1 basligi "A Controlled Multi-Seed Evaluation of Hybrid
+% LSTM-GAT Architectures" idi. Calismanin merkezi bulgusu artik yalnizca
+% cok-tohumlu degerlendirme degil; bolme secimi ve pencere kumelenmesinin
+% sonuclari tersine cevirebildigi. Baslik buna gore guncellendi.
+\title{How Much Does Fusion Design Matter? Partition, Seed, and Cluster Effects in the Evaluation of Hybrid LSTM--GAT Traffic Anomaly Detectors}
+
+\author{
+    Ayhan~Gültekin$^{1}$ $|$ Kerem~Kartal$^{2}$ $|$ Ahmet~Yusuf~Şimşek$^{3}$ $|$ Rümeysa~Yeşilova$^{3}$ $|$ Ahmet~Sayar$^{4}$ \\[2ex]
+    \small
+    $^{1}$Student Affairs Department, Kocaeli University, Kocaeli, Türkiye $|$
+    $^{2}$Department of Software Engineering, Kocaeli University, Kocaeli, Türkiye $|$
+    $^{3}$Department of Artificial Intelligence and Machine Learning, Kocaeli University, Kocaeli, Türkiye $|$
+    $^{4}$Department of Artificial Intelligence Engineering, Bahçeşehir University, Istanbul, Türkiye \\[1.5ex]
+    \textbf{Correspondence:} Ayhan Gültekin (ayhan.gultekin@kocaeli.edu.tr)
+}
+
+\maketitle
+
+% =====================================================================
+% ABSTRACT — YENIDEN YAZILDI
+% Onceki surum "outperforming baselines" iddiasi tasiyordu; olculen
+% sonuclar bu iddiayi desteklemedigi icin cerceve degistirildi.
+% =====================================================================
+\begin{abstract}
+Hybrid spatio-temporal architectures for traffic anomaly detection are typically reported through a single training run on a single data partition, with overlapping sliding windows treated as independent observations. This paper asks how much of such evidence survives a controlled protocol. Using a physics-informed synthetic trajectory dataset over an OpenStreetMap-derived road network, we hold the task, optimization budget, checkpoint criterion, and threshold rule fixed; vary one component at a time across nine encoder configurations, four fusion operators, and two graph constructions; and report every result over multiple seeds. Because windows are cut with stride 10 from length-50 sequences and therefore overlap by $80\%$, all inference uses the \emph{trip} as the statistical unit, with cluster bootstrap, sign-flip permutation tests, and Holm correction. Four findings emerge. First, on the fixed partition---which contains 4{,}799 windows but only 14 trips---\emph{no} comparison remains significant once the correct unit and multiplicity correction are applied; seven comparisons that are significant at the window level are not. Second, under five-fold trip-grouped cross-validation, in which all 90 trips receive an out-of-fold prediction, the four fusion operators span $0.0205$ F1 with a within-configuration standard deviation of $0.04$--$0.05$, and none is distinguishable from any other: the sample-wise gate that motivated the original design ranks last on the fixed partition and first under cross-validation, so the choice of fusion operator is not resolvable on this data in either direction. Third, a reproducible degenerate failure mode of the gate is documented---it collapses to $\mathrm{F1}=0.0715$ at one seed, recurring at the same seed across an independent re-run---and localized: it occurs only when the gate locks onto a spatial branch with near-chance standalone discriminative power, and disappears on a graph construction where that branch is more informative. Fourth, the single comparison that is significant at the trip level after correction is one we did not predict: the spatial branch improves detection of abnormal-dwell events by $+0.0335$ F1 ($95\%$ CI $[+0.0139, +0.0610]$, Holm $p = 0.002$), while providing no benefit on speed-limit violations, the subtype whose defining rule depends on a road attribute available only to that branch. We additionally report a zero-parameter threshold-rule reference ($\mathrm{F1}=0.8536$), gradient-boosting baselines that match the hybrid model to within $0.0014$ F1, probability calibration, and single-window latency. The study argues that architectural claims in this problem setting require multi-partition evidence at the correct statistical unit, and demonstrates on its own earlier results what happens when they do not have it.
+\end{abstract}
+
+\begin{IEEEkeywords}
+  Traffic Anomaly Detection, Spatio-Temporal Modeling, Graph Attention Network (GAT), Long Short-Term Memory (LSTM), Multimodal Fusion, Ablation Study, Evaluation Methodology, Clustered Data, Cluster Bootstrap, Permutation Test, Reproducibility, Intelligent Transportation Systems.
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Intelligent Transportation Systems (ITS) have become a fundamental component of modern urban mobility management by enabling large-scale monitoring and analysis of traffic conditions through heterogeneous data sources. These systems generate massive volumes of spatio-temporal traffic data, providing new opportunities for understanding driving behavior and enhancing road safety. Traffic anomalies---such as sudden stops or abnormal maneuvers---can disrupt traffic flow and create significant safety risks. Accurate and timely detection is therefore critical for decision-support mechanisms in ITS environments.
+
+Recent studies have leveraged deep learning, particularly \textbf{Long Short-Term Memory (LSTM)} networks, to model sequential vehicle trajectories. However, road segments form complex graph-structured networks, making purely temporal reasoning insufficient for context-sensitive anomaly detection. To capture structural dependencies, \textbf{Graph Attention Networks (GAT)} and related graph-based approaches have been increasingly adopted alongside temporal encoders. As reflected in recent literature, current research increasingly moves toward both richer spatio-temporal anomaly modeling and more effective fusion strategies for integrating temporal behavior with spatial context \cite{huang_multivariate_2024, sun_framework_2025, nguyen_spatiotemporal_2026, liang_anomaly_2025}. Existing approaches frequently suffer from \textbf{``contextual blindness,''} where a model flags natural behavior as anomalous due to limited structural awareness, while many multimodal methods still rely on static or weakly adaptive fusion that cannot fully respond to changing traffic conditions \cite{sun_framework_2025, liang_anomaly_2025}.
+
+% ---------------------------------------------------------------------
+% YENI: makalenin cercevesi burada degisiyor.
+% ---------------------------------------------------------------------
+A recurring methodological pattern accompanies this progress. Architectural contributions in this area are commonly evaluated through a \emph{single} training run on a \emph{single} train/test partition, and improvements of one to three F1 points are reported as evidence that a proposed fusion or attention mechanism is responsible for the gain. Two properties of the anomaly-detection setting make such evidence fragile. First, anomaly prevalence is low, so the number of positive test instances is small and paired significance tests have limited power. Second, graph message passing on GPU is not bit-reproducible---scatter-based aggregation performs floating-point summation in a nondeterministic order---so repeated runs of an identical configuration do not return identical numbers. Under these conditions, a single-run difference cannot distinguish an architectural effect from seed and partition variance.
+
+This paper therefore asks a narrower and more answerable question than ``is the proposed architecture better?'': \emph{which components of a hybrid LSTM--GAT anomaly detector actually carry the observed performance, and how much of the reported advantage survives a controlled protocol?} We keep the task formulation, dataset, grouped partition, optimizer, epoch budget, checkpoint criterion, and threshold-selection rule fixed, vary one component at a time, and report every result over multiple seeds with interval estimates and paired tests. The system under study is the hybrid design we previously proposed, denoted \textbf{STANet}, whose fusion stage is a sample-wise scalar modality gate; the evaluation, however, is deliberately symmetric and does not privilege that design.
+
+The main contributions are:
+\begin{itemize}
+  \item \textbf{Controlled encoder benchmark.} Nine encoder configurations---covering the core operators of STGCN, DCRNN, and Graph WaveNet adapted to the present task---are compared under an identical protocol over five seeds. The comparison separates two questions that are usually reported together. The choice of \emph{spatial} operator is resolvable: graph attention exceeds Chebyshev convolution, diffusion convolution, and adaptive adjacency with significant margins. The choice of \emph{temporal} encoder is not: the LSTM, a GRU, and a Transformer encoder finish within $0.0015$ F1 of one another, an order of magnitude below the leader's own seed standard deviation.
+  \item \textbf{Direct fusion ablation.} Four fusion operators---sample-wise gating, fixed concatenation, static weighted summation, and multi-head cross-attention---are compared with all other components frozen. Sample-wise gating ranks last, exhibits a degenerate collapse mode in one of five seeds, and its learned optimum coincides with a constant weight of $\approx 0.50$. Repeating the ablation on a second graph construction localizes the collapse: it occurs when the gate locks onto a spatial branch that carries almost no standalone signal, and disappears when that branch is made more informative.
+  \item \textbf{Evidence on evaluation protocol.} We show that an ablation conclusion drawn from one fixed grouped partition is not reproduced under five-fold trip-grouped cross-validation covering all sequences. We further show that the windows used as observations overlap by $80\%$, so the window-level tests customary in this literature overstate the effective sample size; all inference here uses the trip as the unit, with cluster bootstrap, permutation tests, and Holm correction.
+  \item \textbf{Reference points and transparency.} A zero-parameter threshold-rule classifier derived from the generation thresholds, gradient-boosting baselines on window aggregates, probability calibration, and single-window latency on GPU and CPU are reported alongside the learned models, together with a complete data card for the synthetic dataset. Every result file carries a protocol hash, and configurations appearing in several tables are trained once and shared, so the tables are consistent by construction rather than by assertion.
+\end{itemize}
+
+\section{Related Work}
+The literature most relevant to this study covers both anomaly-detection models and the fusion strategies used to integrate temporal and spatial information.
+
+\subsection{Temporal, Spatial, and Spatio-Temporal Anomaly Models}
+Early traffic anomaly detection studies were predominantly driven by temporal modeling, where recurrent architectures such as LSTM-based networks were used to capture abrupt variations in velocity, acceleration, and short-term driving behavior. These models remain effective when anomalies are primarily reflected in kinematic changes, but they often overlook whether a maneuver is contextually plausible for the surrounding road environment. In parallel, graph-based and spatially aware methods improved structural understanding by modeling road connectivity, segment interactions, and topological constraints. Such approaches are better suited to representing where risky conditions may emerge, yet they can miss the sequential behavioral evolution that distinguishes a routine slowdown from a truly hazardous event.
+
+Recent studies increasingly bridge these two views through spatio-temporal learning. Huang et al. \cite{huang_multivariate_2024} combine Dynamic GAT and Informer components to capture long-range temporal dependencies together with adaptive relational structure. Duan et al. \cite{sun_framework_2025} extend this direction through a multimodal deep-fusion framework with heterogeneous graph neural networks. Nguyen et al. \cite{nguyen_spatiotemporal_2026} further show that graph-based spatio-temporal integration can effectively represent coupled speed--volume patterns in urban traffic environments. Taken together, these studies confirm that anomaly detection benefits from combining behavioral evolution with structural context; how much weight each modality should receive, however, is usually settled by architectural configuration rather than measured directly.
+
+\subsection{Fusion Strategies and Context Integration}
+A second research direction focuses on how information from temporal and spatial branches should be fused. Liang et al. \cite{liang_anomaly_2025} adopt a lightweight spatio-temporal architecture that emphasizes compact feature fusion, whereas Cui et al. \cite{cui_lane-flow-learning_2026} use a spatial--temporal attention design for lane-aware trajectory prediction. These studies show that attention and feature-level coupling improve representation quality, yet the relative contribution of temporal and spatial cues is still largely determined by architectural configuration rather than by an explicit, empirically validated comparison against simpler fusion operators.
+
+The mechanism examined in this paper is a \textbf{sample-wise scalar modality gate} applied after the LSTM and GAT outputs have been projected into a shared 64-dimensional space. It produces one scalar per sample and broadcasts that value across all latent features; it is not a feature-level attention vector, a time-step attention mechanism, or a graph-neighborhood coefficient. Table \ref{tab:comparison} places this mechanism among related designs. A central empirical question of this study is whether that modality-level distinction translates into a measurable advantage; Section~\ref{sec:fusion_ablation} reports that, under a controlled protocol, it does not.
+
+% Domain adaptation baglaminda eklendi (Hakem 2, Madde 2) — sim-to-real
+% aktarim tartismasi Bolum VIII-C'de.
+Beyond fusion design, transfer between simulated and real operating conditions is an open problem for simulation-trained detectors. Digital twin-assisted graph contrastive domain adaptation has shown promise for adapting simulation-derived representations to small-sample target domains in adjacent diagnostic fields \cite{gcda_bearing}, and we return to this direction in Section~\ref{sec:future_directions}.
+
+\begin{table*}[!t]
+\centering
+\caption{Summary of related spatio-temporal anomaly detection methods}
+\label{tab:comparison}
+\renewcommand{\arraystretch}{1.25}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{0.97\textwidth}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\centering\arraybackslash}p{0.06\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Study} & \textbf{Year} & \textbf{Core Arch.} & \textbf{Temporal} & \textbf{Spatial} & \textbf{Fusion} \\ \midrule
+  Huang et al.~\cite{huang_multivariate_2024} & 2024 & Dynamic GAT--Informer & Informer & Dynamic GAT & Integrated gated feature fusion with graph-neighborhood attention \\
+  Duan et al.~\cite{sun_framework_2025} & 2025 & Multimodal deep fusion + HGNN & Traffic flow / speed dynamics & Heterogeneous GNN & Integrated multimodal feature fusion \\
+  Nguyen et al.~\cite{nguyen_spatiotemporal_2026} & 2026 & Spatiotemporal prediction model & Time-series analysis & Graph-based dependency modeling & Integrated spatio-temporal feature fusion \\
+  Liang et al.~\cite{liang_anomaly_2025} & 2025 & Lightweight ST network & TCN / CNN & Spatio-temporal features & Compact feature-level fusion \\
+  Cui et al.~\cite{cui_lane-flow-learning_2026} & 2026 & Lane-flow fusion attention & Temporal self-attention & Lane-level spatial attention & Feature-level attention fusion \\
+  \textbf{This study} & \textbf{2026} & \textbf{Hybrid LSTM--GAT, evaluated component-wise} & \textbf{Stacked LSTM (vs.\ GRU, gated TCN, dilated conv, Transformer)} & \textbf{GAT (vs.\ Chebyshev, diffusion, adaptive adjacency, none)} & \textbf{Four operators compared directly: gated, concat, weighted sum, cross-attention} \\ \bottomrule
+\end{tabularx}
+\end{table*}
+
+\FloatBarrier
+
+% =====================================================================
+% BOLUM III — DEGISMEDI (matematik ve notasyon aynen korundu)
+% =====================================================================
+\section{Problem Formulation}
+
+Urban traffic systems can be modeled as complex spatio-temporal processes in which vehicle movements evolve while simultaneously occurring within the structural constraints of a road network \cite{zhang_automatic_2022, zhang_traffic_2025}. In this study, the traffic anomaly detection problem is formulated as a context-aware learning task that jointly models vehicle trajectory dynamics and road network topology \cite{ren_graph_2024}. The mathematical notations used throughout this formulation are summarized in Table \ref{tab:notations}.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Summary of mathematical notation}
+  \label{tab:notations}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{@{}p{0.36\columnwidth}p{0.58\columnwidth}@{}}
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\ \midrule
+    $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ & Directed graph representing the road network \\
+    $\mathcal{V}, \mathcal{E}$ & Set of nodes (road segments) and edges (connectivity) \\
+    $N, \mathbf{A}$ & Number of nodes and adjacency matrix encoding connectivity \\
+    $\mathbf{s}_i, \mathcal{S}$ & Structural feature vector of node $i$ and the set of all structural features \\
+    $\mathcal{T} = \{\mathbf{x}_1, \dots, \mathbf{x}_\tau\}$ & Vehicle trajectory sequence of length $\tau$ \\
+    $\mathbf{x}_t, \mathbf{X} \in \mathbb{R}^{\tau \times 4}$ & Per-step kinematic vector and stacked temporal feature matrix \\
+    $v_t, a_t, \theta_t, id_t$ & Velocity, acceleration, heading angle, and road-segment ID at time $t$ \\
+    $x_{sin}, x_{cos}$ & Trigonometric heading components used for continuous angular representation \\
+    \shortstack[l]{$type_i, length_i$\\$deg_i, context_i$} & \shortstack[l]{Road category and segment length;\\node degree and contextual attributes} \\
+    $\mathbf{h}_t, \mathbf{h}_{temp}, \mathbf{h}_{spat}$ & LSTM hidden state, temporal embedding, and spatial embedding \\
+    $\Theta_{temp}, \Theta_{spat}$ & Learnable parameter sets of the LSTM and GAT branches \\
+    $\alpha_{ij}, \mathcal{N}_i$ & Graph-attention coefficient from node $j$ to node $i$ and neighborhood of node $i$ \\
+    $\mathbf{W}, \vec{a}, \mathbf{h}_i'$ & GAT transform matrix, attention vector, and updated node representation \\
+    $d$ & Shared latent dimension used before multimodal fusion \\
+    $\mathbf{h}'_{temp}, \mathbf{h}'_{spat}$ & Projected temporal and spatial embeddings in shared latent space \\
+    \shortstack[l]{$\mathbf{W}_t, \mathbf{b}_t$\\$\mathbf{W}_s, \mathbf{b}_s$} & Learnable projection parameters for temporal/spatial branches \\
+    $g_{gate}, \mathbf{W}_g, b_g$ & Sample-wise scalar modality weight and gating-network parameters \\
+    $\mathbf{z}$ & Joint spatio-temporal fused embedding \\
+    \shortstack[l]{$f_{LSTM}(\cdot), f_{GAT}(\cdot)$\\$f_{fusion}(\cdot), g(\cdot)$} & \shortstack[l]{Temporal encoder, spatial encoder,\\fusion, and classification mappings} \\
+    $\sigma(\cdot)$ & Activation function (sigmoid where specified) \\
+    \shortstack[l]{$y, \hat{y}$\\$y_i, \hat{y}_i$} & Ground-truth and predicted labels (global and sample-level forms) \\
+    $\mathcal{L}, M$ & Loss function and mini-batch size \\
+    $w_{pos}$ & Positive-class weight in the WBCE loss \\
+    $\Phi$ & Overall mapping function for anomaly detection \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Road Network Representation}
+The road network is represented as a directed graph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$, where $\mathcal{V}$ is a set of $N$ nodes (road segments) and $\mathcal{E}$ denotes the set of edges representing physical connectivity \cite{li_graph_2023, park_graph_2025}. Each node $v_i \in \mathcal{V}$ is associated with a structural feature vector $\mathbf{s}_i$:
+\begin{equation}
+  \mathbf{s}_i = [type_i, length_i, deg_i, context_i]
+\end{equation}
+where $type_i$ denotes the road category, $length_i$ is the segment length, $deg_i$ is the node degree, and $context_i$ represents additional intersection characteristics \cite{chen_enhancing_2026, zhong_multi-factor_2025}. Spatial dependencies are encoded via an adjacency matrix $\mathbf{A}$ \cite{pan_dc-stgcn_2021, chang_stfdsgcn_2025}.
+
+\subsection{Vehicle Trajectory Modeling}
+Vehicle movement is represented as a trajectory sequence $\mathcal{T} = \{\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_\tau\}$, where $\tau$ is the sequence length and each observation $\mathbf{x}_t$ describes the kinematic state at time $t$ \cite{zhou_hybrid_2022, taheri_sarteshnizi_applicability_2026}:
+\begin{equation}
+  \mathbf{x}_t = [v_t, a_t, \theta_t, id_t]
+\end{equation}
+where $v_t$ is speed, $a_t$ is acceleration, $\theta_t$ is the heading angle, and $id_t$ is the identifier of the road segment where the vehicle is located.
+
+\subsection{Spatio-Temporal Feature Representation}
+Anomaly detection requires the integration of behavioral dynamics and structural context \cite{hu_dynamic_2026, zhu_spatio-temporal_2026}. We define the learning task as finding a joint embedding $\mathbf{z}$:
+\begin{equation}
+  \mathbf{z} = f(\mathbf{h}_{temp}, \mathbf{h}_{spat})
+\end{equation}
+where $\mathbf{h}_{temp} = \text{LSTM}(\mathcal{T})$ and $\mathbf{h}_{spat} = \text{GAT}(\mathcal{G}, \mathbf{A})$ \cite{xia_attention-based_2023, wang_multi-scale_2025}. The function $f(\cdot)$ denotes the fusion operator, which is treated in this study as an \emph{experimental variable} rather than a fixed design choice.
+
+\subsection{Traffic Anomaly Detection Objective}
+The detection task is formulated as a binary classification:
+\begin{equation}
+  \hat{y} = \sigma(g(\mathbf{z}))
+\end{equation}
+where $g(\cdot)$ is the classification head and $\hat{y} \in [0, 1]$. At the task-formulation level:
+\begin{equation}
+  \label{eq:generic_bce}
+  \mathcal{L} = -\frac{1}{M} \sum_{i=1}^{M} [y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i)]
+\end{equation}
+where $y_i \in \{0, 1\}$ is the ground truth label and $M$ is the number of samples \cite{feng_traffic_2024, sun_framework_2025, ma_utfp-ad_2025}. Equation~\ref{eq:generic_bce} is the generic task-level formulation only; because the training partition is imbalanced, the implemented objective is the weighted binary cross-entropy in Eq.~\ref{eq:wbce}.
+
+\subsection{Problem Definition}
+Given a road network $\mathcal{G}$, vehicle trajectory $\mathcal{T}$, and road features $\mathcal{S}$, the objective is to learn a mapping $\Phi: \{\mathcal{T}, \mathcal{G}, \mathcal{S}\} \rightarrow \{0, 1\}$ \cite{guo_crfpi-net_2026, ren_graph_2024}.
+
+% =====================================================================
+% BOLUM IV — MIMARI ANLATIMI KORUNDU
+% Yalnizca kapinin "ne basardigi" iddialari kaldirildi; mekanizma
+% tarifi aynen duruyor cunku dogru.
+% =====================================================================
+\section{Architecture Under Study}
+
+This section describes the hybrid architecture whose components are evaluated in Section~\ref{sec:results}. The model jointly encodes temporal vehicle dynamics and spatial road-network topology through parallel branches and combines them with a configurable fusion operator. We describe the mechanism here and defer all claims about its effectiveness to the experimental sections; the protocol governing those experiments is given in Section~\ref{sec:protocol}.
+
+\subsection{Overall Architecture}
+As illustrated in Fig. \ref{fig:stanet_framework}, the framework consists of (i) a temporal module for sequence modeling, (ii) a spatial module for structural graph learning, and (iii) a fusion module that combines the two projected representations.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.98\textwidth]{stanet_framework_q1.png}
+  \caption{Overall architecture. The GAT neighborhood coefficients $\alpha_{ij}$ are distinct from the sample-wise scalar modality gate $g_{gate}$; the fusion block is the experimental variable of Section~\ref{sec:fusion_ablation}.}
+  \label{fig:stanet_framework}
+\end{figure*}
+
+Given a vehicle trajectory sequence $\mathcal{T}$ and the road network graph $\mathcal{G}$, the model learns two complementary latent embeddings:
+\begin{align}
+  \mathbf{h}_{temp} &= f_{LSTM}(\mathcal{T}; \Theta_{temp}) \\
+  \mathbf{h}_{spat} &= f_{GAT}(\mathcal{G}, \mathbf{A}; \Theta_{spat})
+\end{align}
+where $\Theta_{temp}$ and $\Theta_{spat}$ denote the learnable parameter sets of the two branches \cite{wang_multi-scale_2025, he_c_2025}. These embeddings are integrated through the fusion operator:
+\begin{equation}
+  \mathbf{z} = f_{fusion}(\mathbf{h}_{temp}, \mathbf{h}_{spat})
+\end{equation}
+The fused representation $\mathbf{z}$ is then mapped by a classification head to the anomaly probability $\hat{y}$.
+
+\subsection{Temporal Module}
+
+\subsubsection{Kinematic Feature Representation}
+The temporal branch processes four kinematic features at each time step $t$:
+\begin{equation}
+  \mathbf{x}_t = [v_t, a_t, \sin(\theta_t), \cos(\theta_t)]
+\end{equation}
+Representing the heading angle $\theta_t$ using its trigonometric components prevents periodic discontinuities at the angular boundaries \cite{taheri_sarteshnizi_applicability_2026}. Each driving window is represented as $\mathbf{X} \in \mathbb{R}^{\tau \times 4}$ with $\tau = 50$.
+
+\subsubsection{LSTM-Based Sequence Encoding}
+A two-layer stacked LSTM encoder is used \cite{zhou_hybrid_2022, taheri_sarteshnizi_applicability_2026, hirata_traffic_2025}:
+\begin{equation}
+  \mathbf{h}_t = \text{LSTM}(\mathbf{x}_t, \mathbf{h}_{t-1})
+\end{equation}
+Each layer contains 128 hidden units with dropout $0.2$ between recurrent layers. The final hidden state of the second layer is exported as the temporal embedding, $\mathbf{h}_{temp} = \mathbf{h}_\tau$. Table \ref{tab:lstm_config} summarizes the branch. Section~\ref{sec:encoder_benchmark} replaces this encoder with four alternatives while keeping everything else fixed.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Summary of LSTM branch configuration}
+  \label{tab:lstm_config}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Component} & \textbf{Setting} & \textbf{Role / Output} \\ \midrule
+    Input window & $\tau = 50$, 4 features & Tensor shape $[B, 50, 4]$ \\
+    Input features & $v_t$, $a_t$, $x_{sin}$, $x_{cos}$ & Driving-profile representation \\
+    Stacked LSTM & input size $=4$, hidden size $=128$ & Temporal dependency learning \\
+    Number of layers & 2 & Hierarchical sequence encoding \\
+    Dropout & $p = 0.2$ & Regularization between LSTM layers \\
+    Temporal embedding & $\mathbf{h}_{temp} \in \mathbb{R}^{128}$ & Output tensor $[B, 128]$ \\
+    Parameters & 200{,}704 & 89.2\% of the full model \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+\subsection{Spatial Module}
+
+\subsubsection{Graph-Based Contextual Features}
+The spatial module uses a GAT to encode the road network structure \cite{zhang_automatic_2022, li_graph_2023, zhong_multi-factor_2025}. Each node $v_i$ is associated with a 17-dimensional structural vector $\mathbf{s}_i$ capturing road-type descriptors, topological metrics (betweenness and closeness centrality), and contextual constraints (traffic-light indicators, tunnel information, rarity scores).
+
+\subsubsection{Graph Attention Mechanism}
+The GAT layers compute adaptive attention coefficients $\alpha_{ij}$ over adjacent road segments \cite{xia_attention-based_2023, ren_graph_2024, chen_gms_2026}:
+\begin{equation}
+  \alpha_{ij} = \frac{\exp\left(\text{LeakyReLU}\left(\vec{a}^T [\mathbf{W}\mathbf{s}_i \Vert \mathbf{W}\mathbf{s}_j]\right)\right)}{\sum_{k \in \mathcal{N}_i} \exp\left(\text{LeakyReLU}\left(\vec{a}^T [\mathbf{W}\mathbf{s}_i \Vert \mathbf{W}\mathbf{s}_k]\right)\right)}
+\end{equation}
+\begin{equation}
+  \mathbf{h}_i' = \sigma \left( \sum_{j \in \mathcal{N}_i} \alpha_{ij} \mathbf{W}\mathbf{s}_j \right)
+\end{equation}
+Two consecutive GAT layers are used: the first maps the 17-dimensional node attributes to a 64-dimensional intermediate representation (32 hidden channels, 2 attention heads); the second produces the final 64-dimensional spatial embedding. The embedding of the road segment occupied by the vehicle is extracted as $\mathbf{h}_{spat}$. Table \ref{tab:gnn_config} summarizes the branch.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Summary of GAT branch configuration}
+  \label{tab:gnn_config}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Component} & \textbf{Setting} & \textbf{Role / Output} \\ \midrule
+    Graph input & $4{,}678$ nodes, $53{,}660$ edges & Trip-specific segment instances \\
+    Distinct physical roads & 628 unique \texttt{osm\_segment\_id} & See Section~\ref{sec:graph_construction} \\
+    Node features & 17 dimensions & Structural and contextual descriptors \\
+    GAT layer 1 & GATConv$(17, 32,$ heads$=2)$ & Intermediate tensor $[N, 64]$ \\
+    GAT layer 2 & GATConv$(64, 64,$ heads$=1)$ & Spatial embedding tensor $[N, 64]$ \\
+    Spatial embedding & $\mathbf{h}_{spat} \in \mathbb{R}^{64}$ & Output of active road segment \\
+    Parameters & 5{,}568 & 2.5\% of the full model \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+\subsection{Fusion Module}
+\label{sec:fusion_module}
+Since $\mathbf{h}_{temp}$ and $\mathbf{h}_{spat}$ originate from different branches, they are first projected into a common latent dimensionality $d = 64$:
+\begin{align}
+  \mathbf{h}'_{temp} &= \text{ReLU}(\mathbf{W}_t \mathbf{h}_{temp} + \mathbf{b}_t) \\
+  \mathbf{h}'_{spat} &= \text{ReLU}(\mathbf{W}_s \mathbf{h}_{spat} + \mathbf{b}_s)
+\end{align}
+
+Four fusion operators are considered. The \textbf{sample-wise scalar modality gate} originally proposed computes Eq.~\ref{eq:gate} and applies it in Eq.~\ref{eq:gated_fusion}:
+\begin{equation}
+  \label{eq:gate}
+  g_{gate} = \sigma(\mathbf{W}_g [\mathbf{h}'_{temp} \Vert \mathbf{h}'_{spat}] + b_g)
+\end{equation}
+\begin{equation}
+  \label{eq:gated_fusion}
+  \mathbf{z} = g_{gate} \cdot \mathbf{h}'_{temp} + (1 - g_{gate}) \cdot \mathbf{h}'_{spat}
+\end{equation}
+where $g_{gate}\in[0,1]$ has tensor shape $[B,1]$: exactly one scalar per sample, broadcast across all 64 dimensions. The three comparison operators are \textbf{fixed concatenation} ($\mathbf{z} = [\mathbf{h}'_{temp} \Vert \mathbf{h}'_{spat}]$, no reweighting), \textbf{static weighted summation} ($\mathbf{z} = s\,\mathbf{h}'_{temp} + (1-s)\,\mathbf{h}'_{spat}$ with a single global learnable scalar $s$), and \textbf{multi-head cross-attention} (four heads, temporal embedding as query, both embeddings as key/value).
+
+We note a structural relation that motivates the ablation. If $g_{gate}$ converges to a constant $\bar{g}$, then Eq.~\ref{eq:gated_fusion} followed by a linear classifier $\mathbf{W}$ yields $\mathbf{W}\mathbf{z} = \bar{g}\,\mathbf{W}\mathbf{h}'_{temp} + (1-\bar{g})\,\mathbf{W}\mathbf{h}'_{spat}$, which fixed concatenation can reproduce exactly by setting its two weight blocks to $\bar{g}\mathbf{W}$ and $(1-\bar{g})\mathbf{W}$. Concatenation therefore spans a strictly larger function class than constant-gate fusion, and any advantage of gating must come from genuinely sample-dependent behavior. Section~\ref{sec:gate_behaviour} tests whether such behavior is observed.
+
+The fused representation passes through a two-layer MLP ($64 \rightarrow 32 \rightarrow 1$, ReLU, dropout $0.2$) to produce the anomaly probability. Table \ref{tab:fusion_config} summarizes the stage.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Summary of the fusion stage and the four operators compared}
+  \label{tab:fusion_config}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Component} & \textbf{Setting} & \textbf{Fusion parameters} \\ \midrule
+    Temporal projection & Linear $128 \rightarrow 64$ + ReLU & --- \\
+    Spatial projection & Linear $64 \rightarrow 64$ + ReLU & --- \\
+    Gated (proposed) & Linear $128\rightarrow32\rightarrow1$ + sigmoid & 4{,}161 \\
+    Fixed concatenation & $[\mathbf{h}'_{temp} \Vert \mathbf{h}'_{spat}]$ & 0 \\
+    Static weighted sum & single learnable scalar $s$ & 1 \\
+    Cross-attention & 4-head, $d=64$ & 16{,}640 \\
+    Classifier & MLP $64/128 \rightarrow 32 \rightarrow 1$ & --- \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+% =====================================================================
+% BOLUM V — VERI. Buyuk olcude korundu; veri karti icerigi eklendi,
+% graf yapisi ve kural baseline sayilari duzeltildi.
+% =====================================================================
+\section{Dataset and Preprocessing}
+
+\subsection{Data Sources}
+The empirical evaluation relies on a \textbf{physics-informed synthetic vehicle trajectory dataset} and \textbf{OpenStreetMap (OSM)} road network topology.
+
+\subsubsection{Vehicle Trajectory Dataset}
+\nocite{wen_hdsvt_2025,feng_traffic_2024_dup2,yu_spatio-temporal_2018,li_diffusion_2018,wu_graph_2019,francies_framework_2025,pipes_car_following_1967,aashto_green_book_2018}
+\textbf{No pre-existing real-world source dataset was used.} To obtain trajectory data with fully known ground-truth anomaly labels---difficult to obtain at scale from real sensor logs because of privacy constraints, sparse anomaly incidence, and the absence of verified incident annotations---this study employs a physics-informed synthetic trajectory-generation framework. Vehicle motion is simulated over the OSM-derived Kocaeli road network using a Markov-chain behavioral model in which each vehicle transitions between four kinematic states (constant speed, acceleration, deceleration, stop) at one-second resolution. State-transition probabilities are conditioned on the local traffic regime (free-flow, transition, congested), defined through a log-normal traffic-intensity distribution and a speed--density relationship adapted from Pipes' car-following model \cite{pipes_car_following_1967}:
+\begin{equation}
+  \bar{v}_s = (v_{\max} - 0.08v_{\max})\left(1-\frac{\tau}{10}\right)^4,
+\end{equation}
+where $v_{\max}$ is the segment's speed limit and $\tau \in [1,9]$ is the sampled traffic-intensity level. Acceleration is constrained to $[-3,1.5]$~m/s$^2$ under normal driving, following AASHTO geometric-design guidance \cite{aashto_green_book_2018}. Sensor-level noise is injected into the speed and bearing channels at every time step.
+
+The generated dataset contains 293{,}168 records across 90 inter-district trips. Ground-truth labels are recorded at injection time according to the taxonomy in Table~\ref{tab:anomaly_taxonomy}. A complete data card---generation parameters, subtype rules, imputation shares, and known limitations---is released with the code and data (Section~\ref{sec:availability}).
+
+\subsubsection{OpenStreetMap Road Network Data}
+\label{sec:osm_data}
+Each road segment is represented by a 17-dimensional feature vector $\mathbf{s}_i$ \cite{zhong_multi-factor_2025} comprising structural indicators (lane count, road category), infrastructure elements (traffic lights, tunnels), and topological measures (betweenness and closeness centrality).
+
+Several structural attributes required imputation because of incomplete OSM tagging. Lane counts and speed limits, when missing, were assigned the road-type-conditional defaults in Table~\ref{tab:road_defaults}; assigned speed values were additionally smoothed using
+\begin{equation}
+  \begin{aligned}
+    \hat{v}_i & =
+    \begin{cases}
+      \operatorname{Round}_5\!\left(\dfrac{v_{i-1}+v_i+v_{i+1}}{3}\right), & C_i,\\
+      v_i, & \text{otherwise},
+    \end{cases}\\
+    C_i & \equiv (S_i \neq \mathrm{OSM}) \land (|v_{i-1}-v_i|>30),
+  \end{aligned}
+\end{equation}
+to remove physically implausible discontinuities. Traffic-light presence was inferred using a hybrid rule combining OSM \texttt{traffic\_signals} tags with a node-degree heuristic.
+
+The values in Table~\ref{tab:road_defaults} are \textbf{author-defined imputation assumptions}, not observed OSM attributes or statutory limits. \textbf{53.8\% of lane counts and 35.3\% of speed limits originate from OSM}; the remainder are imputed defaults (46.2\%) or smoothed values (14.8\% of speeds). This is material for interpreting the spatial branch, because $v_{\max}$ is one of its node features.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Author-defined road-type-conditional imputation defaults}
+  \label{tab:road_defaults}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    \textbf{Road Type} & \textbf{Default Lanes} & \textbf{Default Speed (km/h)} \\ \midrule
+    motorway        & 3  & 130 \\
+    motorway\_link  & 1  & 80 \\
+    trunk           & 2  & 110 \\
+    trunk\_link     & 1  & 60 \\
+    primary         & 2  & 90 \\
+    primary\_link   & 1  & 50 \\
+    secondary       & 1  & 80 \\
+    secondary\_link & 1  & 40 \\
+    (default)       & -- & 50 \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+The network covers 10 central districts of Kocaeli, Türkiye, with 90 inter-district routes forming the trip set.
+
+\subsection{Graph Construction and Node Multiplicity}
+\label{sec:graph_construction}
+% ---------------------------------------------------------------------
+% YENI ALT BOLUM — onceki surumde bildirilen "ortalama derece 11.47"
+% sayisinin dugum coklugundan kaynaklandigi burada acikca belirtiliyor.
+% ---------------------------------------------------------------------
+The graph is constructed by treating each \emph{trip-specific traversal} of a road segment as a separate node. This yields $4{,}678$ nodes and $53{,}660$ directed edges, with an average node degree of $11.47$. It is important to state the structure this reflects: the $4{,}678$ nodes correspond to only \textbf{628 distinct physical roads} identified by \texttt{osm\_segment\_id}, so each physical road appears on average $7.4$ times, once per trip that traverses it. Node features are identical across the copies of a given physical road in $538$ of $546$ multi-copy groups.
+
+Merging the copies into a single node per physical road yields a substantially different graph: $628$ nodes, $699$ edges, and an average degree of $1.11$. The reported degree of $11.47$ therefore describes the trip-instance graph, not the underlying road network, which is closer to a set of overlapping route corridors than to a densely connected urban network.
+
+Either construction imposes a ceiling on what the spatial branch alone can achieve. Because several sequences with different labels map to the same node, road identity alone bounds achievable accuracy at $95.13\%$ on the trip-instance graph and $93.45\%$ on the merged graph. The spatial branch can therefore act as a context provider but cannot serve as a standalone classifier---a prediction confirmed in Section~\ref{sec:encoder_benchmark}.
+
+\paragraph{Which construction is primary, and on what grounds} We adopt the trip-instance graph as the primary setting and report the merged graph alongside it. The criterion is \emph{per-node label purity}, which is a property of the data and is computed before any model is trained: distributing sequences over $4{,}678$ nodes rather than $628$ raises the label-consistency ceiling from $93.45\%$ to $95.13\%$, because fewer conflicting labels are forced onto a shared node. We state this explicitly because the alternative justification---selecting the construction that produces the better downstream score---would make the graph choice a function of the outcome it is used to support. The trade-off runs the other way as well and should be weighed by the reader: the merged graph is the faithful representation of the physical road network, and duplicating a road once per traversal inflates the reported average degree and weakens message passing between genuinely adjacent roads. Both graphs are evaluated under the identical protocol in Section~\ref{sec:graph_ablation}, and the conclusions of this paper are reported for both.
+
+\subsection{Data Cleaning and Feature Engineering}
+Records with implausible sensor readings were removed before sequence construction. Speed values outside $[0,200]$~km/h were excluded ($n=60$), and road-gradient values outside $[-50\%,50\%]$ were excluded ($n=8{,}185$). In total, 8{,}245 records (2.81\%) were removed, yielding 284{,}923 records:
+\begin{equation}
+  \text{retain row }i \iff 0 \leq v_i \leq 200
+  \;\land\; -50 \leq r_i \leq 50.
+\end{equation}
+The raw heading angle is transformed into sine and cosine components to prevent discontinuities at the $0^\circ/360^\circ$ boundary \cite{taheri_sarteshnizi_applicability_2026}.
+
+\subsection{Anomaly Taxonomy and Label Generation}
+Anomalies are injected during simulation according to the two-category, nine-subtype taxonomy in Table~\ref{tab:anomaly_taxonomy}. 6.86\% of simulated rows carry a non-zero anomaly label; after windowing, 7.07\% of sequences are anomalous.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Anomaly taxonomy, generation rules, and observed shares}
+  \label{tab:anomaly_taxonomy}
+  \renewcommand{\arraystretch}{1.15}
+  \footnotesize
+  \begin{tabularx}{\columnwidth}{@{}c>{\raggedright\arraybackslash}p{0.17\columnwidth}>{\raggedright\arraybackslash}X c@{}}
+    \toprule
+    \textbf{No.} & \textbf{Subtype} & \textbf{Generation Rule} & \textbf{Rows} \\ \midrule
+    1 & Speed-limit violation & $v_t > 1.10\,v_{\max}$ & 1{,}405 \\
+    2 & Abnormal dwell & Stationary for $>30$ s & 11{,}610 \\
+    3 & Abnormal acceleration & $a_t\in[-6,-3]\cup[1.5,2.5]$ m/s$^2$ & 299 \\
+    4 & Accident & Composite perturbation + prolonged stop & 5{,}741 \\
+    5 & Abnormal heading change & $|\Delta\theta_t|>10^\circ$ & 213 \\
+    6 & GPS speed artifact & Perturbation from kinematic history & 66 \\
+    7 & GPS acceleration artifact & Perturbation from kinematic history & 76 \\
+    8 & GPS heading artifact & Perturbation from kinematic history & 94 \\
+    9 & Signal freeze & Identical values for $\geq2$ s & 606 \\ \bottomrule
+  \end{tabularx}
+\end{table}
+
+\textbf{Label--input dependence.} Subtypes 1, 2, 3, 5, and 9 are threshold functions of the same kinematic channels supplied to the temporal branch. This is a property of the dataset, not an artifact of the models, and it is quantified directly in Section~\ref{sec:reference_points} through a zero-parameter rule classifier. One subtype is an informative exception: speed-limit violation depends on $v_{\max}$, which is \emph{not} an input to the temporal branch and is available only as a graph node feature. Section~\ref{sec:subtype} tests whether the spatial branch exploits this.
+
+\subsection{Feature Normalization, Sequences, and Partitioning}
+\label{sec:dataset_split}
+Velocity is normalized with Min--Max scaling and acceleration with Z-score standardization. \textbf{Scalers are fitted on the training partition only} and applied to validation and test data, avoiding the distributional leakage that arises when scaling precedes partitioning.
+
+Trajectories are transformed into fixed-length sequences using a sliding window of $\tau = 50$ steps with a stride of 10, yielding 28{,}090 sequences of which 7.07\% are anomalous. The window label and road segment are taken from the final time step.
+
+As summarized in Section~\ref{sec:dataset_split}, the dataset is partitioned by unique trip identifiers rather than by individual samples, so that overlapping windows from the same route cannot appear in more than one partition. Two evaluation regimes are used:
+\begin{itemize}
+  \item a \textbf{fixed grouped partition} (70/15/15 by trip) used for the encoder and fusion comparisons, summarized in Table \ref{tab:dataset_split};
+  \item \textbf{five-fold trip-grouped cross-validation}, in which every one of the 28{,}090 sequences receives an out-of-fold test prediction, used in Section~\ref{sec:cv}.
+\end{itemize}
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Fixed grouped partition and anomaly distribution}
+  \label{tab:dataset_split}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    \textbf{Partition} & \textbf{Trips} & \textbf{Sequences} & \textbf{Anomaly Ratio} \\ \midrule
+    Train      & 63 & 19{,}255 & 7.90\% \\
+    Validation & 13 & 4{,}036  & 7.58\% \\
+    Test       & 14 & 4{,}799  & 3.27\% \\ \bottomrule
+  \end{tabular}}
+\end{table}
+
+The lower test prevalence (3.27\% versus 7.90\% in training) arises from the anomaly composition of the selected whole trips and was not corrected by moving windows across partitions, which would violate the grouping constraint. This imbalance is one motivation for the cross-validated regime, where fold-wise test prevalence ranges from 3.40\% to 10.49\%.
+
+% =====================================================================
+% BOLUM VI — DENEY PROTOKOLU. Buyuk olcude yeni.
+% =====================================================================
+\section{Experimental Protocol}
+\label{sec:protocol}
+
+\subsection{Controlled Comparison Design}
+Every comparison in this paper varies \textbf{one component at a time} while holding the following fixed: task formulation, dataset, grouped partition, optimizer (Adam, learning rate $0.001$), batch size (64), maximum epochs (50), early-stopping patience (15), learning-rate schedule (\textit{ReduceLROnPlateau}, factor $0.5$, patience 3), gradient clipping (max-norm $1.0$), loss function, checkpoint-selection criterion, and threshold-selection rule. Encoder comparisons additionally hold the fusion operator fixed, and fusion comparisons hold both encoders fixed.
+
+\subsubsection{Loss Function}
+Because anomalies are rare, a \textbf{weighted binary cross-entropy} objective is used:
+\begin{equation}
+  \label{eq:wbce}
+  \mathcal{L} = -\frac{1}{M} \sum_{i=1}^{M} [w_{pos} \cdot y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i)]
+\end{equation}
+with $w_{pos}=N_{neg}^{train}/N_{pos}^{train}\approx11.65$, computed exclusively from the training partition after the grouped split.
+
+\subsubsection{Checkpoint and Threshold Selection}
+A single criterion---best validation F1-score---governs both checkpoint retention and early stopping for \emph{all} configurations. Mixing criteria across variants (for example, early-stopping on loss while checkpointing on F1) makes runs incomparable and is avoided.
+
+The decision threshold is selected on the \textbf{validation} partition by maximizing validation F1 over a grid, and then applied unchanged to the test partition. Selecting a threshold on held-out validation data is standard practice and does not constitute test leakage; fixing it a priori at $0.50$, as in the previous version of this work, discards performance without any methodological benefit, because a model trained with $w_{pos}=11.65$ is not calibrated to that operating point.
+
+\subsubsection{Repeatability and Reporting}
+\label{sec:repeatability}
+Every learned configuration on the fixed partition is trained with the same five random seeds ($42$--$46$), and all results are reported as \textbf{mean $\pm$ standard deviation}. The cross-validated analysis uses five trip-grouped folds crossed with two seeds, giving ten observations per configuration.
+
+Multi-seed reporting is not optional in this setting. Graph message passing uses scatter-based aggregation, whose floating-point summation order is nondeterministic on GPU; enabling deterministic cuDNN algorithms does not remove this nondeterminism, and we measured two runs of an identical configuration and seed differing by $0.025$ F1. Bit-level reproducibility is therefore unattainable, and a single reported number carries an unquantified error bar.
+
+\subsubsection{Protocol Stamping and Shared Runs}
+\label{sec:protocol_note}
+Because bit-level reproducibility is unattainable, the burden falls on \emph{procedural} consistency: any two numbers presented as comparable must have been produced under exactly the same protocol. An earlier version of this study did not enforce that, and it failed in a way worth reporting. Halfway through the experiment campaign the cuDNN determinism flag was switched off---deterministic algorithms were making the dilated convolution backward pass roughly forty times slower while providing no reproducibility guarantee, for the reason just given---and the experiments run before and after that change were subsequently placed in the same tables. The configuration \texttt{LSTM + GAT + weighted sum} consequently appeared with two different scores in two tables of the same manuscript, with nothing in the record to explain the discrepancy.
+
+Two mechanisms now prevent this. First, each experiment records a \emph{protocol stamp}: a hash over the seed set, epoch budget, patience, batch size, learning rate, scheduler parameters, dropout, checkpoint criterion, threshold rule, cuDNN flags, window length, stride, split seed, and library versions. Scripts that import another experiment's results assert equality of stamps and abort on mismatch, so results from different protocols cannot silently enter one table. Second, a configuration that appears in more than one table is trained \emph{once} and cached under its protocol stamp; the tables then read the same run. In this paper \texttt{LSTM + GAT + weighted sum} appears in four tables, and all four report the identical cached run rather than four independently trained runs presumed to agree. Changing any protocol field changes the hash, invalidates the cache, and forces retraining.
+
+\subsection{Unit of Statistical Analysis}
+\label{sec:statistical_unit}
+Windows are extracted with length $\tau = 50$ and stride $10$, so two consecutive windows share $40$ of their $50$ time steps---an overlap of $80\%$---and all windows drawn from one trip share a driver, a vehicle, and a route. Windows are therefore \emph{not} independent observations, and paired tests that treat them as such (window-level McNemar, window-level bootstrap) overstate the effective sample size: confidence intervals come out too narrow and $p$-values too small. This is a property of the sampling design, not of any particular model, and it applies to every comparison in this paper.
+
+All inferential statements below therefore use the \textbf{trip} as the unit:
+
+\begin{itemize}
+  \item \textbf{Cluster bootstrap.} Trips, not windows, are resampled with replacement; a selected trip contributes all of its windows. Confidence intervals are the $2.5$th and $97.5$th percentiles of $5{,}000$ resampled F1 differences.
+  \item \textbf{Cluster permutation test.} Under the null hypothesis that two models are exchangeable within a trip, an independent coin flip per trip swaps the two models' predictions on all windows of that trip. The two-sided $p$-value is the proportion of $20{,}000$ such relabelings whose F1 difference is at least as extreme as the observed one. This is the valid counterpart of McNemar's test for clustered data.
+  \item \textbf{Multiplicity.} Within each family of comparisons (baselines, fusion operators, encoder configurations) Holm--Bonferroni step-down correction controls the family-wise error rate at $\alpha = 0.05$.
+\end{itemize}
+
+Both quantities are computable in closed form over per-trip contingency counts, since F1 depends only on the totals $\mathrm{TP}$, $\mathrm{FP}$, and $\mathrm{FN}$ and these are additive over trips; the implementation was verified against a naive resampling loop.
+
+The consequence is a real loss of statistical power, and we state it plainly rather than absorbing it silently. The dataset contains $90$ trips in total, so the fixed test partition contains roughly $13$ independent units. Interval estimates on that partition are correspondingly wide. Under cross-validation every one of the $90$ trips receives an out-of-fold prediction, which is why the cross-validated results are treated as the primary evidence in this paper and the fixed-partition results as a secondary, more variable view of the same question. Window-level values are additionally reported in the accompanying result files, labelled as such, so that readers can see the magnitude of the difference the correct unit makes.
+
+\subsection{Evaluation Metrics}
+Performance is assessed using accuracy, precision, recall, F1-score, ROC-AUC, average precision, and---for the first time in this line of work---probability calibration via the Brier score and Expected Calibration Error (ECE).
+
+\subsection{Implementation}
+Experiments were conducted with PyTorch 2.7.1 (CUDA 11.8) and PyTorch Geometric 2.7.0 on an NVIDIA RTX 4060 Laptop GPU (8~GB). All preprocessing, model, training, and evaluation code, together with the complete result files, is released (Section~\ref{sec:availability}).
+
+% =====================================================================
+% BOLUM VII — SONUCLAR. Tamamen yeniden yapilandirildi.
+% =====================================================================
+\section{Results and Discussion}
+\label{sec:results}
+
+\subsection{Reference Points: Rule-Based and Classical Baselines}
+\label{sec:reference_points}
+
+Because several anomaly subtypes are defined as threshold functions of the model's own input channels (Table~\ref{tab:anomaly_taxonomy}), we first establish how much of the task is solvable without learning, and how much is solvable with classical feature-based learning. Table~\ref{tab:reference_points} and Fig.~\ref{fig:reference_points} report both alongside the hybrid model. All learned models use the fixed grouped partition, corrected normalization, validation-selected thresholds, and multi-seed reporting.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Reference points on the fixed test partition ($n=4{,}799$, 157 positives)}
+  \label{tab:reference_points}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lcccc@{}}
+      \toprule
+      \textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{ROC-AUC} \\ \midrule
+      Rule: $v<1$ only (0 params) & --- & --- & 0.8129 & --- \\
+      Rule: $v<1 \lor |a|>3$ (0 params) & --- & --- & 0.8317 & --- \\
+      \textbf{Rule: 3 thresholds (0 params)} & 0.8354 & 0.8726 & \textbf{0.8536} & --- \\ \midrule
+      XGBoost (window aggregates) & 0.9200 & 0.8166 & $0.8651 \pm 0.0052$ & \textbf{0.9966} \\
+      LightGBM (window aggregates) & 0.9355 & 0.8127 & $0.8698 \pm 0.0075$ & \textbf{0.9966} \\
+      Random Forest (window aggr.) & 0.9518 & 0.8013 & $0.8699 \pm 0.0061$ & 0.9964 \\ \midrule
+      LSTM only (no spatial branch) & 0.9400 & 0.7694 & $0.8455 \pm 0.0190$ & 0.9294 \\
+      \textbf{Hybrid LSTM--GAT} & 0.9336 & 0.8178 & $\bm{0.8713 \pm 0.0188}$ & 0.9638 \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+Three observations follow. First, a \textbf{zero-parameter classifier using three generation thresholds reaches $\mathrm{F1}=0.8536$}, within $2$ points of a $220{,}802$-parameter neural model. Second, gradient-boosting models on 38 hand-crafted window aggregates reach $0.865$--$0.870$ and attain \textbf{higher ROC-AUC than any neural configuration} ($0.9966$ versus $0.9638$), indicating better threshold-independent ranking. Third, the hybrid model attains the highest mean F1, but by a margin of $0.0014$ over Random Forest---roughly one tenth of its own seed-to-seed standard deviation.
+
+None of these differences is statistically significant under paired testing (Table~\ref{tab:reference_stats}), including the comparison against the spatial-branch ablation. With 157 positive test instances distributed over roughly 13 trips (Section~\ref{sec:statistical_unit}), the available power cannot resolve differences of one to three F1 points. We state the consequence directly: \textbf{on this partition the hybrid model is not distinguishable from a Random Forest on hand-crafted window aggregates, from a three-threshold rule with no parameters, or from itself with the spatial branch removed.} The cross-validated analysis of Section~\ref{sec:cv} is where the remaining discriminative evidence lies.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Paired comparisons against the hybrid LSTM--GAT model. The two
+  $\Delta$F1 columns are \emph{different quantities} and are reported
+  separately: the first is the difference of five-seed means, the second is
+  the difference on the median seed, which is the run the interval and the
+  test are computed on. The interval is the quantity that brackets the
+  median-seed difference, not the mean.}
+  \label{tab:reference_stats}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Comparison} & \textbf{$\Delta$F1} & \textbf{$\Delta$F1} & \textbf{Bootstrap 95\% CI} & \textbf{McNemar} \\
+     & \textbf{(5-seed mean)} & \textbf{(median seed)} & \textbf{(median seed)} & \textbf{$p$} \\ \midrule
+    vs.\ LightGBM         & $+0.0016$ & $+0.0192$ & $[-0.0063, +0.0473]$ & 0.302 \\
+    vs.\ XGBoost          & $+0.0063$ & $+0.0280$ & $[+0.0034, +0.0558]$ & 0.049 \\
+    vs.\ Random Forest    & $+0.0014$ & $+0.0084$ & $[-0.0132, +0.0303]$ & 0.754 \\
+    vs.\ 3-threshold rule & $+0.0178$ & $+0.0316$ & $[-0.0086, +0.0740]$ & 0.073 \\
+    vs.\ LSTM only        & $+0.0258$ & $+0.0081$ & $[-0.0147, +0.0316]$ & 0.549 \\ \bottomrule
+  \end{tabular}}
+\end{table}
+
+Two corrections to the previous version of this table are worth recording, because both produced numbers that could not be reconciled with each other. First, the mean difference and the interval were placed in one row without stating that they are computed on different quantities---the mean over seeds and a single seed respectively---so a mean falling outside its neighbouring interval looked like an arithmetic error. Second, and more consequentially, the paired bootstrap applied the \emph{hybrid model's} decision threshold to the competitor's probabilities. Since the models are calibrated differently, this evaluated every competitor away from its own operating point and inflated the difference systematically in the hybrid's favour: the Random Forest interval read $[+0.038, +0.116]$ against a mean difference of $+0.0137$. With each model scored at its own validation-selected threshold, the same interval is $[-0.0132, +0.0303]$, and the comparison is not significant. The values above use the corrected procedure. Both remain window-level statistics and are superseded by the trip-level analysis in Section~\ref{sec:trip_level}.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig_F1_baselines.png}
+  \caption{Reference points: zero-parameter rules and classical feature-based models against the hybrid neural model on the fixed test partition.}
+  \label{fig:reference_points}
+\end{figure}
+
+\subsection{Encoder Benchmark}
+\label{sec:encoder_benchmark}
+
+Reviewers of spatio-temporal anomaly detectors reasonably ask for comparison against STGCN \cite{yu_spatio-temporal_2018}, DCRNN \cite{li_diffusion_2018}, and Graph WaveNet \cite{wu_graph_2019}. These architectures target a structurally different formulation: every graph node carries a continuous time series and the model predicts jointly across all nodes at each step. The present task maps a single vehicle's 50-step window to a single road segment for binary classification, so these models cannot be deployed unmodified.
+
+We therefore isolate the \textbf{core operator} of each architecture and evaluate it under an identical task, budget, partition, fusion operator, and classification head. On the temporal axis we compare the stacked LSTM against a GRU (the DCRNN recurrent backbone), a gated temporal convolution (STGCN), a dilated causal convolution stack with residual and skip connections (Graph WaveNet), and a Transformer encoder. On the spatial axis we compare the GAT against Chebyshev graph convolution (STGCN), bidirectional diffusion convolution (DCRNN), a learnable adaptive adjacency (Graph WaveNet), and no spatial branch at all. This adaptation is a deliberate scoping decision and is stated as such.
+
+Table~\ref{tab:encoder_benchmark} and Fig.~\ref{fig:encoder_benchmark} report the outcome. The fusion operator is held at static weighted summation throughout this benchmark. This choice follows from Section~\ref{sec:fusion_ablation}: the gated operator exhibits a collapse mode that would inject variance unrelated to encoder quality.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Encoder benchmark, three seeds, identical protocol}
+  \label{tab:encoder_benchmark}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}llccr c@{}}
+      \toprule
+      \textbf{Config} & \textbf{Origin} & \textbf{F1-Score} & \textbf{ROC-AUC} & \textbf{Params} & \textbf{$p$} \\ \midrule
+      \textbf{LSTM + GAT} & \textbf{this study} & $\bm{0.8713 \pm 0.0188}$ & $0.9638$ & 220{,}802 & --- \\
+      GRU & DCRNN backbone & $0.8701 \pm 0.0102$ & $\bm{0.9929}$ & 170{,}626 & 0.119 \\
+      Transformer & Transformer & $0.8698 \pm 0.0081$ & $0.9899$ & 292{,}098 & 0.815 \\
+      Dilated causal conv & Graph WaveNet & $0.8535 \pm 0.0114$ & $0.9799$ & 416{,}258 & 0.115 \\
+      No spatial branch & control & $0.8455 \pm 0.0190$ & $0.9294$ & 215{,}234 & 0.549 \\
+      Gated TCN & STGCN & $0.8314 \pm 0.0058$ & $0.9861$ & 122{,}242 & \textbf{0.003} \\
+      Chebyshev conv & STGCN & $0.8234 \pm 0.0389$ & $0.9481$ & 223{,}106 & \textbf{0.007} \\
+      Diffusion conv & DCRNN & $0.8181 \pm 0.0450$ & $0.9633$ & 228{,}290 & \textbf{0.003} \\
+      Adaptive adjacency & Graph WaveNet & $0.4657 \pm 0.2833$ & $0.7891$ & 321{,}850 & $\bm{<}$\textbf{0.001} \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.98\linewidth]{fig_F4_benchmark.png}
+  \caption{Encoder benchmark. Bars show mean F1 over five seeds; error bars show standard deviation.}
+  \label{fig:encoder_benchmark}
+\end{figure}
+
+The LSTM--GAT pairing attains the highest mean F1 among the nine configurations, but the margin is significant against only four of the eight alternatives, and the identity of those four is the substantive result. The pairing separates cleanly from the STGCN gated temporal convolution ($p = 0.003$) and from all three alternative \emph{spatial} operators---Chebyshev convolution ($p = 0.007$), diffusion convolution ($p = 0.003$), and adaptive adjacency ($p < 0.001$). It does \emph{not} separate from any of the remaining strong temporal encoders: the GRU backbone ($0.8701 \pm 0.0102$, $p = 0.119$), the Transformer encoder ($0.8698 \pm 0.0081$, $p = 0.815$), or the dilated causal convolution stack ($0.8535 \pm 0.0114$, $p = 0.115$). The top three configurations lie within $0.0015$ F1 of one another, an order of magnitude below the leader's own seed standard deviation.
+
+We draw the conclusion the measurement supports rather than the one the architecture was proposed to demonstrate: \textbf{the choice of temporal encoder is not resolvable on this data, while the choice of spatial operator is}. Attention-based aggregation is measurably better than the Chebyshev, diffusion, and adaptive alternatives; whether the recurrence is an LSTM, a GRU, or self-attention is not something these experiments can decide. The GRU reaches the same F1 with $23\%$ fewer parameters and the highest ROC-AUC of any neural configuration, and would be the preferable choice on that basis alone.
+
+Two negative results are informative. Replacing the GAT with Chebyshev or diffusion convolution falls \emph{below} the no-spatial-branch control, indicating that graph message passing is not intrinsically helpful here and that any benefit is specific to attention-based aggregation. More strikingly, Graph WaveNet's learnable adaptive adjacency collapses ($0.4657 \pm 0.2833$): parameterizing a free $4{,}678 \times 4{,}678$ adjacency matrix is not identifiable at this data scale. Together with Section~\ref{sec:fusion_ablation}, a consistent pattern emerges---\textbf{freely parameterized adaptive components are unstable in this regime, whereas fixed or minimally parameterized alternatives are both stronger and more reliable}.
+
+\paragraph{Note on the previous version} The margins reported here are smaller and fewer than in the earlier version of this work, which reported $0.8836 \pm 0.0033$ for LSTM--GAT and significance against the DCRNN backbone and both Graph WaveNet components. That table was computed over three seeds rather than five. Extending to five seeds raised the leader's standard deviation from $0.0033$ to $0.0188$, and the comparisons against the GRU and dilated-convolution encoders ceased to be significant. A three-seed standard deviation of $0.0033$ on a configuration whose five-seed spread is $0.0188$ is not a small error bar; it is an under-sampled one.
+
+\subsection{Fusion Ablation}
+\label{sec:fusion_ablation}
+
+We now hold both encoders fixed and vary only the fusion operator, over five seeds. Table~\ref{tab:fusion_ablation} and Fig.~\ref{fig:fusion_ablation} summarize the outcome.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Fusion ablation, five seeds, all other components identical}
+  \label{tab:fusion_ablation}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lcccr@{}}
+      \toprule
+      \textbf{Fusion} & \textbf{F1-Score} & \textbf{ROC-AUC} & \textbf{Worst seed} & \textbf{Params} \\ \midrule
+      \textbf{Static weighted sum} & $\bm{0.8713 \pm 0.0188}$ & $\bm{0.9638}$ & $0.8491$ & \textbf{1} \\
+      Cross-attention & $0.8559 \pm 0.0228$ & $0.9417$ & $0.8369$ & 16{,}640 \\
+      Fixed concatenation & $0.8442 \pm 0.0091$ & $0.8993$ & $0.8339$ & 0 \\
+      Gated (proposed) & $0.6953 \pm 0.3488$ & $0.8752$ & $\bm{0.0715}$ & 4{,}161 \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.98\linewidth]{fig_F3_fusion_ablation.png}
+  \caption{The fusion ranking is partition-dependent. Left: the fixed partition (five seeds, 14 trips), where the gated operator ranks fourth of four and one run collapses. Right: trip-grouped cross-validation (ten runs, 90 trips), where the same operator ranks first of four and no run collapses. Bars are means with standard deviation; dots are individual runs. Under cross-validation no pairwise difference is significant at the trip level after Holm correction (Section~\ref{sec:cv}).}
+  \label{fig:fusion_ablation}
+\end{figure}
+
+The sample-wise gate ranks \textbf{last of four}. Two aspects of this result matter more than the ranking itself.
+
+\textbf{A degenerate collapse mode.} In one of five seeds the gated model failed completely ($\mathrm{F1}=0.0715$), with a mean $g_{gate}$ of $0.026$ and a mean of $0.0125$ on anomalous samples. The gate had locked onto the spatial modality, which---as Section~\ref{sec:encoder_benchmark} shows---cannot classify on its own, and training could not escape. Equation~\ref{eq:gated_fusion} admits this optimum by construction: as $g_{gate}\rightarrow 0$ the temporal signal is suppressed multiplicatively and its gradient vanishes with it. Concatenation has no such mode, because the classifier weights the two embeddings independently and can simply ignore the uninformative one. No collapse occurred in any of the fifteen runs of the other three operators.
+
+This collapse is reproducible in the strongest sense available to us. The earlier version of this study observed it at seed $45$ under a different cuDNN configuration ($\mathrm{F1}=0.0833$). The experiments reported here were re-run from scratch under the protocol of Section~\ref{sec:protocol_note}, and the collapse recurred \emph{at the same seed} with a comparable magnitude. It is a property of the operator and this initialization, not an artifact of a particular backend setting.
+
+\textbf{The learned optimum is a constant.} In the static weighted-sum variant, the single learnable scalar converged to $\{0.519, 0.522, 0.518, 0.498, 0.497\}$ across the five seeds---that is, to approximately equal weighting in every run. The data does not call for a sample-dependent mixing weight. A one-parameter static weight outperforms the $4{,}161$-parameter adaptive gate, and does so with an order of magnitude lower seed variance ($\pm 0.0188$ versus $\pm 0.3488$).
+
+Paired single-run tests are the wrong instrument for this comparison. On the median seed the gated model is indistinguishable from concatenation ($p = 1.000$) and from cross-attention ($p = 0.727$), and its difference from the static weighted sum is $-0.0379$ with interval $[-0.0708, -0.0119]$; none of these single-partition numbers reflects the $0.35$ standard deviation that is the substantive finding. Across-seed instability is not visible to a test that examines one seed. This is itself an argument for the multi-seed protocol of Section~\ref{sec:repeatability}.
+
+\subsection{Gate Behavior}
+\label{sec:gate_behaviour}
+
+Section~\ref{sec:fusion_module} established that gating can only outperform concatenation through genuinely sample-dependent behavior. Fig.~\ref{fig:gate} examines whether such behavior is observed, by measuring the class-conditional shift $\bar{g}_{\text{anomalous}} - \bar{g}_{\text{normal}}$ across seeds.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.98\linewidth]{fig_F3_gate.png}
+  \caption{Modality gate behavior across five seeds. Left: observed range and class means. Right: class-conditional shift, which is inconsistent in both magnitude and sign.}
+  \label{fig:gate}
+\end{figure}
+
+The measured shifts are $+0.0602$, $-0.0774$, $-0.0535$, $-0.0135$, and $-0.2427$. Both the magnitude and the \emph{sign} vary across seeds. A class-conditional interpretation of the gate---for instance, that anomalous samples shift weight toward the temporal branch---is therefore not a stable property of the trained model but an observation that holds in one run and reverses in the other four.
+
+This is a correction to the interpretation offered in the earlier version of this work, which reported a shift from $0.70$--$0.75$ on normal samples to approximately $0.80$ on anomalous samples based on a single checkpoint. Re-evaluating the archived checkpoint gives class means of $0.860$ and $0.856$ respectively---a difference of $0.004$, with the gate never falling below $0.5$ on any sample. We report this explicitly because interpretability claims derived from one training run are exactly the kind of evidence this study argues against.
+
+\subsection{Cross-Validated Evaluation and Subtype Stratification}
+\label{sec:cv}
+
+The fixed partition of Table~\ref{tab:dataset_split} contains 157 positive test instances drawn from 14 trips. Section~\ref{sec:trip_level} showed that this supports no inferential claim. We therefore repeat the entire evaluation---all four fusion operators and the spatial-branch control---under five-fold trip-grouped cross-validation crossed with two seeds, giving ten runs per configuration. Every sequence receives an out-of-fold test prediction, so all \textbf{90 trips} enter the analysis rather than 14, and fold-wise test prevalence ranges from $3.40\%$ to $10.49\%$. This is the primary evidence base of the paper.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Five-fold trip-grouped cross-validation crossed with two seeds (ten runs per configuration, all 28{,}090 sequences). Collapse counts runs with $\mathrm{F1} < 0.30$.}
+  \label{tab:cv}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lcccccc@{}}
+      \toprule
+      \textbf{Model} & \textbf{Run F1} & \textbf{Worst} & \textbf{Collapse} & \textbf{Pooled F1} & \textbf{Brier} & \textbf{ECE} \\ \midrule
+      Gated hybrid & $\bm{0.8908 \pm 0.0429}$ & $\bm{0.8385}$ & 0/10 & $0.8865$ & $0.0257$ & $0.0579$ \\
+      Cross-attention hybrid & $0.8894 \pm 0.0510$ & $0.8007$ & 0/10 & $\bm{0.8913}$ & $0.0267$ & $0.0627$ \\
+      LSTM only (control) & $0.8839 \pm 0.0436$ & $0.8302$ & 0/10 & $0.8812$ & $\bm{0.0208}$ & $0.0548$ \\
+      Weighted-sum hybrid & $0.8831 \pm 0.0412$ & $0.8062$ & 0/10 & $0.8906$ & $0.0236$ & $\bm{0.0409}$ \\
+      Concatenation hybrid & $0.8703 \pm 0.0543$ & $0.7621$ & 0/10 & $0.8772$ & $0.0254$ & $0.0560$ \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+\textbf{The fusion ranking reverses.} On the fixed partition the gated operator finished last of four and collapsed in one of five seeds; across five trip partitions it finishes \emph{first} of four and collapses in none of ten runs. Its worst cross-validated run is $0.8385$, against $0.0715$ on the fixed partition. The concatenation operator, third on the fixed partition, is last here.
+
+Neither ordering should be reported as a result, and we report neither. At the trip level, gating differs from the weighted sum by $-0.0040$ (95\% CI $[-0.0147, +0.0065]$, Holm $p = 0.613$), from cross-attention by $-0.0047$ ($[-0.0123, +0.0044]$, Holm $p = 0.613$), and from concatenation by $+0.0093$ ($[+0.0019, +0.0199]$, raw $p = 0.023$, Holm $p = 0.070$). \textbf{No fusion operator is distinguishable from any other} once the correct unit and multiplicity correction are applied. The four configurations span $0.0205$ F1, against a within-configuration standard deviation of $0.04$--$0.05$.
+
+This is the paper's central empirical statement, and it cuts in both directions. It does not vindicate the sample-wise gate: nothing here shows the gate helping. It equally does not condemn it: the fixed-partition result that placed it last, including its collapse, is not reproduced when five partitions are used instead of one. \textbf{What the data supports is that the choice of fusion operator in this setting is not resolvable}---and that a study reporting a ranking from a single partition, as the earlier version of this work did, would have reported one of two opposite orderings depending on which partition it happened to use.
+
+The collapse mode of Section~\ref{sec:fusion_ablation} remains a real and reproducible phenomenon; it recurred at the same seed across a full re-run under a different backend configuration. What these ten cross-validated runs establish is that it is \emph{rare} rather than systematic, and Section~\ref{sec:graph_ablation} shows it is conditional on the spatial branch being nearly uninformative. A failure mode that appears in one of fifteen runs is worth documenting for practitioners; it is not evidence that one operator is generally worse than another.
+
+The spatial-branch control is equally instructive: removing the spatial branch entirely yields $0.8839 \pm 0.0436$, statistically indistinguishable from every hybrid variant. On the fixed partition the same ablation appeared to cost $3.5$ F1 points at $p = 0.035$. We \textbf{withdraw that claim}. Section~\ref{sec:subtype} examines whether the spatial branch helps anywhere at all.
+
+\subsubsection{Subtype Stratification}
+\label{sec:subtype}
+Section~\ref{sec:reference_points} identified speed-limit violation as the one anomaly subtype whose defining rule depends on a quantity ($v_{\max}$) available only to the spatial branch. Pooling out-of-fold predictions gives 144 such sequences drawn from all 90 trips---enough for a stratified comparison that the single partition, with 13 positives from 14 trips, could not support. Table~\ref{tab:subtype} and Fig.~\ref{fig:subtype} report the result, with all tests at the trip level and Holm correction across the three subtypes.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Subtype stratification on pooled cross-validated predictions. Intervals and $p$-values are trip-level over all 90 trips; the Holm column corrects across the three subtypes.}
+  \label{tab:subtype}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lcccccc@{}}
+      \toprule
+      \textbf{Subtype} & \textbf{$n$} & \textbf{Hybrid} & \textbf{LSTM-only} & \textbf{$\Delta$} & \textbf{Trip 95\% CI} & \textbf{Holm} \\ \midrule
+      Speed-limit violation & 144 & $0.1469$ & $\bm{0.2312}$ & $-0.0843$ & $[-0.2499, +0.0716]$ & 0.563 \\
+      \textbf{Abnormal dwell} & 1{,}154 & $\bm{0.9400}$ & $0.9065$ & $\bm{+0.0335}$ & $\bm{[+0.0139, +0.0610]}$ & $\bm{0.002}$ \\
+      Signal freeze & 62 & $0.0405$ & $\bm{0.0773}$ & $-0.0367$ & $[-0.0926, +0.0306]$ & 0.563 \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig_F5_subtype.png}
+  \caption{Subtype stratification on pooled cross-validated predictions. The spatial branch helps where it was not predicted to (abnormal dwell) and does not help where it holds the decisive feature (speed-limit violation).}
+  \label{fig:subtype}
+\end{figure}
+
+This table contains the paper's one comparison that is significant at the trip level after correction, and it is not the one we set out to test.
+
+\textbf{The predicted effect is absent.} On speed-limit violations---the subtype whose generating rule is a function of $v_{\max}$, a quantity present only in the node features---the hybrid model is \emph{worse} than the temporal-only model ($0.1469$ versus $0.2312$), and the interval spans zero. Both are weak in absolute terms. Although $v_{\max}$ is available to the spatial branch, that branch does not deliver it in a form the classifier uses. Two plausible reasons are that $v_{\max}$ is an imputed default for $49.9\%$ of segments (Section~\ref{sec:osm_data}), and that speed-limit violations constitute only $0.5\%$ of rows, providing little gradient signal.
+
+\textbf{An unpredicted effect is present.} On abnormal dwell---by far the most frequent subtype, with $1{,}154$ positives---the hybrid model gains $+0.0335$ F1 over the temporal-only control, with a trip-level interval of $[+0.0139, +0.0610]$ that excludes zero and a Holm-corrected $p$ of $0.002$. With 90 clusters rather than 14, the design has enough power to resolve an effect of this size, and it does. We did not predict this subtype and offer an interpretation only tentatively: dwell events are plausibly more discriminable when road context distinguishes a signalized intersection or a congested trunk segment from an open motorway, and that context is exactly what the node features encode. Because it was not hypothesized in advance, we report it as a finding to be confirmed rather than as confirmation.
+
+The two results together locate the spatial branch's contribution precisely: it is real, it is small, and it is concentrated in the high-frequency subtype rather than in the one whose definition depends on a road attribute. This is a more specific statement than either the earlier version's claim of a general spatial gain or its subsequent retraction, and it is the statement the data supports.
+
+\subsection{Calibration}
+\label{sec:calibration}
+Probability calibration was not assessed in the previous version of this work. Table~\ref{tab:cv} and the reliability diagram in Fig.~\ref{fig:calibration} report it. The best-calibrated hybrid is the weighted-sum variant (ECE $0.0409$), ahead of concatenation ($0.0560$), gating ($0.0579$), and cross-attention ($0.0627$); the temporal-only control attains the lowest Brier score ($0.0208$).
+
+We note this as a correction to the earlier version of this work, which reported the gated operator as clearly best calibrated (ECE $0.0338$ against $0.0594$ for the weighted sum) on the basis of a single seed per fold. With two seeds per fold the ordering of the two is reversed and the gap is small. Calibration differences of this magnitude are not separable from run-to-run variation at this sample size, and we no longer claim calibration as an advantage of the gating mechanism.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{fig_F5_calibration.png}
+  \caption{Reliability diagram from pooled cross-validated predictions.}
+  \label{fig:calibration}
+\end{figure}
+
+The general point survives the correction even though the specific claim does not. In a monitoring context where alerts are ranked or thresholded by predicted risk, a better-calibrated score is more useful than a marginally higher F1, and calibration is worth reporting for that reason regardless of which variant wins. All five configurations are mildly overconfident, with ECE between $0.041$ and $0.063$; none is well enough calibrated to be used as a risk score without post-hoc recalibration.
+
+\subsection{Graph Construction Ablation}
+\label{sec:graph_ablation}
+Section~\ref{sec:graph_construction} noted that the graph can be built from trip-specific segment instances ($4{,}678$ nodes) or merged by physical road ($628$ nodes). Table~\ref{tab:graph_ablation} reports both.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Effect of graph construction, five seeds. The fusion operator is
+  named explicitly in every row: an earlier version of this table labelled its
+  hybrid rows only as ``hybrid'', which made them appear inconsistent with the
+  fusion ablation of Table~\ref{tab:fusion_ablation} when in fact a different
+  operator had been used.}
+  \label{tab:graph_ablation}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}llcccc@{}}
+      \toprule
+      \textbf{Configuration} & \textbf{Fusion} & \textbf{Nodes} & \textbf{Deg.} & \textbf{F1-Score} & \textbf{ROC-AUC} \\ \midrule
+      GAT only, trip-instance & --- & 4{,}678 & 11.47 & $0.0767 \pm 0.0035$ & $0.5910$ \\
+      GAT only, merged & --- & 628 & 1.11 & $0.0745 \pm 0.0047$ & $0.7115$ \\ \midrule
+      Hybrid, trip-instance & weighted sum & 4{,}678 & 11.47 & $\bm{0.8713 \pm 0.0188}$ & $0.9638$ \\
+      Hybrid, merged & weighted sum & 628 & 1.11 & $0.8413 \pm 0.0010$ & $0.9228$ \\
+      Hybrid, trip-instance & gated & 4{,}678 & 11.47 & $0.6953 \pm 0.3488$ & $0.8752$ \\
+      Hybrid, merged & gated & 628 & 1.11 & $0.8493 \pm 0.0274$ & $\bm{0.9684}$ \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+Merging duplicate nodes substantially improves the \emph{standalone} discriminative power of the spatial branch (ROC-AUC $0.5910 \rightarrow 0.7115$), confirming that the duplicate structure degrades message passing. Its F1 nonetheless remains near $0.07$, consistent with the label-ambiguity ceiling of Section~\ref{sec:graph_construction}: several sequences with different labels map to the same node, so no threshold yields good precision and recall simultaneously.
+
+With the fusion operator held fixed, the hybrid is stronger on the trip-instance graph ($0.8713$ versus $0.8413$ for weighted sum), consistent with its higher per-node label purity. The row that repays closer reading is the last one. \textbf{The gated operator does not collapse on the merged graph}: it attains $0.8493 \pm 0.0274$ there, against $0.6953 \pm 0.3488$ on the trip-instance graph, and records the highest ROC-AUC in the table. This locates the collapse mechanism precisely. The gate fails when it locks onto a spatial branch that carries almost no standalone signal (ROC-AUC $0.5910$, barely above chance); on the merged graph the same branch reaches $0.7115$, and locking onto it is no longer catastrophic. The instability of Section~\ref{sec:fusion_ablation} is therefore not a property of gating in the abstract but of gating over an uninformative modality---which is a sharper and more transferable statement than the one we could make from the fixed graph alone.
+
+\subsection{Statistical Reassessment at the Trip Level}
+\label{sec:trip_level}
+
+Every $p$-value reported so far treats each of the $4{,}799$ test windows as an independent observation. Section~\ref{sec:statistical_unit} explained why that assumption does not hold: windows overlap by $80\%$, and all windows of a trip share a driver, a vehicle, and a route. This subsection repeats the same comparisons with the trip as the unit and reports what changes. It is placed here, after the results it revises, because the revision applies to all of them at once.
+
+The fixed test partition contains $4{,}799$ windows drawn from \textbf{14 trips} (between $75$ and $760$ windows each, mean $343$). Fourteen is the effective sample size for any inference on this partition.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{The same comparisons at the window level and at the trip level. $\Delta$F1 and intervals are computed on the median seed. Trip-level $p$-values come from sign-flip permutation over trips; the Holm column corrects within each family. Widening is the ratio of trip-level to window-level interval width.}
+  \label{tab:trip_level}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}llcccc@{}}
+    \toprule
+    \textbf{Family} & \textbf{Comparison} & \textbf{$p$ (window)} & \textbf{$p$ (trip)} & \textbf{Holm} & \textbf{Widen.} \\ \midrule
+    \multirow{5}{*}{Baselines}
+      & vs.\ LSTM only        & 0.549 & 0.749 & 1.000 & $2.43\times$ \\
+      & vs.\ LightGBM         & 0.302 & 0.219 & 0.657 & $1.81\times$ \\
+      & vs.\ XGBoost          & \textbf{0.049} & 0.064 & 0.320 & $1.80\times$ \\
+      & vs.\ Random Forest    & 0.754 & 0.632 & 1.000 & $1.07\times$ \\
+      & vs.\ threshold rule   & \textbf{0.000} & 0.065 & 0.320 & $1.84\times$ \\ \midrule
+    \multirow{3}{*}{Fusion}
+      & gated vs.\ weighted sum & \textbf{0.031} & \textbf{0.032} & 0.097 & $1.25\times$ \\
+      & gated vs.\ concatenation & 1.000 & 0.500 & 0.755 & $1.16\times$ \\
+      & gated vs.\ cross-attention & 0.727 & 0.377 & 0.755 & $0.85\times$ \\ \midrule
+    \multirow{8}{*}{Encoders}
+      & vs.\ adaptive adjacency & \textbf{0.000} & \textbf{0.007} & 0.056 & $2.71\times$ \\
+      & vs.\ gated TCN          & \textbf{0.003} & \textbf{0.048} & 0.335 & $1.44\times$ \\
+      & vs.\ Chebyshev conv     & \textbf{0.007} & 0.061 & 0.365 & $2.79\times$ \\
+      & vs.\ diffusion conv     & \textbf{0.003} & 0.062 & 0.365 & $2.22\times$ \\
+      & vs.\ GRU                & 0.119 & 0.375 & 1.000 & $1.71\times$ \\
+      & vs.\ dilated conv       & 0.115 & 0.503 & 1.000 & $1.19\times$ \\
+      & vs.\ Transformer        & 0.815 & 0.439 & 1.000 & $1.17\times$ \\
+      & vs.\ no spatial branch  & 0.549 & 0.748 & 1.000 & $2.43\times$ \\ \bottomrule
+  \end{tabular}}
+\end{table}
+
+The outcome is unambiguous and we report it without softening. \textbf{Under the correct statistical unit, no comparison on the fixed partition remains significant after multiplicity correction.} Seven comparisons that were significant at the window level are not significant at the trip level: the advantage over XGBoost, the advantage over the zero-parameter threshold rule, the gated-versus-weighted-sum difference, and the margins over the STGCN gated temporal convolution, Chebyshev convolution, diffusion convolution, and adaptive adjacency. Confidence intervals widen by factors of $1.07$ to $2.79$. The hybrid model's own F1 on this partition, $0.8851$ on the median seed, carries a trip-level interval of $[0.7231, 0.9470]$.
+
+Two of these deserve comment rather than a bare verdict. The comparison against adaptive adjacency has a raw trip-level $p$ of $0.007$ and a cluster-bootstrap interval of $[+0.679, +0.944]$ that excludes zero by a wide margin; it fails only after Holm correction across eight comparisons, at $p = 0.056$. Given an effect size of $+0.86$ F1, we regard the collapse of adaptive adjacency as established and its formal non-significance as a statement about the correction and the cluster count rather than about the effect. Conversely, the gated-versus-weighted-sum difference has a raw $p$ of $0.032$ but an effect size of $-0.038$, and it does not survive correction; we do not claim it from this partition.
+
+The general lesson is the one this table was constructed to expose. A literature that evaluates overlapping windows as independent observations on a single partition will report significance that a correctly specified test does not support. That is not a criticism of any particular prior study; it applies with full force to the earlier version of this work, whose central ablation claim rested on a window-level $p$ of $0.035$ from one partition. What remains, and what the following subsection assesses, is the cross-validated evidence---in which all $90$ trips receive an out-of-fold prediction rather than $14$.
+
+\subsection{Computational Efficiency and Edge Feasibility}
+\label{sec:efficiency}
+
+Table~\ref{tab:efficiency} and Fig.~\ref{fig:efficiency} report parameter counts and single-window inference latency measured with batch size 1, after 50 warm-up iterations, over 500 repetitions on GPU and 60 on CPU. Measurements are taken on the \textbf{trip-instance graph} ($4{,}678$ nodes), the primary setting of the accuracy tables. The previous version reported latency measured on the merged $628$-node graph while reporting accuracy on the trip-instance graph, which understated the cost of the configuration actually being evaluated; the figures below supersede those.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Single-window inference latency (median) and parameter counts, measured on the trip-instance graph ($4{,}678$ nodes)}
+  \label{tab:efficiency}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lrcccc@{}}
+      \toprule
+      \textbf{Model} & \textbf{Params} & \textbf{GPU} & \textbf{GPU cached} & \textbf{CPU} & \textbf{CPU cached} \\ \midrule
+      Hybrid (weighted sum, GAT) & 220{,}802 & 2.87 ms & \textbf{0.64 ms} & 27.82 ms & \textbf{7.03 ms} \\
+      Hybrid (gated, GAT) & 224{,}962 & 2.80 ms & 0.78 ms & 25.07 ms & 7.63 ms \\
+      Hybrid (concat) & 222{,}849 & 2.56 ms & 0.55 ms & 23.14 ms & 7.32 ms \\
+      Hybrid (cross-attention) & 237{,}441 & 2.91 ms & 0.96 ms & 19.83 ms & 6.61 ms \\
+      LSTM only & 215{,}234 & 0.80 ms & 0.64 ms & 7.69 ms & 7.03 ms \\
+      GRU + GAT & 170{,}626 & 2.60 ms & 0.66 ms & 33.63 ms & 8.58 ms \\
+      Gated TCN + GAT & 122{,}242 & 2.76 ms & 0.88 ms & 24.79 ms & 1.83 ms \\
+      Dilated conv + GAT & 416{,}258 & 4.22 ms & 2.26 ms & 27.42 ms & 5.98 ms \\
+      Transformer + GAT & 292{,}098 & 3.30 ms & 1.30 ms & 22.48 ms & 2.84 ms \\
+      Adaptive adjacency + LSTM & 321{,}850 & 6.18 ms & 0.69 ms & 55.40 ms & 6.85 ms \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.98\linewidth]{fig_F6_efficiency.png}
+  \caption{Single-window latency with and without graph-embedding caching, on GPU and CPU (log scale).}
+  \label{fig:efficiency}
+\end{figure}
+
+The primary model contains $220{,}802$ parameters ($\approx 0.9$~MB in fp32), of which the temporal branch accounts for $200{,}704$ ($90.9\%$), the projection layers $12{,}416$, the classifier $2{,}113$, the spatial branch only $5{,}568$ ($2.5\%$), and the fusion operator a single scalar. Peak GPU memory is $66$~MB.
+
+Despite that small share, the spatial branch dominates inference cost, because a naive implementation recomputes embeddings for all $4{,}678$ nodes on every forward pass. \textbf{Since the road network is static, node embeddings can be computed once and cached}, reducing GPU latency from $2.87$ to $0.64$~ms ($4.5\times$) and CPU latency from $27.82$ to $7.03$~ms ($4.0\times$). After caching, the hybrid model matches the temporal-only model exactly on both devices ($0.64$~ms on GPU, $7.03$~ms on CPU): once the graph forward pass is amortized, spatial context is free at inference time. This holds for every fusion operator, since all four cost at most $16{,}640$ parameters and none appears in the latency ranking.
+
+At $27.82$~ms per uncached window on CPU ($p_{95} = 39.92$~ms), or $7.03$~ms cached ($p_{95} = 8.77$~ms), a single-core edge device could process on the order of $35$ windows per second without caching and $140$ with it, against a one-second sampling resolution. Caching is therefore not an optimization but a precondition for single-core deployment at scale. Memory is not a constraint at this model size. These figures characterize computational feasibility only; they do not address detection quality under real sensing conditions.
+
+\subsection{Scope of the Contribution}
+\label{sec:scope}
+It is worth stating directly what kind of claim this paper does and does not make, because the two are easily conflated in this literature.
+
+This is an \emph{evaluation study}. Its object is a set of design decisions---encoder pairing, fusion operator, graph construction---and its result is a statement about how much evidence a controlled comparison can actually support for each of them. It is not a report of a deployable traffic anomaly detector, and none of the numbers here should be read as an estimate of field performance. The data are simulated; the labels are, for most subtypes, threshold functions of the model's own inputs; the road network is one city; the trip count is $90$. Each of these independently rules out a deployment claim, and we make none.
+
+What survives those limitations is the methodological finding, and it does so precisely because it is a \emph{relative} statement evaluated under a single fixed protocol: a sample-wise gate that is presented as the architectural contribution of a hybrid model does not, on this data, outperform a single learnable scalar, and the difference between the two is smaller than the variation across random seeds. That comparison does not depend on the data being real, because every variant faces the identical task, partition, budget, and decision rule. It does depend on the comparison being controlled, which is why Section~\ref{sec:protocol_note} and Section~\ref{sec:statistical_unit} are given the space they are.
+
+Whether the same conclusion holds on field-collected trajectories is an open question that this dataset cannot answer, and we identify it in Section~\ref{sec:future_directions} as the decisive next experiment rather than implying it here.
+
+\subsection{Threats to Validity}
+\label{sec:threats}
+
+\textbf{Synthetic data.} All findings are obtained on simulated trajectories over one city network. No real sensor data, verified incident record, or prospective stream is involved, and no claim about real-world detection performance is made.
+
+\textbf{Label--input dependence.} Most anomaly subtypes are threshold functions of the model's own inputs (Section~\ref{sec:reference_points}). Conclusions about \emph{relative} architectural merit are unaffected, since all configurations face the same task, but absolute performance figures reflect a partly self-referential problem and should not be compared to results on independently labelled data.
+
+\textbf{Statistical power.} This is the tightest constraint on what the paper can claim, and it is a consequence of the sampling design rather than of the analysis. Because windows overlap by $80\%$ and share a trip, the unit of analysis is the trip (Section~\ref{sec:statistical_unit}), and the dataset contains only $90$ trips: roughly $13$ of them in the fixed test partition, all $90$ across the cross-validation folds. Interval estimates on the fixed partition are therefore wide, and comparisons that appear significant at the window level frequently are not once the correct unit is used. We report both, labelled, and base conclusions on the trip-level, Holm-corrected values from the cross-validated analysis. Differences that the design cannot resolve are presented as point estimates with intervals and are not claimed as significant---including differences that would favour the architecture proposed in the earlier version of this work.
+
+\textbf{Encoder adaptation.} STGCN, DCRNN, and Graph WaveNet are represented by their core operators rather than their full published architectures. This is necessary given the task mismatch, but the results should be read as evidence about those operators in this setting rather than as a benchmark of the published systems.
+
+\textbf{Imputation dependence.} Roughly half of the lane counts and speed limits are author-defined defaults, which directly affects the node features available to the spatial branch. A sensitivity analysis over these defaults was not performed.
+
+% =====================================================================
+% BOLUM VIII — SONUC
+% =====================================================================
+\section{Conclusion and Future Work}
+
+This study evaluated the components of a hybrid LSTM--GAT traffic anomaly detector under a controlled protocol in which one element is varied at a time and every result is reported over multiple seeds with interval estimates and paired tests.
+
+\subsection{Summary of Findings}
+\begin{itemize}
+  \item \textbf{The fixed partition supports no claim at all.} It holds $4{,}799$ windows but $14$ trips. At the trip level, after Holm correction, none of sixteen comparisons is significant---including seven that are significant when windows are treated as independent. The hybrid model's own F1 on that partition carries an interval of $[0.7231, 0.9470]$.
+  \item \textbf{The fusion ranking is partition-dependent, in both directions.} The sample-wise gate ranks last of four on the fixed partition and first of four under cross-validation, where no operator differs significantly from any other. We therefore make no accuracy claim for or against the gating mechanism, and we withdraw the earlier claim against it.
+  \item \textbf{A reproducible collapse mode exists and is conditional.} The gate collapsed to $\mathrm{F1}=0.0715$ at one of five seeds on the fixed partition, recurring at the same seed in an independent re-run under a different backend configuration. It occurred in none of ten cross-validated runs, and it disappears on a graph construction where the spatial branch carries more standalone signal. It is a rare, conditional failure mode worth documenting for practitioners---not evidence of general inferiority.
+  \item \textbf{The spatial branch helps, but not where predicted.} Abnormal-dwell detection improves by $+0.0335$ F1 (trip-level $95\%$ CI $[+0.0139, +0.0610]$, Holm $p = 0.002$); speed-limit violation, the subtype whose rule depends on $v_{\max}$, shows no benefit. This is the study's one properly powered positive result, and it was not hypothesized in advance.
+  \item \textbf{Encoder choice separates along one axis only.} Graph attention exceeds Chebyshev convolution, diffusion convolution, and adaptive adjacency; the LSTM, a GRU, and a Transformer encoder finish within $0.0015$ F1 of one another. Which spatial operator is used is resolvable here; which recurrence is used is not.
+  \item \textbf{Gate interpretability is seed-dependent.} The class-conditional shift in $g_{gate}$ varies in magnitude and sign across seeds and does not constitute a stable model property.
+  \item \textbf{Deployment cost is removable} (Section~\ref{sec:efficiency}). Caching static node embeddings reduces single-window latency by $4.5\times$ on GPU and $4.0\times$ on CPU, after which the hybrid model matches temporal-only latency exactly.
+  \item \textbf{Simple references are strong.} A zero-parameter three-threshold rule reaches $\mathrm{F1}=0.8536$ and gradient boosting on window aggregates matches the neural model to within $0.0014$ F1, with higher ROC-AUC.
+\end{itemize}
+
+\subsection{Implications}
+The limitations bounding these conclusions are collected in Section~\ref{sec:threats}. The broader implication is methodological, and it has three parts that we would separate.
+
+\textbf{The unit of analysis is not a detail.} Sliding-window evaluation is near-universal in this literature, and windows cut with a stride shorter than their length are not independent observations. Reporting window-level $p$-values under that design does not slightly overstate significance; in our case it turned sixteen non-significant comparisons into seven significant ones. Any study using overlapping windows should state its cluster structure and test at the level of the independent unit---here the trip, elsewhere the vehicle, the sensor, or the day.
+
+\textbf{One partition cannot order architectures.} We report the same four fusion operators ranked in opposite orders on one partition and across five, with the mechanism under study finishing both last and first. Neither ordering is wrong; both are under-determined. A single grouped partition, even a well-constructed one, is a sample of size one from the space of partitions, and architectural rankings are not stable with respect to that sample.
+
+\textbf{Error bars must be earned.} Extending our encoder benchmark from three seeds to five raised the leading configuration's standard deviation from $0.0033$ to $0.0188$ and removed two of its four significant margins. A tight standard deviation over three runs is not evidence of stability; it is a small sample of a quantity whose spread has not been measured.
+
+We would additionally encourage reporting a rule-based or classical reference whenever labels are generated by known rules, since it bounds how much of the measured performance is attributable to learning at all---in this study, a zero-parameter rule reaches within $0.018$ F1 of every neural configuration tested.
+
+\subsection{Future Directions}
+\label{sec:future_directions}
+\begin{itemize}
+  \item \textbf{Dataset redesign.} Sharing road segments across trips and increasing the prevalence of context-dependent subtypes such as speed-limit violation would allow the spatial branch's contribution to be tested with adequate power---the decisive experiment that the present data cannot support.
+  \item \textbf{Simulation-to-real transfer.} Findings obtained on physics-informed synthetic trajectories require domain adaptation before transfer to field data. Digital twin-assisted graph contrastive domain adaptation has shown promise for adapting simulation-derived representations to small-sample target domains \cite{gcda_bearing}; adding such a layer to the spatial branch is a natural next step for cross-city transfer.
+  \item \textbf{Stabilized gating.} Since the collapse mode arises from the multiplicative form of Eq.~\ref{eq:gated_fusion}, entropy regularization on $g_{gate}$, a bounded gating range, or an auxiliary supervision signal on the gate are candidate remedies worth evaluating.
+  \item \textbf{Imputation sensitivity.} Road-type-specific lane and speed-limit defaults should be varied systematically to quantify how strongly the spatial branch depends on author-defined assumptions.
+  \item \textbf{Real-world and cross-city validation.} Field-collected sensor data, independently verified incidents, prospective streams, and external road networks are required before any claim of deployment suitability.
+\end{itemize}
+
+\section*{Data and Code Availability}
+\label{sec:availability}
+The synthetic dataset, its data card, the complete preprocessing and modelling code, the experiment scripts, every result file reported in this paper, and the script that verifies the manuscript's numbers against those files are available at \url{\repourl} and permanently archived at \texttt{doi:\zenododoi}. No real-world vehicle trajectory data was used.
+
+The repository contains two mechanisms that support the internal consistency of the tables reported here. First, every result file carries a \emph{protocol stamp}: a hash over the seed set, epoch budget, patience, batch size, learning rate, scheduler, dropout, checkpoint criterion, threshold rule, cuDNN flags, window length, stride, split seed, and library versions. Scripts that consume another script's results assert that the stamps match and abort otherwise. Second, configurations that appear in more than one table are trained once and cached under their protocol stamp, so those tables read the same run rather than two independently trained runs that are assumed to agree. Section~\ref{sec:protocol_note} describes why these mechanisms were introduced.
+
+Because several anomaly subtypes are defined as threshold functions of the model's input channels, a zero-parameter rule-based classifier is reported alongside all learned models as a reference point.
+
+% Kaynakca elle yazilmis bir thebibliography ortami olarak tutuluyor
+% (orijinal PDF'ten cikarilip atif anahtarlariyla eslestirildi; bkz. _build_refs.py).
+% BibTeX kullanilmiyor: stanet.bib mevcut degil.
+\input{bibliography.tex}
+
+\end{document}

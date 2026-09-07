@@ -1,0 +1,1188 @@
+{
+  "protocol": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "max_epochs": 50,
+    "patience": 15,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "grad_clip": 1.0,
+    "scheduler": [
+      0.5,
+      3
+    ],
+    "dropout": 0.2,
+    "select_by": "val_f1",
+    "threshold_rule": "argmax_val_f1",
+    "cudnn_deterministic": false,
+    "cudnn_benchmark": true,
+    "sequence_length": 50,
+    "step_size": 10,
+    "split_seed": 42,
+    "legacy_pipeline": false,
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "hash": "0902cd97ec17"
+  },
+  "test_cluster_info": {
+    "n_windows": 4799,
+    "n_trips": 14,
+    "windows_per_trip_mean": 342.7857142857143,
+    "windows_per_trip_median": 301.5,
+    "windows_per_trip_min": 75,
+    "windows_per_trip_max": 760,
+    "window_overlap_ratio": 0.8
+  },
+  "families": {
+    "baselines": {
+      "label": "F1b — STANet (LSTM+GAT) vs temel modeller",
+      "reference": "hybrid_lstm_gat",
+      "n_seeds": 1,
+      "median_seed_index": 0,
+      "cluster_info": {
+        "n_windows": 4799,
+        "n_trips": 14,
+        "windows_per_trip_mean": 342.7857142857143,
+        "windows_per_trip_median": 301.5,
+        "windows_per_trip_min": 75,
+        "windows_per_trip_max": 760,
+        "window_overlap_ratio": 0.8
+      },
+      "comparisons": {
+        "lstm_only": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.008058723175002225,
+            "mean_diff": 0.00804754499626563,
+            "std_diff": 0.029782087841798855,
+            "lo": -0.04810238889771702,
+            "hi": 0.06432707537520245,
+            "p_a_better": 0.6462,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.008058723175002225,
+            "null_mean": 6.440498888962545e-05,
+            "null_std": 0.017945125236795114,
+            "p_value": 0.7487625618719064,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.7487625618719064
+          ],
+          "p_min": 0.7487625618719064,
+          "p_max": 0.7487625618719064,
+          "n_seeds_significant": 0,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 7,
+              "only_b_correct": 4,
+              "p_value": 0.548828125,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.008058723175002225,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.007687743569077075,
+              "lo": -0.014690798410655848,
+              "hi": 0.03160349171886983,
+              "p_a_better": 0.743,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.11242946427291947,
+          "ci_width_window": 0.04629429012952568,
+          "ci_widening": 2.4285816665155853,
+          "holm": {
+            "p_raw": 0.7487625618719064,
+            "p_holm": 1.0,
+            "rank": 5,
+            "n_family": 5,
+            "significant": false
+          }
+        },
+        "lightgbm": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.019155753691836086,
+            "mean_diff": 0.026197336220475563,
+            "std_diff": 0.041266258829414294,
+            "lo": -0.003612318095117941,
+            "hi": 0.09235723180928589,
+            "p_a_better": 0.9492,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.019155753691836086,
+            "null_mean": -4.764104250333539e-05,
+            "null_std": 0.013219312959022532,
+            "p_value": 0.21888905554722263,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.21888905554722263
+          ],
+          "p_min": 0.21888905554722263,
+          "p_max": 0.21888905554722263,
+          "n_seeds_significant": 0,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 10,
+              "only_b_correct": 5,
+              "p_value": 0.30175781249999994,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.013162816796034704,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.013481977759386336,
+              "lo": -0.012104244258644066,
+              "hi": 0.04085366134262202,
+              "p_a_better": 0.8355,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.09596954990440383,
+          "ci_width_window": 0.052957905601266085,
+          "ci_widening": 1.8121855238570737,
+          "holm": {
+            "p_raw": 0.21888905554722263,
+            "p_holm": 0.6566671666416679,
+            "rank": 3,
+            "n_family": 5,
+            "significant": false
+          }
+        },
+        "xgboost": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.027992277992277992,
+            "mean_diff": 0.03504916598842132,
+            "std_diff": 0.03127951275894643,
+            "lo": 0.008064516129032251,
+            "hi": 0.10323112739054183,
+            "p_a_better": 0.9976,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.027992277992277992,
+            "null_mean": -7.743434209245284e-05,
+            "null_std": 0.01323564642703191,
+            "p_value": 0.063946802659867,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.063946802659867
+          ],
+          "p_min": 0.063946802659867,
+          "p_max": 0.063946802659867,
+          "n_seeds_significant": 0,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 13,
+              "only_b_correct": 4,
+              "p_value": 0.049041748046875,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.018002268002268007,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.01804841998006819,
+              "lo": -0.007309229755095353,
+              "hi": 0.0456179337684714,
+              "p_a_better": 0.917,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.09516661126150958,
+          "ci_width_window": 0.05292716352356675,
+          "ci_widening": 1.7980674747312875,
+          "holm": {
+            "p_raw": 0.063946802659867,
+            "p_holm": 0.31973401329933504,
+            "rank": 1,
+            "n_family": 5,
+            "significant": false
+          }
+        },
+        "random_forest": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.008422806368011848,
+            "mean_diff": 0.009208928605034737,
+            "std_diff": 0.02204520892726144,
+            "lo": -0.03170731707317076,
+            "hi": 0.046806209060222814,
+            "p_a_better": 0.7418,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.008422806368011848,
+            "null_mean": 1.3854213297117041e-05,
+            "null_std": 0.012581684639224835,
+            "p_value": 0.631668416579171,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.631668416579171
+          ],
+          "p_min": 0.631668416579171,
+          "p_max": 0.631668416579171,
+          "n_seeds_significant": 0,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 6,
+              "only_b_correct": 4,
+              "p_value": 0.75390625,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.0646223146223146,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.06535504856917237,
+              "lo": 0.030120192029948353,
+              "hi": 0.10338922271758083,
+              "p_a_better": 1.0,
+              "significant": true
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.07851352613339357,
+          "ci_width_window": 0.07326903068763248,
+          "ci_widening": 1.0715786109975978,
+          "holm": {
+            "p_raw": 0.631668416579171,
+            "p_holm": 1.0,
+            "rank": 4,
+            "n_family": 5,
+            "significant": false
+          }
+        },
+        "rule_dwell_only": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.07223190932868351,
+            "mean_diff": 0.07674482752764239,
+            "std_diff": 0.043718362920547156,
+            "lo": 0.017571059431524594,
+            "hi": 0.1470006591957812,
+            "p_a_better": 0.9904,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.07223190932868351,
+            "null_mean": 0.0002436289963915998,
+            "null_std": 0.041069594256547215,
+            "p_value": 0.06524673766311684,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.06524673766311684
+          ],
+          "p_min": 0.06524673766311684,
+          "p_max": 0.06524673766311684,
+          "n_seeds_significant": 0,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 30,
+              "only_b_correct": 6,
+              "p_value": 6.960169412195683e-05,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.07223190932868351,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.07213825350384698,
+              "lo": 0.03805979691648,
+              "hi": 0.10836726835390884,
+              "p_a_better": 1.0,
+              "significant": true
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.1294295997642566,
+          "ci_width_window": 0.07030747143742883,
+          "ci_widening": 1.8409081868268353,
+          "holm": {
+            "p_raw": 0.06524673766311684,
+            "p_holm": 0.31973401329933504,
+            "rank": 2,
+            "n_family": 5,
+            "significant": false
+          }
+        }
+      },
+      "reference_ci": {
+        "unit": "trip",
+        "n_trips": 14,
+        "n_boot": 5000,
+        "point": 0.8851351351351351,
+        "mean": 0.8687687395927547,
+        "std": 0.05605026600264396,
+        "lo": 0.7230722891566265,
+        "hi": 0.9469980253585533
+      }
+    },
+    "fusion": {
+      "label": "F3 — gated fuzyon vs alternatifler",
+      "reference": "gated",
+      "n_seeds": 5,
+      "median_seed_index": 2,
+      "cluster_info": {
+        "n_windows": 4799,
+        "n_trips": 14,
+        "windows_per_trip_mean": 342.7857142857143,
+        "windows_per_trip_median": 301.5,
+        "windows_per_trip_min": 75,
+        "windows_per_trip_max": 760,
+        "window_overlap_ratio": 0.8
+      },
+      "comparisons": {
+        "concat": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.00623282292893601,
+            "mean_diff": 0.008883906193122994,
+            "std_diff": 0.011488500272048703,
+            "lo": 0.0,
+            "hi": 0.035386631716906924,
+            "p_a_better": 0.883,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.00623282292893601,
+            "null_mean": 5.4699676459938614e-06,
+            "null_std": 0.004600615833013747,
+            "p_value": 0.5000749962501875,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.12434378281085946,
+            0.25078746062696866,
+            0.5000749962501875,
+            9.99950002499875e-05,
+            0.6202689865506724
+          ],
+          "p_min": 9.99950002499875e-05,
+          "p_max": 0.6202689865506724,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 4,
+              "only_b_correct": 3,
+              "p_value": 1.0,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.00511695906432752,
+              "threshold_a": 0.69,
+              "threshold_b": 0.69,
+              "mean_diff": 0.004903951039510508,
+              "lo": -0.009678804537341597,
+              "hi": 0.02089387592220257,
+              "p_a_better": 0.706,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.035386631716906924,
+          "ci_width_window": 0.030572680459544168,
+          "ci_widening": 1.1574592474393242,
+          "holm": {
+            "p_raw": 0.5000749962501875,
+            "p_holm": 0.7548622568871557,
+            "rank": 3,
+            "n_family": 3,
+            "significant": false
+          }
+        },
+        "weighted_sum": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": -0.03791291291291288,
+            "mean_diff": -0.04584869098313208,
+            "std_diff": 0.03998270364439455,
+            "lo": -0.10702054794520544,
+            "hi": -0.015354655601882716,
+            "p_a_better": 0.0,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": -0.03791291291291288,
+            "null_mean": -0.00010666545720762657,
+            "null_std": 0.019955937425419668,
+            "p_value": 0.03234838258087096,
+            "alternative": "two-sided",
+            "significant": true
+          },
+          "per_seed_p": [
+            0.09619519024048798,
+            0.09874506274686266,
+            0.03234838258087096,
+            9.99950002499875e-05,
+            0.872356382180891
+          ],
+          "p_min": 9.99950002499875e-05,
+          "p_max": 0.872356382180891,
+          "n_seeds_significant": 2,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 4,
+              "only_b_correct": 14,
+              "p_value": 0.0308837890625,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": -0.022907647907647877,
+              "threshold_a": 0.69,
+              "threshold_b": 0.69,
+              "mean_diff": -0.02397031923992,
+              "lo": -0.061658870768609104,
+              "hi": 0.011568643940436251,
+              "p_a_better": 0.0925,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.09166589234332272,
+          "ci_width_window": 0.07322751470904536,
+          "ci_widening": 1.2517957588419941,
+          "holm": {
+            "p_raw": 0.03234838258087096,
+            "p_holm": 0.09704514774261287,
+            "rank": 1,
+            "n_family": 3,
+            "significant": false
+          }
+        },
+        "cross_attention": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.00694444444444442,
+            "mean_diff": 0.008335901849841525,
+            "std_diff": 0.011090727155317193,
+            "lo": -0.0052419707048311,
+            "hi": 0.03255824518275867,
+            "p_a_better": 0.9134,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.00694444444444442,
+            "null_mean": 1.3607586402275162e-05,
+            "null_std": 0.005205118612180887,
+            "p_value": 0.37743112844357785,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.9368031598420079,
+            0.12849357532123393,
+            0.37743112844357785,
+            9.99950002499875e-05,
+            0.2950852457377131
+          ],
+          "p_min": 9.99950002499875e-05,
+          "p_max": 0.9368031598420079,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 5,
+              "only_b_correct": 3,
+              "p_value": 0.7265625,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.015607101947308077,
+              "threshold_a": 0.69,
+              "threshold_b": 0.69,
+              "mean_diff": 0.015245485491838786,
+              "lo": -0.006214476187994458,
+              "hi": 0.03812555036064531,
+              "p_a_better": 0.9235,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.03780021588758977,
+          "ci_width_window": 0.04434002654863977,
+          "ci_widening": 0.8525077414223916,
+          "holm": {
+            "p_raw": 0.37743112844357785,
+            "p_holm": 0.7548622568871557,
+            "rank": 2,
+            "n_family": 3,
+            "significant": false
+          }
+        }
+      },
+      "reference_ci": {
+        "unit": "trip",
+        "n_trips": 14,
+        "n_boot": 5000,
+        "point": 0.8472222222222222,
+        "mean": 0.8229200486096226,
+        "std": 0.08179162753512814,
+        "lo": 0.6285434173669467,
+        "hi": 0.9277586139312454
+      }
+    },
+    "benchmark": {
+      "label": "F4 — STANet (LSTM+GAT) vs STGCN / DCRNN / Graph WaveNet / Transformer",
+      "reference": "T:lstm",
+      "n_seeds": 5,
+      "median_seed_index": 2,
+      "cluster_info": {
+        "n_windows": 4799,
+        "n_trips": 14,
+        "windows_per_trip_mean": 342.7857142857143,
+        "windows_per_trip_median": 301.5,
+        "windows_per_trip_min": 75,
+        "windows_per_trip_max": 760,
+        "window_overlap_ratio": 0.8
+      },
+      "comparisons": {
+        "T:gru": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.0222588809545331,
+            "mean_diff": 0.02472598472899486,
+            "std_diff": 0.024676753419798084,
+            "lo": -0.011779587319155738,
+            "hi": 0.07357995208669361,
+            "p_a_better": 0.8748,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.0222588809545331,
+            "null_mean": 4.970310675905846e-05,
+            "null_std": 0.020361183379687703,
+            "p_value": 0.3751312434378281,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.2534373281335933,
+            0.12844357782110893,
+            0.3751312434378281,
+            0.032648367581620916,
+            0.2531873406329683
+          ],
+          "p_min": 0.032648367581620916,
+          "p_max": 0.3751312434378281,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 11,
+              "only_b_correct": 4,
+              "p_value": 0.11846923828124999,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.01846846846846839,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.018640227423451675,
+              "lo": -0.005591549349441277,
+              "hi": 0.04430843008581523,
+              "p_a_better": 0.931,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.08535953940584935,
+          "ci_width_window": 0.04989997943525651,
+          "ci_widening": 1.7106127171174568,
+          "holm": {
+            "p_raw": 0.3751312434378281,
+            "p_holm": 1.0,
+            "rank": 5,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "T:stgcn": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.046425457715780216,
+            "mean_diff": 0.051754368090813775,
+            "std_diff": 0.03766719763196458,
+            "lo": 0.018640112871716963,
+            "hi": 0.10842075777189371,
+            "p_a_better": 0.996,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.046425457715780216,
+            "null_mean": 0.0001369851153622807,
+            "null_std": 0.023071384397439453,
+            "p_value": 0.04779761011949402,
+            "alternative": "two-sided",
+            "significant": true
+          },
+          "per_seed_p": [
+            0.127893605319734,
+            0.08234588270586471,
+            0.04779761011949402,
+            0.43387830608469574,
+            0.18439078046097696
+          ],
+          "p_min": 0.04779761011949402,
+          "p_max": 0.43387830608469574,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 21,
+              "only_b_correct": 5,
+              "p_value": 0.002493917942047119,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.04853382794559258,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.048672806073433356,
+              "lo": 0.017872803729984045,
+              "hi": 0.08039580998107851,
+              "p_a_better": 1.0,
+              "significant": true
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.08978064490017675,
+          "ci_width_window": 0.06252300625109447,
+          "ci_widening": 1.4359617408608711,
+          "holm": {
+            "p_raw": 0.04779761011949402,
+            "p_holm": 0.33458327083645817,
+            "rank": 2,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "T:wavenet": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.01975051975051967,
+            "mean_diff": 0.019213502677140417,
+            "std_diff": 0.01563764142498642,
+            "lo": -0.011709496160004804,
+            "hi": 0.05116796440489435,
+            "p_a_better": 0.8836,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.01975051975051967,
+            "null_mean": 0.00011572011533877791,
+            "null_std": 0.01586017986686246,
+            "p_value": 0.5030748462576872,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.1904904754762262,
+            0.036348182590870456,
+            0.5030748462576872,
+            0.6233188340582971,
+            0.5927703614819259
+          ],
+          "p_min": 0.036348182590870456,
+          "p_max": 0.6233188340582971,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 14,
+              "only_b_correct": 6,
+              "p_value": 0.11531829833984375,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.01975051975051967,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.019541674076669423,
+              "lo": -0.006744864193966057,
+              "hi": 0.0460124244314246,
+              "p_a_better": 0.923,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.06287746056489915,
+          "ci_width_window": 0.052757288625390655,
+          "ci_widening": 1.1918250957013345,
+          "holm": {
+            "p_raw": 0.5030748462576872,
+            "p_holm": 1.0,
+            "rank": 7,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "T:transformer": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.009273066169617872,
+            "mean_diff": 0.014260139932882413,
+            "std_diff": 0.039040428210571194,
+            "lo": -0.012037809455766086,
+            "hi": 0.06233421750663137,
+            "p_a_better": 0.8492,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.009273066169617872,
+            "null_mean": 3.235313354620712e-05,
+            "null_std": 0.009057064638797359,
+            "p_value": 0.4392780360981951,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.8150592470376481,
+            0.06384680765961702,
+            0.4392780360981951,
+            0.25523723813809307,
+            1.0
+          ],
+          "p_min": 0.06384680765961702,
+          "p_max": 1.0,
+          "n_seeds_significant": 0,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 10,
+              "only_b_correct": 8,
+              "p_value": 0.8145294189453125,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.011414998616363747,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.011580313230172917,
+              "lo": -0.020244479913908656,
+              "hi": 0.04357284154771554,
+              "p_a_better": 0.751,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.07437202696239746,
+          "ci_width_window": 0.0638173214616242,
+          "ci_widening": 1.1653893529066432,
+          "holm": {
+            "p_raw": 0.4392780360981951,
+            "p_holm": 1.0,
+            "rank": 6,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "S:cheb": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.0430298719772404,
+            "mean_diff": 0.057300264743142315,
+            "std_diff": 0.0546654836296693,
+            "lo": 0.012529569000967545,
+            "hi": 0.16581818181818186,
+            "p_a_better": 0.9976,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.0430298719772404,
+            "null_mean": 0.00010325671562361114,
+            "null_std": 0.02128180478579016,
+            "p_value": 0.06074696265186741,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.37468126593670315,
+            0.0183990800459977,
+            0.06074696265186741,
+            0.6236688165591721,
+            0.5292735363231839
+          ],
+          "p_min": 0.0183990800459977,
+          "p_max": 0.6236688165591721,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 13,
+              "only_b_correct": 2,
+              "p_value": 0.00738525390625,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.0430298719772404,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.0427515215418956,
+              "lo": 0.017285355954819025,
+              "hi": 0.07230398475179542,
+              "p_a_better": 0.9995,
+              "significant": true
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.15328861281721431,
+          "ci_width_window": 0.055018628796976395,
+          "ci_widening": 2.786122013016043,
+          "holm": {
+            "p_raw": 0.06074696265186741,
+            "p_holm": 0.36448177591120445,
+            "rank": 3,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "S:diffusion": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.04620896063849078,
+            "mean_diff": 0.0558917637061591,
+            "std_diff": 0.03344981299013898,
+            "lo": 0.013982985577618501,
+            "hi": 0.1373640248640249,
+            "p_a_better": 0.9986,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.04620896063849078,
+            "null_mean": 9.600559178994603e-05,
+            "null_std": 0.023906574462029578,
+            "p_value": 0.06219689015549223,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.3765311734413279,
+            0.0183990800459977,
+            0.06219689015549223,
+            0.503324833758312,
+            0.752312384380781
+          ],
+          "p_min": 0.0183990800459977,
+          "p_max": 0.752312384380781,
+          "n_seeds_significant": 1,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 17,
+              "only_b_correct": 3,
+              "p_value": 0.0025768280029296875,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.04729729729729726,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.047480460100966,
+              "lo": 0.02169982057772011,
+              "hi": 0.07721621568769542,
+              "p_a_better": 1.0,
+              "significant": true
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.12338103928640641,
+          "ci_width_window": 0.05551639510997531,
+          "ci_widening": 2.2224252681031342,
+          "holm": {
+            "p_raw": 0.06219689015549223,
+            "p_holm": 0.36448177591120445,
+            "rank": 4,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "S:adaptive": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.8648305666072164,
+            "mean_diff": 0.8456643852952297,
+            "std_diff": 0.06873762723056479,
+            "lo": 0.6790372417267005,
+            "hi": 0.9441519699934043,
+            "p_a_better": 1.0,
+            "significant": true
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.8648305666072164,
+            "null_mean": 0.0037521756544036705,
+            "null_std": 0.4691570924383163,
+            "p_value": 0.007049647517624119,
+            "alternative": "two-sided",
+            "significant": true
+          },
+          "per_seed_p": [
+            0.22108894555272238,
+            0.0183990800459977,
+            0.007049647517624119,
+            0.12339383030848458,
+            0.06449677516124194
+          ],
+          "p_min": 0.007049647517624119,
+          "p_max": 0.22108894555272238,
+          "n_seeds_significant": 2,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 169,
+              "only_b_correct": 10,
+              "p_value": 1.9971769145818494e-38,
+              "significant": true
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.8724769072870339,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.8724530929140513,
+              "lo": 0.8182502619391975,
+              "hi": 0.916032996798818,
+              "p_a_better": 1.0,
+              "significant": true
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.2651147282667038,
+          "ci_width_window": 0.09778273485962052,
+          "ci_widening": 2.7112631759308994,
+          "holm": {
+            "p_raw": 0.007049647517624119,
+            "p_holm": 0.05639718014099295,
+            "rank": 1,
+            "n_family": 8,
+            "significant": false
+          }
+        },
+        "S:none": {
+          "cluster_bootstrap": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_boot": 5000,
+            "observed_diff": 0.008058723175002225,
+            "mean_diff": 0.00804754499626563,
+            "std_diff": 0.029782087841798855,
+            "lo": -0.04810238889771702,
+            "hi": 0.06432707537520245,
+            "p_a_better": 0.6462,
+            "significant": false
+          },
+          "cluster_permutation": {
+            "unit": "trip",
+            "n_trips": 14,
+            "n_perm": 20000,
+            "observed_diff": 0.008058723175002225,
+            "null_mean": 5.016695108037915e-05,
+            "null_std": 0.01780840866680293,
+            "p_value": 0.7478626068696566,
+            "alternative": "two-sided",
+            "significant": false
+          },
+          "per_seed_p": [
+            0.03239838008099595,
+            0.0183990800459977,
+            0.7478626068696566,
+            0.24598770061496925,
+            0.1288935553222339
+          ],
+          "p_min": 0.0183990800459977,
+          "p_max": 0.7478626068696566,
+          "n_seeds_significant": 2,
+          "window_level_INVALID": {
+            "mcnemar": {
+              "only_a_correct": 7,
+              "only_b_correct": 4,
+              "p_value": 0.548828125,
+              "significant": false
+            },
+            "bootstrap_diff": {
+              "unit": "window_INVALID",
+              "observed_diff": 0.008058723175002225,
+              "threshold_a": 0.9199999999999999,
+              "threshold_b": 0.9199999999999999,
+              "mean_diff": 0.007687743569077075,
+              "lo": -0.014690798410655848,
+              "hi": 0.03160349171886983,
+              "p_a_better": 0.743,
+              "significant": false
+            },
+            "note": "pencereler %80 ortusur - bagimsizlik varsayimi ihlal"
+          },
+          "ci_width_trip": 0.11242946427291947,
+          "ci_width_window": 0.04629429012952568,
+          "ci_widening": 2.4285816665155853,
+          "holm": {
+            "p_raw": 0.7478626068696566,
+            "p_holm": 1.0,
+            "rank": 8,
+            "n_family": 8,
+            "significant": false
+          }
+        }
+      },
+      "reference_ci": {
+        "unit": "trip",
+        "n_trips": 14,
+        "n_boot": 5000,
+        "point": 0.8851351351351351,
+        "mean": 0.8687687395927547,
+        "std": 0.05605026600264396,
+        "lo": 0.7230722891566265,
+        "hi": 0.9469980253585533
+      }
+    }
+  },
+  "conclusion_flips": [
+    {
+      "family": "baselines",
+      "comparison": "xgboost",
+      "p_window": 0.049041748046875,
+      "p_holm_trip": 0.31973401329933504
+    },
+    {
+      "family": "baselines",
+      "comparison": "rule_dwell_only",
+      "p_window": 6.960169412195683e-05,
+      "p_holm_trip": 0.31973401329933504
+    },
+    {
+      "family": "fusion",
+      "comparison": "weighted_sum",
+      "p_window": 0.0308837890625,
+      "p_holm_trip": 0.09704514774261287
+    },
+    {
+      "family": "benchmark",
+      "comparison": "T:stgcn",
+      "p_window": 0.002493917942047119,
+      "p_holm_trip": 0.33458327083645817
+    },
+    {
+      "family": "benchmark",
+      "comparison": "S:cheb",
+      "p_window": 0.00738525390625,
+      "p_holm_trip": 0.36448177591120445
+    },
+    {
+      "family": "benchmark",
+      "comparison": "S:diffusion",
+      "p_window": 0.0025768280029296875,
+      "p_holm_trip": 0.36448177591120445
+    },
+    {
+      "family": "benchmark",
+      "comparison": "S:adaptive",
+      "p_window": 1.9971769145818494e-38,
+      "p_holm_trip": 0.05639718014099295
+    }
+  ]
+}

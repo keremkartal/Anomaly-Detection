@@ -1,0 +1,850 @@
+{
+  "graph": {
+    "merge_by_osm": true,
+    "source_rows": 4678,
+    "num_nodes": 628,
+    "num_unique_osm": 628,
+    "num_edges": 699,
+    "avg_degree": 1.1130573248407643,
+    "connected_nodes": 628,
+    "isolated_nodes": 0,
+    "self_loops": 0,
+    "num_features": 17
+  },
+  "n_warmup": 50,
+  "n_repeat": 500,
+  "torch_version": "2.7.1+cu118",
+  "models": {
+    "STANet (gated, GAT)": {
+      "config": {
+        "temporal": "lstm",
+        "spatial": "gat",
+        "fusion": "gated"
+      },
+      "params_total": 224962,
+      "params_by_branch": {
+        "temporal": 200704,
+        "spatial": 5568,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 2.785737997852266,
+        "std_ms": 0.248968441127761,
+        "p50_ms": 2.7075998950749636,
+        "p95_ms": 3.268724982626736,
+        "p99_ms": 3.927093099337071,
+        "min_ms": 2.5164999533444643
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.8029322093352675,
+        "p50_ms": 0.7664000149816275,
+        "p95_ms": 0.9595449664629996,
+        "p99_ms": 1.3250029506161796
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 373.9482697529948,
+          "ms_per_batch": 2.6741666719317436
+        },
+        "batch_32": {
+          "windows_per_sec": 10773.806181184425,
+          "ms_per_batch": 2.9701666673645377
+        },
+        "batch_64": {
+          "windows_per_sec": 19626.222683654156,
+          "ms_per_batch": 3.2609433323765793
+        },
+        "batch_256": {
+          "windows_per_sec": 46528.53507013051,
+          "ms_per_batch": 5.502000000948708
+        }
+      },
+      "peak_vram_mb": 45.07177734375,
+      "cpu_single_window": {
+        "mean_ms": 8.043461287724636,
+        "std_ms": 0.3397512535776908,
+        "p50_ms": 7.974250009283423,
+        "p95_ms": 8.67645995458588,
+        "p99_ms": 9.059908117633313,
+        "min_ms": 7.566099986433983
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.966179006582787,
+        "p50_ms": 4.859199980273843,
+        "p95_ms": 5.372720048762858,
+        "p99_ms": 7.028733915649355
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 117.79492604196795,
+          "ms_per_batch": 8.489330004279813
+        },
+        "batch_32": {
+          "windows_per_sec": 2815.267429893126,
+          "ms_per_batch": 11.366593333271643
+        },
+        "batch_64": {
+          "windows_per_sec": 4421.981392190214,
+          "ms_per_batch": 14.473150003080566
+        },
+        "batch_256": {
+          "windows_per_sec": 7888.051297142707,
+          "ms_per_batch": 32.45414999934535
+        }
+      },
+      "cuda_cache_speedup": 3.5328807961203803,
+      "cpu_cache_speedup": 1.6410623233567823
+    },
+    "concat fusion": {
+      "config": {
+        "temporal": "lstm",
+        "spatial": "gat",
+        "fusion": "concat"
+      },
+      "params_total": 222849,
+      "params_by_branch": {
+        "temporal": 200704,
+        "spatial": 5568,
+        "fusion": 0,
+        "classifier": 4161,
+        "projection": 12416
+      },
+      "params_fusion": 0,
+      "cuda_single_window": {
+        "mean_ms": 3.0747101954184473,
+        "std_ms": 0.3672833386036272,
+        "p50_ms": 2.954700030386448,
+        "p95_ms": 3.724854963365942,
+        "p99_ms": 4.159540890250355,
+        "min_ms": 2.702800091356039
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.6578356046229601,
+        "p50_ms": 0.5637499270960689,
+        "p95_ms": 0.8615599246695635,
+        "p99_ms": 1.2682959949597714
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 397.3430995100283,
+          "ms_per_batch": 2.516716664346556
+        },
+        "batch_32": {
+          "windows_per_sec": 11562.8240512565,
+          "ms_per_batch": 2.7674900057415166
+        },
+        "batch_64": {
+          "windows_per_sec": 21320.280547285718,
+          "ms_per_batch": 3.0018366718043885
+        },
+        "batch_256": {
+          "windows_per_sec": 51433.714775273336,
+          "ms_per_batch": 4.977280002397795
+        }
+      },
+      "peak_vram_mb": 45.0625,
+      "cpu_single_window": {
+        "mean_ms": 7.95294837124886,
+        "std_ms": 0.46107527995172953,
+        "p50_ms": 7.872950052842498,
+        "p95_ms": 8.280285086948425,
+        "p99_ms": 9.524892054032536,
+        "min_ms": 7.531000068411231
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.502211265536325,
+        "p50_ms": 4.376699915155768,
+        "p95_ms": 5.0353350467048585,
+        "p99_ms": 5.59456597082317
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 115.10733951023585,
+          "ms_per_batch": 8.687543333508074
+        },
+        "batch_32": {
+          "windows_per_sec": 2455.287551941872,
+          "ms_per_batch": 13.033096663032968
+        },
+        "batch_64": {
+          "windows_per_sec": 3173.248457967345,
+          "ms_per_batch": 20.168606665295858
+        },
+        "batch_256": {
+          "windows_per_sec": 7304.456698369733,
+          "ms_per_batch": 35.04709666594863
+        }
+      },
+      "cuda_cache_speedup": 5.241153725032653,
+      "cpu_cache_speedup": 1.7988325006198869
+    },
+    "LSTM-only": {
+      "config": {
+        "temporal": "lstm",
+        "spatial": "none",
+        "fusion": "concat"
+      },
+      "params_total": 217281,
+      "params_by_branch": {
+        "temporal": 200704,
+        "spatial": 0,
+        "fusion": 0,
+        "classifier": 4161,
+        "projection": 12416
+      },
+      "params_fusion": 0,
+      "cuda_single_window": {
+        "mean_ms": 0.8502944018691778,
+        "std_ms": 0.5140778516980986,
+        "p50_ms": 0.6202500080689788,
+        "p95_ms": 1.348470023367554,
+        "p99_ms": 3.239211868494749,
+        "min_ms": 0.528800068423152
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.5758334044367075,
+        "p50_ms": 0.5531999049708247,
+        "p95_ms": 0.6790399318560957,
+        "p99_ms": 0.8640071726404129
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 1715.295277051251,
+          "ms_per_batch": 0.5829900037497282
+        },
+        "batch_32": {
+          "windows_per_sec": 46099.98867795693,
+          "ms_per_batch": 0.6941433375080426
+        },
+        "batch_64": {
+          "windows_per_sec": 78132.94798215605,
+          "ms_per_batch": 0.8191166678443551
+        },
+        "batch_256": {
+          "windows_per_sec": 98056.48989142814,
+          "ms_per_batch": 2.610739995725453
+        }
+      },
+      "peak_vram_mb": 45.03955078125,
+      "cpu_single_window": {
+        "mean_ms": 4.7152935482201075,
+        "std_ms": 0.3601765195223411,
+        "p50_ms": 4.628550144843757,
+        "p95_ms": 5.049910058733076,
+        "p99_ms": 6.187272970564664,
+        "min_ms": 4.4466000981628895
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.404067745312087,
+        "p50_ms": 4.371950053609908,
+        "p95_ms": 4.694559914059937,
+        "p99_ms": 4.740115075837821
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 221.08356027886597,
+          "ms_per_batch": 4.523176661071678
+        },
+        "batch_32": {
+          "windows_per_sec": 4424.3729459316355,
+          "ms_per_batch": 7.232663338072598
+        },
+        "batch_64": {
+          "windows_per_sec": 6103.187735657434,
+          "ms_per_batch": 10.486323339864612
+        },
+        "batch_256": {
+          "windows_per_sec": 8265.064047867303,
+          "ms_per_batch": 30.973746666374307
+        }
+      },
+      "cuda_cache_speedup": 1.1212041117427347,
+      "cpu_cache_speedup": 1.0586923656691767
+    },
+    "GRU temporal": {
+      "config": {
+        "temporal": "gru",
+        "spatial": "gat",
+        "fusion": "gated"
+      },
+      "params_total": 174786,
+      "params_by_branch": {
+        "temporal": 150528,
+        "spatial": 5568,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 3.0269047981128097,
+        "std_ms": 0.2962923173057218,
+        "p50_ms": 2.9464500257745385,
+        "p95_ms": 3.671499993652104,
+        "p99_ms": 4.311755001544952,
+        "min_ms": 2.6599999982863665
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.817435594741255,
+        "p50_ms": 0.7543499814346433,
+        "p95_ms": 1.4595700427889824,
+        "p99_ms": 1.571223970968276
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 369.8822171513477,
+          "ms_per_batch": 2.703563333489001
+        },
+        "batch_32": {
+          "windows_per_sec": 10692.518821985921,
+          "ms_per_batch": 2.9927466607963047
+        },
+        "batch_64": {
+          "windows_per_sec": 19789.6932828085,
+          "ms_per_batch": 3.234006666267912
+        },
+        "batch_256": {
+          "windows_per_sec": 51326.742877995304,
+          "ms_per_batch": 4.98765332934757
+        }
+      },
+      "peak_vram_mb": 36.63525390625,
+      "cpu_single_window": {
+        "mean_ms": 11.517530633887697,
+        "std_ms": 0.9162682709460338,
+        "p50_ms": 11.178450076840818,
+        "p95_ms": 13.812084996607153,
+        "p99_ms": 14.304586977232248,
+        "min_ms": 10.689200134947896
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 8.026225822827508,
+        "p50_ms": 7.9004499129951,
+        "p95_ms": 8.852694940287618,
+        "p99_ms": 9.911859997082502
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 86.67887294778839,
+          "ms_per_batch": 11.536836670711637
+        },
+        "batch_32": {
+          "windows_per_sec": 1584.886783767985,
+          "ms_per_batch": 20.190716666790347
+        },
+        "batch_64": {
+          "windows_per_sec": 2610.937297950735,
+          "ms_per_batch": 24.512269999831915
+        },
+        "batch_256": {
+          "windows_per_sec": 4934.696234667231,
+          "ms_per_batch": 51.87756000086665
+        }
+      },
+      "cuda_cache_speedup": 3.9059456463045175,
+      "cpu_cache_speedup": 1.4149130998797779
+    },
+    "STGCN temporal": {
+      "config": {
+        "temporal": "stgcn_temporal",
+        "spatial": "gat",
+        "fusion": "gated"
+      },
+      "params_total": 126402,
+      "params_by_branch": {
+        "temporal": 102144,
+        "spatial": 5568,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 2.9787114076316357,
+        "std_ms": 0.3845557077704366,
+        "p50_ms": 2.8571500442922115,
+        "p95_ms": 3.7252049543894814,
+        "p99_ms": 4.835030017420648,
+        "min_ms": 2.6959998067468405
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 1.04409059882164,
+        "p50_ms": 0.9610000997781754,
+        "p95_ms": 1.536350045353174,
+        "p99_ms": 2.1227599796839054
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 339.82320207906605,
+          "ms_per_batch": 2.942706660057108
+        },
+        "batch_32": {
+          "windows_per_sec": 11136.593783328399,
+          "ms_per_batch": 2.873410005122423
+        },
+        "batch_64": {
+          "windows_per_sec": 19237.320399091775,
+          "ms_per_batch": 3.3268666670968137
+        },
+        "batch_256": {
+          "windows_per_sec": 76539.53595395018,
+          "ms_per_batch": 3.344676666893065
+        }
+      },
+      "peak_vram_mb": 25.765625,
+      "cpu_single_window": {
+        "mean_ms": 4.331595147959888,
+        "std_ms": 0.21422581292282095,
+        "p50_ms": 4.265700001269579,
+        "p95_ms": 4.819864931050688,
+        "p99_ms": 4.905428937636316,
+        "min_ms": 4.042899934574962
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 0.6771774121349857,
+        "p50_ms": 0.6619999185204506,
+        "p95_ms": 0.7612599874846637,
+        "p99_ms": 0.783542029093951
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 235.58365451955123,
+          "ms_per_batch": 4.244776667716602
+        },
+        "batch_32": {
+          "windows_per_sec": 4819.879591566008,
+          "ms_per_batch": 6.6391700025027
+        },
+        "batch_64": {
+          "windows_per_sec": 8945.97747864915,
+          "ms_per_batch": 7.1540533332154155
+        },
+        "batch_256": {
+          "windows_per_sec": 18382.357341404288,
+          "ms_per_batch": 13.926396666405102
+        }
+      },
+      "cuda_cache_speedup": 2.973100673924715,
+      "cpu_cache_speedup": 6.443656384132625
+    },
+    "WaveNet temporal": {
+      "config": {
+        "temporal": "wavenet_temporal",
+        "spatial": "gat",
+        "fusion": "gated"
+      },
+      "params_total": 420418,
+      "params_by_branch": {
+        "temporal": 396160,
+        "spatial": 5568,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 4.537946797441691,
+        "std_ms": 0.971742875673401,
+        "p50_ms": 4.1247999761253595,
+        "p95_ms": 6.684380013030021,
+        "p99_ms": 8.568214050028473,
+        "min_ms": 3.807400120422244
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 2.33065399620682,
+        "p50_ms": 2.1340498933568597,
+        "p95_ms": 3.5272199544124287,
+        "p99_ms": 5.022047935053705
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 242.6369786516192,
+          "ms_per_batch": 4.121383333889146
+        },
+        "batch_32": {
+          "windows_per_sec": 7309.056606736301,
+          "ms_per_batch": 4.378129999774198
+        },
+        "batch_64": {
+          "windows_per_sec": 15005.838195730017,
+          "ms_per_batch": 4.265006670417885
+        },
+        "batch_256": {
+          "windows_per_sec": 47787.76260770077,
+          "ms_per_batch": 5.357019999064505
+        }
+      },
+      "peak_vram_mb": 42.2109375,
+      "cpu_single_window": {
+        "mean_ms": 7.922609678409513,
+        "std_ms": 0.18829704305594214,
+        "p50_ms": 7.885249913670123,
+        "p95_ms": 8.399669907521455,
+        "p99_ms": 8.49792800610885,
+        "min_ms": 7.665099808946252
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.442135472932169,
+        "p50_ms": 4.404449951834977,
+        "p95_ms": 4.796374996658415,
+        "p99_ms": 5.400152872316539
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 128.99625003994558,
+          "ms_per_batch": 7.752163335680962
+        },
+        "batch_32": {
+          "windows_per_sec": 2118.350007923708,
+          "ms_per_batch": 15.106096669721106
+        },
+        "batch_64": {
+          "windows_per_sec": 3236.6256554740835,
+          "ms_per_batch": 19.773680002739034
+        },
+        "batch_256": {
+          "windows_per_sec": 5014.992083624141,
+          "ms_per_batch": 51.04694000134866
+        }
+      },
+      "cuda_cache_speedup": 1.9328507683749843,
+      "cpu_cache_speedup": 1.7902916368444552
+    },
+    "Transformer temporal": {
+      "config": {
+        "temporal": "transformer_temporal",
+        "spatial": "gat",
+        "fusion": "gated"
+      },
+      "params_total": 296258,
+      "params_by_branch": {
+        "temporal": 272000,
+        "spatial": 5568,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 3.5807070010341704,
+        "std_ms": 0.6851848564837517,
+        "p50_ms": 3.297699964605272,
+        "p95_ms": 4.927845019847152,
+        "p99_ms": 6.522436069790274,
+        "min_ms": 3.0834998469799757
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 1.4989751987159252,
+        "p50_ms": 1.3943999074399471,
+        "p95_ms": 2.2466749767772836,
+        "p99_ms": 2.8737631114199758
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 269.97184156537105,
+          "ms_per_batch": 3.70409000509729
+        },
+        "batch_32": {
+          "windows_per_sec": 7970.89295880342,
+          "ms_per_batch": 4.014606665199001
+        },
+        "batch_64": {
+          "windows_per_sec": 13733.247411152237,
+          "ms_per_batch": 4.660223331302404
+        },
+        "batch_256": {
+          "windows_per_sec": 39465.99631035303,
+          "ms_per_batch": 6.486596663792929
+        }
+      },
+      "peak_vram_mb": 48.935546875,
+      "cpu_single_window": {
+        "mean_ms": 5.088432263883371,
+        "std_ms": 0.11482699371770883,
+        "p50_ms": 5.064950091764331,
+        "p95_ms": 5.360675184056163,
+        "p99_ms": 5.433649956248701,
+        "min_ms": 4.914700053632259
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 1.6495742001420548,
+        "p50_ms": 1.6277499962598085,
+        "p95_ms": 1.7975649563595653,
+        "p99_ms": 1.895068136509508
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 192.20789220714354,
+          "ms_per_batch": 5.202699995910128
+        },
+        "batch_32": {
+          "windows_per_sec": 3267.938257153076,
+          "ms_per_batch": 9.79210666846484
+        },
+        "batch_64": {
+          "windows_per_sec": 4198.867094382937,
+          "ms_per_batch": 15.242206662272414
+        },
+        "batch_256": {
+          "windows_per_sec": 8027.405227641861,
+          "ms_per_batch": 31.890753330662847
+        }
+      },
+      "cuda_cache_speedup": 2.3649599709596183,
+      "cpu_cache_speedup": 3.111626541792296
+    },
+    "DCRNN diffusion": {
+      "config": {
+        "temporal": "lstm",
+        "spatial": "diffusion",
+        "fusion": "gated"
+      },
+      "params_total": 232450,
+      "params_by_branch": {
+        "temporal": 200704,
+        "spatial": 13056,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 1.451959004625678,
+        "std_ms": 0.542108359537111,
+        "p50_ms": 1.204199972562492,
+        "p95_ms": 2.8507999377325177,
+        "p99_ms": 2.9892550595104694,
+        "min_ms": 1.0736999101936817
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.7877412028610706,
+        "p50_ms": 0.7488499395549297,
+        "p95_ms": 0.9537100326269861,
+        "p99_ms": 1.5631559118628502
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 681.8708723279389,
+          "ms_per_batch": 1.466553332284093
+        },
+        "batch_32": {
+          "windows_per_sec": 26588.01058441991,
+          "ms_per_batch": 1.2035499947766461
+        },
+        "batch_64": {
+          "windows_per_sec": 49830.00697186711,
+          "ms_per_batch": 1.2843666675811012
+        },
+        "batch_256": {
+          "windows_per_sec": 81120.73369375216,
+          "ms_per_batch": 3.1557899977390966
+        }
+      },
+      "peak_vram_mb": 48.109375,
+      "cpu_single_window": {
+        "mean_ms": 5.9519725731543955,
+        "std_ms": 0.17625738073910677,
+        "p50_ms": 5.907749990001321,
+        "p95_ms": 6.371709902305155,
+        "p99_ms": 6.482255095615983,
+        "min_ms": 5.716999992728233
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.602769363461243,
+        "p50_ms": 4.583700094372034,
+        "p95_ms": 4.770549910608679,
+        "p99_ms": 4.934181903954595
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 166.1927403672226,
+          "ms_per_batch": 6.017110000054042
+        },
+        "batch_32": {
+          "windows_per_sec": 3684.4725177358478,
+          "ms_per_batch": 8.685096671494344
+        },
+        "batch_64": {
+          "windows_per_sec": 5427.610935510095,
+          "ms_per_batch": 11.79155999949823
+        },
+        "batch_256": {
+          "windows_per_sec": 8427.70145961174,
+          "ms_per_batch": 30.37601666680227
+        }
+      },
+      "cuda_cache_speedup": 1.6080657939001692,
+      "cpu_cache_speedup": 1.2888604988042267
+    },
+    "STGCN cheb": {
+      "config": {
+        "temporal": "lstm",
+        "spatial": "cheb",
+        "fusion": "gated"
+      },
+      "params_total": 227266,
+      "params_by_branch": {
+        "temporal": 200704,
+        "spatial": 7872,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 1.4267208073288202,
+        "std_ms": 0.4065655676496482,
+        "p50_ms": 1.1761999921873212,
+        "p95_ms": 2.2686900454573333,
+        "p99_ms": 2.46049887733534,
+        "min_ms": 0.9484000038355589
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.8740600049495697,
+        "p50_ms": 0.7458000909537077,
+        "p95_ms": 1.5864300774410365,
+        "p99_ms": 1.6962771071121094
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 760.3213651800635,
+          "ms_per_batch": 1.3152333286901317
+        },
+        "batch_32": {
+          "windows_per_sec": 29358.157201098777,
+          "ms_per_batch": 1.089986669830978
+        },
+        "batch_64": {
+          "windows_per_sec": 49219.789360927585,
+          "ms_per_batch": 1.300290001866718
+        },
+        "batch_256": {
+          "windows_per_sec": 84829.54004582783,
+          "ms_per_batch": 3.017816669307649
+        }
+      },
+      "peak_vram_mb": 46.58447265625,
+      "cpu_single_window": {
+        "mean_ms": 5.5754951636997925,
+        "std_ms": 0.541739045354103,
+        "p50_ms": 5.490350071340799,
+        "p95_ms": 5.836089968215674,
+        "p99_ms": 7.41528511978686,
+        "min_ms": 5.176699953153729
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.628354844997727,
+        "p50_ms": 4.575900034978986,
+        "p95_ms": 5.199499893933534,
+        "p99_ms": 5.311907017603517
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 177.2105988566896,
+          "ms_per_batch": 5.643003333049515
+        },
+        "batch_32": {
+          "windows_per_sec": 3868.8991291928655,
+          "ms_per_batch": 8.271086666112145
+        },
+        "batch_64": {
+          "windows_per_sec": 5613.685463584506,
+          "ms_per_batch": 11.400709999725223
+        },
+        "batch_256": {
+          "windows_per_sec": 9211.59206928575,
+          "ms_per_batch": 27.791069999026757
+        }
+      },
+      "cuda_cache_speedup": 1.5770982149965018,
+      "cpu_cache_speedup": 1.199840474960466
+    },
+    "GraphWaveNet adaptive": {
+      "config": {
+        "temporal": "lstm",
+        "spatial": "adaptive",
+        "fusion": "gated"
+      },
+      "params_total": 245010,
+      "params_by_branch": {
+        "temporal": 200704,
+        "spatial": 25616,
+        "fusion": 4161,
+        "classifier": 2113,
+        "projection": 12416
+      },
+      "params_fusion": 4161,
+      "cuda_single_window": {
+        "mean_ms": 1.3683315948583186,
+        "std_ms": 0.3453045097949072,
+        "p50_ms": 1.3075999449938536,
+        "p95_ms": 1.6512350994162253,
+        "p99_ms": 3.273930128198117,
+        "min_ms": 1.1598998680710793
+      },
+      "cuda_single_window_cached": {
+        "mean_ms": 0.7816514014266431,
+        "p50_ms": 0.7518499623984098,
+        "p95_ms": 0.9245050488971173,
+        "p99_ms": 1.3790699979290337
+      },
+      "cuda_throughput": {
+        "batch_1": {
+          "windows_per_sec": 849.2280499768284,
+          "ms_per_batch": 1.1775400023907423
+        },
+        "batch_32": {
+          "windows_per_sec": 26150.342746448103,
+          "ms_per_batch": 1.2236933301513393
+        },
+        "batch_64": {
+          "windows_per_sec": 53820.70987213875,
+          "ms_per_batch": 1.189133330869178
+        },
+        "batch_256": {
+          "windows_per_sec": 86000.89124838087,
+          "ms_per_batch": 2.9767133373146257
+        }
+      },
+      "peak_vram_mb": 46.6533203125,
+      "cpu_single_window": {
+        "mean_ms": 6.581401610146126,
+        "std_ms": 0.700223000840374,
+        "p50_ms": 6.2882499769330025,
+        "p95_ms": 7.742354983929544,
+        "p99_ms": 9.256565908435732,
+        "min_ms": 5.8697001077234745
+      },
+      "cpu_single_window_cached": {
+        "mean_ms": 4.745090312715019,
+        "p50_ms": 4.712950089015067,
+        "p95_ms": 5.090255010873079,
+        "p99_ms": 5.33029304118827
+      },
+      "cpu_throughput": {
+        "batch_1": {
+          "windows_per_sec": 141.01263062869074,
+          "ms_per_batch": 7.091563326927523
+        },
+        "batch_32": {
+          "windows_per_sec": 2706.443109096537,
+          "ms_per_batch": 11.823636673701307
+        },
+        "batch_64": {
+          "windows_per_sec": 3888.4099260404973,
+          "ms_per_batch": 16.45916999938587
+        },
+        "batch_256": {
+          "windows_per_sec": 7549.292308370039,
+          "ms_per_batch": 33.91046333126724
+        }
+      },
+      "cuda_cache_speedup": 1.7391767112983487,
+      "cpu_cache_speedup": 1.334249219313746
+    }
+  },
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+}

@@ -1,0 +1,19 @@
+# STANet — reproduction environment
+# Python 3.10.11, CUDA 11.8 (CPU-only also works; see README)
+#
+# PyTorch and PyTorch Geometric must be installed first, from their own
+# index, because the wheels are build-specific:
+#   pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu118
+#   pip install torch-geometric==2.7.0
+torch==2.7.1
+torch-geometric==2.7.0
+
+numpy==1.26.4
+pandas==2.3.3
+scikit-learn==1.7.2
+scipy==1.15.3
+xgboost==3.2.0
+lightgbm==4.6.0
+matplotlib==3.10.7
+seaborn==0.13.2
+networkx==3.4.2

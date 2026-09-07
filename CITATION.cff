@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use this software or dataset, please cite it as below."
+title: "STANet: controlled evaluation of hybrid LSTM-GAT architectures for traffic anomaly detection"
+abstract: >-
+  Reproduction package for a controlled, multi-seed evaluation of the design
+  choices underlying a hybrid LSTM + Graph Attention Network traffic anomaly
+  detector. Contains the full experiment pipeline (encoder benchmark, fusion
+  ablation, graph-construction ablation, trip-grouped cross-validation,
+  trip-level cluster statistics, efficiency measurements), the synthetic
+  trajectory dataset generated over an OpenStreetMap-derived road network,
+  and every result file reported in the paper.
+type: software
+license: MIT
+version: 2.0.0
+date-released: "2026-09-06"
+repository-code: "https://github.com/REPLACE-WITH-ACTUAL-USERNAME/stanet-traffic-anomaly"
+keywords:
+  - traffic anomaly detection
+  - graph attention network
+  - long short-term memory
+  - multimodal fusion
+  - ablation study
+  - evaluation methodology
+  - reproducibility
+authors:
+  - family-names: "Gültekin"
+    given-names: "Ayhan"
+    affiliation: "Student Affairs Department, Kocaeli University, Kocaeli, Türkiye"
+    email: "ayhan.gultekin@kocaeli.edu.tr"
+  - family-names: "Kartal"
+    given-names: "Kerem"
+    affiliation: "Department of Software Engineering, Kocaeli University, Kocaeli, Türkiye"
+  - family-names: "Şimşek"
+    given-names: "Ahmet Yusuf"
+    affiliation: "Department of Artificial Intelligence and Machine Learning, Kocaeli University, Kocaeli, Türkiye"
+  - family-names: "Yeşilova"
+    given-names: "Rümeysa"
+    affiliation: "Department of Artificial Intelligence and Machine Learning, Kocaeli University, Kocaeli, Türkiye"
+  - family-names: "Sayar"
+    given-names: "Ahmet"
+    affiliation: "Department of Artificial Intelligence Engineering, Bahçeşehir University, Istanbul, Türkiye"
