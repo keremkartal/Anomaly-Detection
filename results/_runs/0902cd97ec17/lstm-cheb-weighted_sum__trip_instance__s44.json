@@ -1,0 +1,267 @@
+{
+  "spec": {
+    "arch": "generic_hybrid",
+    "graph": "trip_instance",
+    "temporal": "lstm",
+    "spatial": "cheb",
+    "fusion": "weighted_sum"
+  },
+  "seed": 44,
+  "protocol": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "max_epochs": 50,
+    "patience": 15,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "grad_clip": 1.0,
+    "scheduler": [
+      0.5,
+      3
+    ],
+    "dropout": 0.2,
+    "select_by": "val_f1",
+    "threshold_rule": "argmax_val_f1",
+    "cudnn_deterministic": false,
+    "cudnn_benchmark": true,
+    "sequence_length": 50,
+    "step_size": 10,
+    "split_seed": 42,
+    "legacy_pipeline": false,
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "hash": "0902cd97ec17"
+  },
+  "metrics": {
+    "threshold": 0.95,
+    "accuracy": 0.9906230464680141,
+    "precision": 0.9375,
+    "recall": 0.7643312101910829,
+    "f1": 0.8421052631578947,
+    "n": 4799,
+    "n_pos": 157,
+    "roc_auc": 0.9062265880344789,
+    "pr_auc": 0.7553481752607328,
+    "confusion_matrix": [
+      [
+        4634,
+        8
+      ],
+      [
+        37,
+        120
+      ]
+    ],
+    "tn": 4634,
+    "fp": 8,
+    "fn": 37,
+    "tp": 120,
+    "f1_at_0.5": 0.8442906574394463,
+    "threshold_val": 0.95,
+    "best_epoch": 4,
+    "epochs_run": 19,
+    "seconds": 62.2688205242157,
+    "sec_per_epoch": 3.277306343379774,
+    "total_params": 223106,
+    "seed": 44,
+    "fusion_params": 1,
+    "branch_params": {
+      "temporal": 200704,
+      "spatial": 7872,
+      "fusion": 1,
+      "classifier": 2113,
+      "projection": 12416
+    },
+    "gate": {
+      "min": 0.4985361695289612,
+      "max": 0.4985361695289612,
+      "mean": 0.4985361695289612,
+      "std": 0.0,
+      "mean_normal": 0.49853619933128357,
+      "mean_anomaly": 0.4985361397266388,
+      "range": 0.0
+    },
+    "by_type": {
+      "hiz_asimi": {
+        "threshold": 0.95,
+        "accuracy": 0.9954887218045113,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 4655,
+        "n_pos": 13,
+        "roc_auc": 0.5374258442978823,
+        "pr_auc": 0.005153279261640787,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            13,
+            0
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 13,
+        "tp": 0
+      },
+      "uzun_duraklama": {
+        "threshold": 0.95,
+        "accuracy": 0.998109640831758,
+        "precision": 0.9365079365079365,
+        "recall": 0.9915966386554622,
+        "f1": 0.963265306122449,
+        "n": 4761,
+        "n_pos": 119,
+        "roc_auc": 0.9943862939402388,
+        "pr_auc": 0.9229352471735189,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            1,
+            118
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 1,
+        "tp": 118
+      },
+      "anormal_ivme": {
+        "threshold": 0.95,
+        "accuracy": 0.9978466838931955,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 4644,
+        "n_pos": 2,
+        "roc_auc": 0.7153166738474795,
+        "pr_auc": 0.04204631738800303,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 2,
+        "tp": 0
+      },
+      "kaza": {
+        "threshold": 0.95,
+        "accuracy": 0.9974182444061962,
+        "precision": 0.2,
+        "recall": 0.3333333333333333,
+        "f1": 0.25,
+        "n": 4648,
+        "n_pos": 6,
+        "roc_auc": 0.847407726554646,
+        "pr_auc": 0.0782143176164352,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            4,
+            2
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 4,
+        "tp": 2
+      },
+      "anormal_yon_degisimi": {
+        "threshold": 0.95,
+        "accuracy": 0.9978466838931955,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 4644,
+        "n_pos": 2,
+        "roc_auc": 0.9757647565704437,
+        "pr_auc": 0.05006284038542103,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 2,
+        "tp": 0
+      },
+      "gps_ivme_artefakti": {
+        "threshold": 0.95,
+        "accuracy": 0.9976318622174382,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 4645,
+        "n_pos": 3,
+        "roc_auc": 0.5891138876920868,
+        "pr_auc": 0.0013746637072908259,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            3,
+            0
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 3,
+        "tp": 0
+      },
+      "sinyal_donmasi": {
+        "threshold": 0.95,
+        "accuracy": 0.9957026214009455,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "n": 4654,
+        "n_pos": 12,
+        "roc_auc": 0.5604265402843601,
+        "pr_auc": 0.010981665654698663,
+        "confusion_matrix": [
+          [
+            4634,
+            8
+          ],
+          [
+            12,
+            0
+          ]
+        ],
+        "tn": 4634,
+        "fp": 8,
+        "fn": 12,
+        "tp": 0
+      }
+    }
+  }
+}

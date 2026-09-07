@@ -75,8 +75,30 @@ summary table.
 
 Total: ~5.5 h on an NVIDIA RTX-class GPU.
 
-Runs are cached (see below), so re-running a script after a crash resumes
-rather than retraining.
+### The cached runs are in the repository
+
+`results/_runs/` ships with the repository and holds all 130 training runs
+behind the paper, keyed by protocol hash. This matters for reproduction.
+
+Graph message passing uses `scatter_add`, whose floating-point summation order
+is nondeterministic on GPU. Retraining the same configuration at the same seed
+therefore does **not** return the same number: we measured a difference of
+0.0256 F1 on a clean clone, against a five-seed standard deviation of 0.0188.
+The paper states this in Section VI-A-3 and reports every result as a
+multi-seed mean for exactly this reason.
+
+With the cache present, the commands above **read** those runs instead of
+retraining, and reproduce the published tables bit for bit in a few minutes.
+
+To retrain from scratch and see how far a fresh campaign lands from ours:
+
+```bash
+rm -rf results/_runs
+# then run the scripts above; ~5.5 h
+```
+
+The multi-seed means are the quantity that should reproduce; individual runs
+are not expected to.
 
 Finally, verify the manuscript against the results:
 

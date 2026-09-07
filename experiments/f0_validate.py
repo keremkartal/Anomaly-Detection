@@ -60,6 +60,24 @@ def main():
          C.LEGACY_GNN_CKPT),
     ]
 
+    # Bu bolum, ILK SURUMUN checkpoint'lerini yukleyip o zamanki sayilari
+    # yeniden uretmeye yarar. Checkpoint'ler depoya dahil degildir (egitim
+    # ciktisi, kaynak degil), bu yuzden temiz bir klonda atlanir. Veri ve graf
+    # butunlugu kontrolleri checkpoint'lerden bagimsizdir ve her zaman calisir.
+    missing = [str(c) for _, _, c in specs if not Path(c).exists()]
+    if missing:
+        print("\n" + "=" * 70)
+        print("ESKI CHECKPOINT'LER YOK — legacy dogrulama bolumu atlaniyor.")
+        print("Bu BEKLENEN durumdur; checkpoint'ler depoya dahil degil.")
+        print("Veri ve graf kontrolleri yukarida tamamlandi.")
+        print("Makalenin sonuclari icin README'deki F3/F4/F2/F1b/F5 sirasini")
+        print("izleyin; o betikler checkpoint'e ihtiyac duymaz.")
+        print("=" * 70)
+        results["legacy_validation"] = {"skipped": True, "missing": missing}
+        save_json(results, C.RESULTS_DIR / "F0_validation.json")
+        print(f"\nkaydedildi: {C.RESULTS_DIR / 'F0_validation.json'}")
+        return
+
     for name, model, ckpt in specs:
         sd = torch.load(ckpt, map_location=device, weights_only=False)
         model.load_state_dict(sd)          # strict=True — uyumsuzluk hata verir
