@@ -1,5 +1,7 @@
 # STANet — Controlled Evaluation of Hybrid LSTM–GAT Traffic Anomaly Detection
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22637361.svg)](https://doi.org/10.5281/zenodo.22637361)
+
 Reproduction package for the paper *"How Much Does Fusion Design Matter?
 Partition, Seed, and Cluster Effects in the Evaluation of Hybrid LSTM–GAT
 Traffic Anomaly Detectors."*
@@ -187,7 +189,12 @@ Two structural properties matter when reading any result here:
 
 ## Citation
 
-See `CITATION.cff`. A Zenodo DOI is minted for each release.
+See `CITATION.cff`.
+
+- Version DOI (this snapshot, v2.0.0): [10.5281/zenodo.22637361](https://doi.org/10.5281/zenodo.22637361)
+- Concept DOI (always the latest version): [10.5281/zenodo.22637360](https://doi.org/10.5281/zenodo.22637360)
+
+The version DOI is the one to cite when reproducing the numbers in the paper; it pins the exact code and data used.
 
 ## License
 

@@ -12,6 +12,14 @@ abstract: >-
 type: software
 license: MIT
 version: 2.0.0
+doi: 10.5281/zenodo.22637361
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22637360
+    description: Concept DOI; resolves to the latest version.
+  - type: doi
+    value: 10.5281/zenodo.22637361
+    description: Version DOI for release v2.0.0.
 date-released: "2026-09-06"
 repository-code: "https://github.com/keremkartal/Anomaly-Detection"
 keywords:

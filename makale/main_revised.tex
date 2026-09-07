@@ -57,7 +57,11 @@
 % "yer tutucu" olarak yakalar ve doldurulana kadar dogrulama gecmez.
 % =====================================================================
 \newcommand{\repourl}{https://github.com/keremkartal/Anomaly-Detection}
-\newcommand{\zenododoi}{PENDING-DOI}
+% Surum DOI'si: v2.0.0 anlik goruntusune, yani bu makaledeki sayilari
+% ureten kodun tam haline coozulur. Kavram DOI'si her zaman en son surume
+% coozulur ve ikisi de veri erisim beyaninda verilir.
+\newcommand{\zenododoi}{10.5281/zenodo.22637361}
+\newcommand{\zenodoconcept}{10.5281/zenodo.22637360}
 
 \begin{document}
 \raggedbottom
@@ -993,7 +997,7 @@ We would additionally encourage reporting a rule-based or classical reference wh
 
 \section*{Data and Code Availability}
 \label{sec:availability}
-The synthetic dataset, its data card, the complete preprocessing and modelling code, the experiment scripts, every result file reported in this paper, and the script that verifies the manuscript's numbers against those files are available at \url{\repourl} and permanently archived at \texttt{doi:\zenododoi}. No real-world vehicle trajectory data was used.
+The synthetic dataset, its data card, the complete preprocessing and modelling code, the experiment scripts, every result file reported in this paper, and the script that verifies the manuscript's numbers against those files are available at \url{\repourl} and permanently archived at \texttt{doi:\zenododoi}, which resolves to the exact snapshot (\texttt{v2.0.0}) that produced every number reported here. The concept identifier \texttt{doi:\zenodoconcept} resolves to the most recent version. No real-world vehicle trajectory data was used.
 
 The repository contains two mechanisms that support the internal consistency of the tables reported here. First, every result file carries a \emph{protocol stamp}: a hash over the seed set, epoch budget, patience, batch size, learning rate, scheduler, dropout, checkpoint criterion, threshold rule, cuDNN flags, window length, stride, split seed, and library versions. Scripts that consume another script's results assert that the stamps match and abort otherwise. Second, configurations that appear in more than one table are trained once and cached under their protocol stamp, so those tables read the same run rather than two independently trained runs that are assumed to agree. Section~\ref{sec:protocol_note} describes why these mechanisms were introduced.
 
