@@ -13,7 +13,7 @@ type: software
 license: MIT
 version: 2.0.0
 date-released: "2026-09-06"
-repository-code: "https://github.com/REPLACE-WITH-ACTUAL-USERNAME/stanet-traffic-anomaly"
+repository-code: "https://github.com/keremkartal/Anomaly-Detection"
 keywords:
   - traffic anomaly detection
   - graph attention network

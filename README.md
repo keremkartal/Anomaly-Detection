@@ -1,8 +1,8 @@
 # STANet — Controlled Evaluation of Hybrid LSTM–GAT Traffic Anomaly Detection
 
-Reproduction package for the paper *"How Much Does Fusion Design Matter? A
-Controlled Multi-Seed Evaluation of Hybrid LSTM–GAT Architectures for Traffic
-Anomaly Detection."*
+Reproduction package for the paper *"How Much Does Fusion Design Matter?
+Partition, Seed, and Cluster Effects in the Evaluation of Hybrid LSTM–GAT
+Traffic Anomaly Detectors."*
 
 This repository contains **everything needed to reproduce every number in the
 paper**: the data, the pipeline, the experiment scripts, the raw result files,
@@ -36,8 +36,8 @@ because consecutive windows overlap by 80 % and are not independent.
 ## Quick start
 
 ```bash
-git clone <repository-url>
-cd stanet-traffic-anomaly
+git clone https://github.com/keremkartal/Anomaly-Detection.git
+cd Anomaly-Detection
 
 # PyTorch first (build-specific wheels)
 pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu118
@@ -68,7 +68,8 @@ summary table.
 | F5 | `python experiments/f5_cv.py` | 5-fold trip-grouped CV, fusion ablation under CV, calibration | 50 | ~2 h |
 | F7 | `python experiments/f7_cluster_stats.py` | trip-level statistics for all families | – | ~2 min (CPU) |
 | F6 | `python experiments/f6_efficiency.py` | latency and parameter counts | – | ~5 min |
-| F9 | `python experiments/f9_figures_en.py` | all paper figures into `results/figures/` | – | < 1 min |
+| F9 | `python experiments/f9_figures_en.py` | eight result figures, copied into `makale/` | – | < 1 min |
+| F9b | `python experiments/f9_architecture.py` | the architecture diagram (Fig. 1) | – | < 1 min |
 
 Total: ~5.5 h on an NVIDIA RTX-class GPU.
 
@@ -86,9 +87,12 @@ python makale/_verify_numbers.py
 ## Two mechanisms that guarantee the tables agree
 
 Version 1 of this study reported the **same configuration** with two different
-scores in two different tables (0.8836 and 0.8484). The cause was that some
-experiments had run with `cudnn.deterministic=True` and others with `False`,
-with no record of which. Version 2 makes that failure structurally impossible.
+scores in two different tables (0.8836 and 0.8484). Two causes were found:
+some experiments had run with `cudnn.deterministic=True` and others with
+`False` with no record of which, and two code paths instantiated
+architecturally identical models under different parameter names, which draws
+different initial weights at the same seed. Version 2 makes that failure
+structurally impossible.
 
 ### 1. Protocol stamp
 
@@ -140,10 +144,11 @@ stanet/                  library
   utils.py               seeding, device, JSON I/O, protocol stamp
 
 experiments/             one script per experiment, F0-F9
+  _superseded/           version-1 scripts, kept for provenance only
 results/                 result JSONs (committed), figures, run cache (ignored)
   _v1_arsiv/             version-1 results plus a note on what changed and why
 veriseti/                dataset (see veriseti/README.md)
-makale/                  LaTeX source, figures, verification script, reviewer response
+makale/                  LaTeX source, figures, data card, verification script
 ```
 
 ---
@@ -173,7 +178,7 @@ Two structural properties matter when reading any result here:
 - **Windows are not independent.** Stride 10 on length-50 windows means
   consecutive windows share 40 of 50 steps — 80 % overlap. All statistical
   tests in this repository therefore use the **trip** as the unit.
-- **Only 90 trips exist.** The fixed test split contains roughly 13 trips.
+- **Only 90 trips exist.** The fixed test split contains **14 trips**.
   Trip-level confidence intervals on the fixed split are correspondingly wide;
   the cross-validated analysis, in which all 90 trips receive a test
   prediction, is the more reliable evidence and is treated as primary.
