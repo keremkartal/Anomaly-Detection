@@ -252,6 +252,36 @@ def check_figures():
     print()
 
 
+# ======================================================== E2. ESKIMIS IFADE
+# Sayi kontrolu (C) bir degerin metinde BULUNDUGUNU dogrular; metinde kalmis
+# ESKI bir ifadeyi yakalamaz. Tablo 11'in basligi "three seeds" derken tablo
+# bes tohumluydu ve C kontrolu bunu gormedi. Asagidakiler o bosluğu kapatir.
+STALE_PHRASES = [
+    (r"Encoder benchmark, three seeds", "Tablo 11 basligi: benchmark 5 tohum"),
+    (r"three seeds for the encoder", "kodlayici benchmark 5 tohum"),
+    (r"five for the fusion ablation, three", "tohum sayilari artik esit"),
+    (r"Cross-experiment inconsistencies", "v1 ozet cumlesi"),
+    (r"run-level reconciliation", "v1 ifadesi"),
+]
+
+
+def check_stale_phrases():
+    print("E2. ESKIMIS IFADE")
+    hits = []
+    for pat, desc in STALE_PHRASES:
+        for m in re.finditer(pat, tex, re.IGNORECASE):
+            line = tex[:m.start()].count("\n") + 1
+            hits.append((line, desc, m.group(0)))
+    if hits:
+        print(f"{FAIL} {len(hits)} eskimis ifade:")
+        for line, desc, txt in hits:
+            print(f"      satir {line:4d}  {desc}: \"{txt}\"")
+        failures.append(f"{len(hits)} eskimis ifade .tex icinde")
+    else:
+        print(f"{OK} eskimis ifade yok")
+    print()
+
+
 # ======================================================== E. YER TUTUCU
 PLACEHOLDERS = [
     r"PENDING-REPO",
@@ -295,6 +325,7 @@ if __name__ == "__main__":
     check_shared_run()
     check_numbers()
     check_figures()
+    check_stale_phrases()
     check_placeholders()
     print("=" * 78)
     if failures:
