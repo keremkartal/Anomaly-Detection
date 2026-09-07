@@ -233,9 +233,26 @@ def fig_benchmark():
                 xerr=[x[2] for x in rows], capsize=4, color=cols,
                 edgecolor="black", linewidth=0.5)
     ax.bar_label(b, fmt="%.4f", padding=3, fontsize=8)
+    # `origin` alani JSON'da Turkce yazilmis; makale Ingilizce oldugu icin
+    # figurde Ingilizce karsiliklari kullanilir.
+    EN_ORIGIN = {
+        "STANet (onerilen)": "STANet (this study)",
+        "DCRNN tekrarlayan omurga": "DCRNN recurrent backbone",
+        "STGCN gated TCN": "STGCN gated TCN",
+        "Graph WaveNet dilated conv": "Graph WaveNet dilated conv.",
+        "Transformer encoder": "Transformer encoder",
+        "STGCN Chebyshev graf konv.": "STGCN Chebyshev graph conv.",
+        "DCRNN cift yonlu difuzyon": "DCRNN bidirectional diffusion",
+        "Graph WaveNet uyarlanabilir A": "Graph WaveNet adaptive adjacency",
+        "uzamsal dal yok (kontrol)": "no spatial branch (control)",
+    }
     for i, (_, _, _, org, _) in enumerate(rows):
-        ax.text(0.01, i, f"  {org}", va="center", fontsize=7.5, color="white")
-    ax.set_xlabel("F1-Score (3 seeds, mean$\pm$sd)")
+        ax.text(0.01, i, f"  {EN_ORIGIN.get(org, org)}", va="center",
+                fontsize=7.5, color="white")
+    # Tohum sayisi sabit yazilmamali: sonuc dosyasindan okunur.
+    n_seed = len(r.get("config", {}).get("seeds", [])) or len(
+        next(iter(r["configs"].values()))["runs"])
+    ax.set_xlabel(f"F1-Score ({n_seed} seeds, mean$\pm$sd)")
     ax.set_xlim(0, 1.05)
     ax.set_title("Encoder benchmark: STGCN / DCRNN / Graph WaveNet core operators")
     fig.tight_layout()
