@@ -282,6 +282,86 @@ def check_stale_phrases():
     print()
 
 
+# ======================================================== E3. IDDIA DENETIMI
+# C kontrolu bir SAYININ metinde bulundugunu dogrular. Metinde kalmis bir
+# IDDIAYI gormez. Tablo 11'in basligi "three seeds" derken tablo bes tohumluydu
+# ve C bunu kacirdi (E2 o tip ifadeler icin). Bu kontrol bir adim oteye gider:
+# metindeki her p degeri bir sonuc dosyasinda gercekten var mi?
+#
+# Amac ikinci tur revizyonu engellemek: yeni sayilar geldiginde metinde kalan
+# eski p degerleri ve anlamlilik iddialari burada yakalanir.
+
+def _collect_pvalues():
+    """Sonuc dosyalarindaki tum p degerlerini topla."""
+    found = set()
+
+    def walk(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k in ("p_value", "p_holm", "p_raw") and isinstance(v, (int, float)):
+                    found.add(round(float(v), 4))
+                else:
+                    walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    for name, j in J.items():
+        if j is not None:
+            walk(j)
+    return found
+
+
+def check_claims():
+    """
+    Metindeki her p degeri bir sonuc dosyasindan geliyor mu?
+
+    Iki istisna var:
+      * `p = 0.2` gibi dropout oranlari p degeri degildir — satirinda
+        "Dropout" gecen eslesmeler atlanir.
+      * Geri cekilmis eski iddialar bilerek anilir. Bunlar .tex icinde
+        `% ESKI-DEGER` yorumuyla isaretlenir; isaretli satirlar atlanir.
+    """
+    print("E3. IDDIA DENETIMI (metindeki p degerleri sonuc dosyalarinda var mi)")
+    known = _collect_pvalues()
+    if not known:
+        print("    (sonuc dosyalarinda p degeri bulunamadi, kontrol atlandi)\n")
+        return
+
+    lines = tex.split("\n")
+    cited, skipped = [], 0
+    for m in re.finditer(r"p\s*(?:=|<)\s*([01]\.[0-9]+)", tex):
+        idx = tex[:m.start()].count("\n")
+        line_txt = lines[idx]
+        if "Dropout" in line_txt or "dropout" in line_txt:
+            skipped += 1
+            continue
+        if "ESKI-DEGER" in line_txt:
+            skipped += 1
+            continue
+        cited.append((idx + 1, m.group(1), m.group(0)))
+
+    orphan = []
+    for line, txt, raw in cited:
+        dec = len(txt.split(".")[1])          # metinde kac ondalik yazilmis
+        val = float(txt)
+        # kaynak degeri AYNI hassasiyete yuvarlayip karsilastir
+        if not any(round(k, dec) == round(val, dec) for k in known):
+            orphan.append((line, txt, raw))
+
+    print(f"    metindeki p degeri : {len(cited)}  (atlanan {skipped})")
+    print(f"    sonuc dosyalarinda : {len(cited) - len(orphan)}")
+    if orphan:
+        print(f"{FAIL} {len(orphan)} p degeri hicbir sonuc dosyasinda yok:")
+        for line, txt, raw in orphan:
+            ctx = lines[line - 1].strip()[:88]
+            print(f"      satir {line:4d}  {raw:12s}  {ctx}")
+        failures.append(f"{len(orphan)} p degeri sonuc dosyalariyla eslesmiyor")
+    else:
+        print(f"{OK} her p degeri bir sonuc dosyasindan geliyor")
+    print()
+
+
 # ======================================================== E. YER TUTUCU
 PLACEHOLDERS = [
     r"PENDING-REPO",
@@ -326,6 +406,7 @@ if __name__ == "__main__":
     check_numbers()
     check_figures()
     check_stale_phrases()
+    check_claims()
     check_placeholders()
     print("=" * 78)
     if failures:

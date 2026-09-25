@@ -106,6 +106,9 @@ def get_or_train(spec, seed, ds, node_idx, graph, device,
             print(f"  [onbellek] {key}: F1={meta['metrics']['f1']:.4f}", flush=True)
         return {"metrics": meta["metrics"], "spec": meta["spec"],
                 "protocol_hash": phash, "cached": True,
+                # eski kayitlarda history yok; None doner, cagiran taraf bunu
+                # "bu kosu egitim egrisi olmadan onbelleklenmis" diye okur
+                "history": meta.get("history"),
                 "prob_test": arr["prob_test"], "prob_val": arr["prob_val"],
                 "gate": arr["gate"] if "gate" in arr.files else None}
 
@@ -142,8 +145,11 @@ def get_or_train(spec, seed, ds, node_idx, graph, device,
         }
     m["by_type"] = metrics_by_type(yt, pt, ds.type_test, th)
 
+    # Egitim seyri de saklanir. Hakem 1 madde 9 ve Hakem 3 madde 7, gate
+    # cokmesinin mekanizmasi icin egitim egrileri ve epoch bazinda gate
+    # dagilimi istiyor; bunlar yalnizca son metrikten cikarilamaz.
     save_json({"spec": spec, "seed": seed, "protocol": protocol_stamp(),
-               "metrics": m}, jf)
+               "metrics": m, "history": out["history"]}, jf)
     payload = {"prob_test": pt, "prob_val": pv, "y_test": yt, "y_val": yv}
     if gw is not None:
         payload["gate"] = np.asarray(gw)
@@ -154,11 +160,12 @@ def get_or_train(spec, seed, ds, node_idx, graph, device,
               f"ep{m['best_epoch']}/{m['epochs_run']} {m['seconds']/60:.1f}dk",
               flush=True)
 
+    hist = out["history"]
     del model, out
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
     return {"metrics": m, "spec": spec, "protocol_hash": phash, "cached": False,
-            "prob_test": pt, "prob_val": pv, "gate": gw}
+            "history": hist, "prob_test": pt, "prob_val": pv, "gate": gw}
 
 
 def run_seeds(spec, seeds, ds, node_idx, graph, device, **kw):

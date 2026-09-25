@@ -657,7 +657,7 @@ Table~\ref{tab:encoder_benchmark} and Fig.~\ref{fig:encoder_benchmark} report th
       \toprule
       \textbf{Config} & \textbf{Origin} & \textbf{F1-Score} & \textbf{ROC-AUC} & \textbf{Params} & \textbf{$p$} \\ \midrule
       \textbf{LSTM + GAT} & \textbf{this study} & $\bm{0.8713 \pm 0.0188}$ & $0.9638$ & 220{,}802 & --- \\
-      GRU & DCRNN backbone & $0.8701 \pm 0.0102$ & $\bm{0.9929}$ & 170{,}626 & 0.119 \\
+      GRU & DCRNN backbone & $0.8701 \pm 0.0102$ & $\bm{0.9929}$ & 170{,}626 & 0.118 \\
       Transformer & Transformer & $0.8698 \pm 0.0081$ & $0.9899$ & 292{,}098 & 0.815 \\
       Dilated causal conv & Graph WaveNet & $0.8535 \pm 0.0114$ & $0.9799$ & 416{,}258 & 0.115 \\
       No spatial branch & control & $0.8455 \pm 0.0190$ & $0.9294$ & 215{,}234 & 0.549 \\
@@ -675,7 +675,7 @@ Table~\ref{tab:encoder_benchmark} and Fig.~\ref{fig:encoder_benchmark} report th
   \label{fig:encoder_benchmark}
 \end{figure}
 
-The LSTM--GAT pairing attains the highest mean F1 among the nine configurations, but the margin is significant against only four of the eight alternatives, and the identity of those four is the substantive result. The pairing separates cleanly from the STGCN gated temporal convolution ($p = 0.003$) and from all three alternative \emph{spatial} operators---Chebyshev convolution ($p = 0.007$), diffusion convolution ($p = 0.003$), and adaptive adjacency ($p < 0.001$). It does \emph{not} separate from any of the remaining strong temporal encoders: the GRU backbone ($0.8701 \pm 0.0102$, $p = 0.119$), the Transformer encoder ($0.8698 \pm 0.0081$, $p = 0.815$), or the dilated causal convolution stack ($0.8535 \pm 0.0114$, $p = 0.115$). The top three configurations lie within $0.0015$ F1 of one another, an order of magnitude below the leader's own seed standard deviation.
+The LSTM--GAT pairing attains the highest mean F1 among the nine configurations, but the margin is significant against only four of the eight alternatives, and the identity of those four is the substantive result. The pairing separates cleanly from the STGCN gated temporal convolution ($p = 0.003$) and from all three alternative \emph{spatial} operators---Chebyshev convolution ($p = 0.007$), diffusion convolution ($p = 0.003$), and adaptive adjacency ($p < 0.001$). It does \emph{not} separate from any of the remaining strong temporal encoders: the GRU backbone ($0.8701 \pm 0.0102$, $p = 0.118$), the Transformer encoder ($0.8698 \pm 0.0081$, $p = 0.815$), or the dilated causal convolution stack ($0.8535 \pm 0.0114$, $p = 0.115$). The top three configurations lie within $0.0015$ F1 of one another, an order of magnitude below the leader's own seed standard deviation.
 
 We draw the conclusion the measurement supports rather than the one the architecture was proposed to demonstrate: \textbf{the choice of temporal encoder is not resolvable on this data, while the choice of spatial operator is}. Attention-based aggregation is measurably better than the Chebyshev, diffusion, and adaptive alternatives; whether the recurrence is an LSTM, a GRU, or self-attention is not something these experiments can decide. The GRU reaches the same F1 with $23\%$ fewer parameters and the highest ROC-AUC of any neural configuration, and would be the preferable choice on that basis alone.
 
@@ -767,7 +767,9 @@ This is the paper's central empirical statement, and it cuts in both directions.
 
 The collapse mode of Section~\ref{sec:fusion_ablation} remains a real and reproducible phenomenon; it recurred at the same seed across a full re-run under a different backend configuration. What these ten cross-validated runs establish is that it is \emph{rare} rather than systematic, and Section~\ref{sec:graph_ablation} shows it is conditional on the spatial branch being nearly uninformative. A failure mode that appears in one of fifteen runs is worth documenting for practitioners; it is not evidence that one operator is generally worse than another.
 
-The spatial-branch control is equally instructive: removing the spatial branch entirely yields $0.8839 \pm 0.0436$, statistically indistinguishable from every hybrid variant. On the fixed partition the same ablation appeared to cost $3.5$ F1 points at $p = 0.035$. We \textbf{withdraw that claim}. Section~\ref{sec:subtype} examines whether the spatial branch helps anywhere at all.
+The spatial-branch control is equally instructive: removing the spatial branch entirely yields $0.8839 \pm 0.0436$, statistically indistinguishable from every hybrid variant. On the fixed partition the same ablation appeared to cost $3.5$ F1 points
+at $p = 0.035$.  % ESKI-DEGER: geri cekilen v1 iddiasi, bilerek aniliyor
+We \textbf{withdraw that claim}. Section~\ref{sec:subtype} examines whether the spatial branch helps anywhere at all.
 
 \subsubsection{Subtype Stratification}
 \label{sec:subtype}
@@ -879,7 +881,7 @@ The fixed test partition contains $4{,}799$ windows drawn from \textbf{14 trips}
       & vs.\ gated TCN          & \textbf{0.003} & \textbf{0.048} & 0.335 & $1.44\times$ \\
       & vs.\ Chebyshev conv     & \textbf{0.007} & 0.061 & 0.365 & $2.79\times$ \\
       & vs.\ diffusion conv     & \textbf{0.003} & 0.062 & 0.365 & $2.22\times$ \\
-      & vs.\ GRU                & 0.119 & 0.375 & 1.000 & $1.71\times$ \\
+      & vs.\ GRU                & 0.118 & 0.375 & 1.000 & $1.71\times$ \\
       & vs.\ dilated conv       & 0.115 & 0.503 & 1.000 & $1.19\times$ \\
       & vs.\ Transformer        & 0.815 & 0.439 & 1.000 & $1.17\times$ \\
       & vs.\ no spatial branch  & 0.549 & 0.748 & 1.000 & $2.43\times$ \\ \bottomrule
