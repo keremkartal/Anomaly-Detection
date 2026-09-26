@@ -574,6 +574,115 @@ Both quantities are computable in closed form over per-trip contingency counts, 
 
 The consequence is a real loss of statistical power, and we state it plainly rather than absorbing it silently. The dataset contains $90$ trips in total, so the fixed test partition contains roughly $13$ independent units. Interval estimates on that partition are correspondingly wide. Under cross-validation every one of the $90$ trips receives an out-of-fold prediction, which is why the cross-validated results are treated as the primary evidence in this paper and the fixed-partition results as a secondary, more variable view of the same question. Window-level values are additionally reported in the accompanying result files, labelled as such, so that readers can see the magnitude of the difference the correct unit makes.
 
+\subsection{How Much a Single Run Is Worth}
+\label{sec:replication}
+The claim that graph message passing is not bit-reproducible on GPU has been
+made twice above. It is stated in the literature, but this paper relies on it
+heavily enough that it should be measured here rather than cited, because the
+size of the effect decides whether any single-run comparison in this area can
+carry an architectural conclusion.
+
+The measurement is a controlled replication. Two configurations were trained a
+second time under the same protocol stamp, at the same seed, on the same five
+cross-validation partitions. Everything that the experimenter controls is
+identical between the two runs; the only difference is the order in which the
+GPU accumulates floating-point sums. The two configurations differ in exactly
+one respect: whether the spatial branch contains a \texttt{GATConv} layer.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{\textbf{[Fixed protocol, same seed, same partition]}~ Replication of
+  an identical run. Ten pairs, five per configuration.}
+  \label{tab:replication}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Configuration} & \textbf{GATConv} & \textbf{Identical} &
+    \textbf{Mean $|\Delta$F1$|$} & \textbf{Max $|\Delta$F1$|$} \\ \midrule
+    Temporal only & no  & $5/5$ & $0.0000$ & $0.0000$ \\
+    LSTM + GAT    & yes & $0/5$ & $0.0195$ & $0.0414$ \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+Without the graph layer, replication is exact: five of five pairs agree to
+every reported digit, and the selected epoch is the same in each. With it,
+none of the five pairs agree; the mean absolute difference is $0.0195$ F1 and
+the largest is $0.0414$. The instability is not confined to the final metric.
+In one pair the best validation F1 was reached at epoch $4$ in the first run
+and epoch $43$ in the second, so the two runs are not small perturbations of
+one another but different trajectories with similar endpoints.
+
+The number to compare this against is the spread of the architectures
+themselves. Across the five configurations of the cross-validated fusion
+comparison (Table~\ref{tab:cv}), the gap between the best and the worst mean
+F1 is $0.0205$. \textbf{A single run's replication error with graph attention
+is therefore of the same order as the entire architectural spread, and its
+worst case exceeds it.} This is the quantitative form of the argument made in
+the introduction: in this setting a one-run difference of one to three F1
+points is not evidence about an architecture, and the practice of reporting
+one is what the protocol of this study is designed to replace.
+
+\subsection{Equivalence, and What Non-Significance Does Not Mean}
+\label{sec:equivalence}
+Several comparisons in this paper end without a significant difference. A
+non-significant result is a statement about what the data can resolve, not a
+finding that two methods perform the same; concluding equivalence from a large
+$p$-value inverts the logic of the test. Where this paper needs to say that
+two operators are interchangeable, it tests that claim directly.
+
+\textbf{Two one-sided tests.} For an equivalence bound $\delta$, the two null
+hypotheses $H_{01}: \mu \le -\delta$ and $H_{02}: \mu \ge +\delta$ are each
+tested one-sided, and $p_{\mathrm{TOST}} = \max(p_1, p_2)$. Rejecting both
+places the difference inside $(-\delta, +\delta)$, which is equivalent to the
+$(1-2\alpha)$ confidence interval lying entirely within those bounds. Each
+comparison is reported as one of three outcomes: \emph{different} when the
+difference is significant after Holm correction, \emph{equivalent} when
+$p_{\mathrm{TOST}} < \alpha$, and \emph{undetermined} when neither holds. The
+third outcome is the honest description of most comparisons here, and we use
+that word rather than letting a large $p$-value imply the second.
+
+\textbf{The bound.} $\delta$ was fixed at $0.02$ F1 before the comparisons were
+run, and it was chosen from measurement noise rather than from the results.
+Two quantities set it: the run-to-run standard deviation under
+cross-validation, which ranges from $0.031$ to $0.054$ across configurations,
+and the mean replication error of an identical run reported above, $0.0195$.
+A difference smaller than either of these is below what the apparatus can
+resolve, so treating it as a real architectural effect would be interpreting
+noise. Alongside each test we also report $\delta_{\min}$, the smallest bound
+at which equivalence could have been declared, so that a reader who prefers a
+different bound can apply it without re-running anything.
+
+\textbf{Overlapping training sets.} In repeated cross-validation the training
+sets of different folds and repetitions overlap heavily---the same trip appears
+in the training portion of most partitions---so runs are not independent and
+the ordinary paired $t$-statistic underestimates the variance. The
+Nadeau--Bengio correction adds the overlap term,
+\begin{equation}
+  \hat{\sigma}^2_{\mathrm{corr}} = \left(\frac{1}{n} + \frac{n_{\mathrm{test}}}{n_{\mathrm{train}}}\right) S^2 ,
+  \label{eq:nadeau_bengio}
+\end{equation}
+where $n$ is the number of runs and $S^2$ the sample variance of the paired
+differences. With the trip as the unit, $n_{\mathrm{train}} = 59$ and
+$n_{\mathrm{test}} = 18$, giving an overlap ratio of $0.305$. On a pilot of two
+repetitions this widened the interval by a factor of $2.01$ and moved a
+comparison from $p = 0.174$ to $p = 0.482$---which is the entire point of
+applying it. The correction is used for every cross-validated comparison, and
+for equivalence tests as well, where a wider interval makes an equivalence
+claim harder rather than easier.
+
+\textbf{What the fixed partition can and cannot show.} On the fixed partition
+the same training set is used by every seed, so seed-level tests describe
+variation over initializations only and do not generalize to new data. Their
+resolution is also bounded combinatorially: with five seeds per configuration,
+an exact two-sample permutation test has $\binom{10}{5} = 252$ arrangements
+and a smallest attainable two-sided $p$-value of $2/252 = 0.0079$, which Holm
+correction over a family of four comparisons raises to $0.0317$. A
+fixed-partition comparison can therefore reach significance only when the two
+sets of runs separate completely. This is a property of the design, not of any
+result obtained under it, and it is the reason the cross-validated analysis is
+treated as primary throughout.
+
 \subsection{Data Provenance and What the Model Sees}
 \label{sec:provenance}
 A reviewer asked directly whether the graph, the node features or the topology carry information from the test trajectories, and whether the attention layer passes messages over a graph that includes test segments. Both questions have a yes in them, and the answer is more useful stated as a table than as a paragraph. Table~\ref{tab:provenance} lists every input the model or the protocol touches, when it is fixed, and whether anything derived from the test partition reaches it.

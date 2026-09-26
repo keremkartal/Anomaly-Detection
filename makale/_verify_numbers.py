@@ -35,9 +35,16 @@ def load(name):
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
 
 
+# FAZ B dosyalari da denetime dahil: metne giren her p degeri ve her sayi
+# bunlardan birinde gecmek zorunda. F10_repeated_cv tam kosum bitince
+# listeye girer; pilot simdiden burada cunku makalede aniliyor.
 NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F5_cv", "F6_efficiency", "F7_cluster_stats",
-         "F8_effects_subtypes")
+         "F8_effects_subtypes",
+         "F10_pilot", "F10_repeated_cv", "F11_classic_cv",
+         "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
+         "F15_reproducibility", "F16_equivalence", "F18_inductive",
+         "F19_noise", "F20_window_stride", "F21_baseline_search")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -72,12 +79,21 @@ def check_protocol():
     if len(su) <= 1:
         print(f"{OK} seed listeleri uyumlu: {sorted(su)[0] if su else '—'}")
     else:
-        # F5 CV'de seed sayisi bilerek farkli (fold x seed tasarimi)
-        non_cv = {n: s for n, s in seeds.items() if n != "F5_cv"}
-        if len(set(non_cv.values())) <= 1:
+        # Capraz dogrulama deneylerinde seed sayisi BILEREK farklidir: orada
+        # gozlem birimi fold x seed'dir, sabit bolmede ise yalnizca seed.
+        # Ayrimin kendisi bir tasarim karari, tutarsizlik degil — ama CV
+        # dosyalari kendi aralarinda, sabit-bolme dosyalari da kendi
+        # aralarinda ayni seed listesini kullanmak zorunda.
+        CV_FILES = {"F5_cv", "F10_repeated_cv", "F10_pilot", "F11_classic_cv",
+                    "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
+                    "F18_inductive", "F19_noise", "F20_window_stride"}
+        non_cv = {n: s for n, s in seeds.items() if n not in CV_FILES}
+        cv = {n: s for n, s in seeds.items() if n in CV_FILES}
+        if len(set(non_cv.values())) <= 1 and len(set(cv.values())) <= 1:
             print(f"{OK} sabit-bolme seed listeleri uyumlu "
-                  f"{sorted(set(non_cv.values()))[0]}; F5 (CV) bilerek farkli "
-                  f"{seeds.get('F5_cv')}")
+                  f"{sorted(set(non_cv.values()))[0]}; capraz dogrulama "
+                  f"dosyalari kendi aralarinda uyumlu "
+                  f"{sorted(set(cv.values()))[0] if cv else '—'}")
         else:
             msg = f"seed listeleri uyusmuyor: {seeds}"
             failures.append(msg)
@@ -386,7 +402,9 @@ def _collect_pvalues():
     def walk(o):
         if isinstance(o, dict):
             for k, v in o.items():
-                if k in ("p_value", "p_holm", "p_raw") and isinstance(v, (int, float)):
+                if (k in ("p_value", "p_holm", "p_raw", "p_corrected", "p_tost",
+                          "p_lower", "p_upper", "p_naive_INVALID")
+                        and isinstance(v, (int, float))):
                     found.add(round(float(v), 4))
                 else:
                     walk(v)
