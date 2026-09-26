@@ -386,6 +386,73 @@ def check_stale_phrases():
     print()
 
 
+# ==================================================== E4. ESDEGERLIK DILI
+# Anlamsiz bir p degerinden esdegerlik cikarmak, bu makalenin duzeltmek
+# zorunda kaldigi hatalardan biriydi ve metne geri sizmasi kolaydir: bir
+# karsilastirmayi "fark yok" diye kisaltmak dogal gelir. Asagidaki kaliplar
+# yoklugu IDDIA eden ifadelerdir; her biri ya esdegerlik bolumune atif
+# yapmali, ya bir TOST sonucunun yaninda gecmeli, ya da acik yorumla
+# gerekcelendirilmeli.
+EQUIVALENCE_CLAIMS = [
+    r"statistically indistinguishable",
+    r"\bindistinguishable\b",
+    r"no measurable (benefit|difference|effect|gain)",
+    r"(shows|show|showed) no (benefit|difference|effect)",
+    r"performs? the same",
+    r"identical performance",
+    r"there is no difference",
+    r"are equivalent",
+    r"is equivalent to (the|a|another) (model|operator|encoder|variant)",
+]
+# Bir iddiayi gecerli kilan isaretler (ayni satirda ya da komsu satirda)
+EQUIVALENCE_SUPPORT = [
+    r"sec:equivalence", r"TOST", r"two one-sided",
+    r"p_\{\\mathrm\{TOST\}\}", r"% ESDEGERLIK-OK",
+]
+
+
+def check_equivalence_language():
+    print("E4. ESDEGERLIK DILI (yokluk iddialari gerekceli mi)")
+    lines = tex.split("\n")
+    # Esdegerlik bolumunun KENDISI bu ifadeleri tanimlamak icin kullaniyor
+    # ("...not a finding that two methods perform the same"). Orada gecen bir
+    # kalip iddia degil tanimdir, bu yuzden once her satirin hangi alt bolumde
+    # oldugunu buluyoruz ve o bolumu muaf tutuyoruz.
+    in_equiv, cur = [False] * len(lines), False
+    for i, line in enumerate(lines):
+        if re.search(r"\\(sub)*section\{", line):
+            cur = False
+        if "label{sec:equivalence}" in line:
+            cur = True
+        in_equiv[i] = cur
+
+    flagged, supported = [], 0
+    for i, line in enumerate(lines):
+        for pat in EQUIVALENCE_CLAIMS:
+            m = re.search(pat, line, re.IGNORECASE)
+            if not m:
+                continue
+            if in_equiv[i]:
+                supported += 1
+                break
+            # iddianin gecerliligini ayni ve komsu iki satirda ariyoruz:
+            # gerekce genellikle ayni cumlede ya da hemen ardindan gelir
+            window = "\n".join(lines[max(0, i - 1):i + 3])
+            if any(re.search(sp, window, re.IGNORECASE) for sp in EQUIVALENCE_SUPPORT):
+                supported += 1
+            else:
+                flagged.append((i + 1, m.group(0), line.strip()[:110]))
+            break
+    print(f"    gerekceli yokluk iddiasi : {supported}")
+    if flagged:
+        print(f"{FAIL} {len(flagged)} gerekcesiz esdegerlik/yokluk iddiasi:")
+        for ln, hit, ctx in flagged:
+            print(f"      satir {ln:4d} [{hit}]  {ctx}")
+        failures.append(f"{len(flagged)} esdegerlik iddiasi TOST'a baglanmamis")
+    else:
+        print(f"{OK} yokluk iddialarinin hepsi bir esdegerlik testine bagli")
+    print()
+
 # ======================================================== E3. IDDIA DENETIMI
 # C kontrolu bir SAYININ metinde bulundugunu dogrular. Metinde kalmis bir
 # IDDIAYI gormez. Tablo 11'in basligi "three seeds" derken tablo bes tohumluydu
@@ -519,6 +586,7 @@ if __name__ == "__main__":
     check_figure_scale()
     check_stale_phrases()
     check_claims()
+    check_equivalence_language()
     check_placeholders()
     print("=" * 78)
     if failures:
