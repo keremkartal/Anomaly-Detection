@@ -1,0 +1,185 @@
+{
+  "protocol": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "max_epochs": 50,
+    "patience": 15,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "grad_clip": 1.0,
+    "scheduler": [
+      0.5,
+      3
+    ],
+    "dropout": 0.2,
+    "select_by": "val_f1",
+    "threshold_rule": "argmax_val_f1",
+    "cudnn_deterministic": false,
+    "cudnn_benchmark": true,
+    "sequence_length": 50,
+    "step_size": 10,
+    "split_seed": 42,
+    "legacy_pipeline": false,
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "hash": "0902cd97ec17"
+  },
+  "design": {
+    "seed": 42,
+    "graph": "trip_instance",
+    "n_folds": 5,
+    "what_differs": "yalnizca GPU kayan nokta toplama sirasi; konfigurasyon, tohum, bolumleme ve protokol ozeti ayni",
+    "replicate_source": "B0 pilotunun rep0 dilimi"
+  },
+  "configs": {
+    "hybrid_gat": {
+      "has_gatconv": true,
+      "n_pairs": 5,
+      "pairs": [
+        {
+          "fold": 0,
+          "f1_run1": 0.8867924528301887,
+          "f1_run2": 0.9090909090909091,
+          "f1_delta": 0.022298456260720356,
+          "threshold_run1": 0.8799999999999999,
+          "threshold_run2": 0.9299999999999999,
+          "best_epoch_run1": 6,
+          "best_epoch_run2": 44,
+          "identical": false
+        },
+        {
+          "fold": 1,
+          "f1_run1": 0.8620689655172413,
+          "f1_run2": 0.8389513108614233,
+          "f1_delta": -0.023117654655818054,
+          "threshold_run1": 0.9299999999999999,
+          "threshold_run2": 0.42999999999999994,
+          "best_epoch_run1": 24,
+          "best_epoch_run2": 8,
+          "identical": false
+        },
+        {
+          "fold": 2,
+          "f1_run1": 0.8654434250764526,
+          "f1_run2": 0.9068825910931174,
+          "f1_delta": 0.04143916601666486,
+          "threshold_run1": 0.7599999999999999,
+          "threshold_run2": 0.42999999999999994,
+          "best_epoch_run1": 4,
+          "best_epoch_run2": 43,
+          "identical": false
+        },
+        {
+          "fold": 3,
+          "f1_run1": 0.8695652173913043,
+          "f1_run2": 0.8788368336025848,
+          "f1_delta": 0.009271616211280476,
+          "threshold_run1": 0.6,
+          "threshold_run2": 0.94,
+          "best_epoch_run1": 27,
+          "best_epoch_run2": 28,
+          "identical": false
+        },
+        {
+          "fold": 4,
+          "f1_run1": 0.9486404833836858,
+          "f1_run2": 0.9470588235294117,
+          "f1_delta": -0.0015816598542740534,
+          "threshold_run1": 0.8999999999999999,
+          "threshold_run2": 0.8099999999999999,
+          "best_epoch_run1": 3,
+          "best_epoch_run2": 2,
+          "identical": false
+        }
+      ],
+      "abs_delta_mean": 0.01954171059975156,
+      "abs_delta_max": 0.04143916601666486,
+      "delta_sd": 0.024344128412485972,
+      "delta_mean_signed": 0.009661984795714718,
+      "n_bit_identical": 0
+    },
+    "lstm_only": {
+      "has_gatconv": false,
+      "n_pairs": 5,
+      "pairs": [
+        {
+          "fold": 0,
+          "f1_run1": 0.8876080691642652,
+          "f1_run2": 0.8876080691642652,
+          "f1_delta": 0.0,
+          "threshold_run1": 0.8599999999999999,
+          "threshold_run2": 0.8599999999999999,
+          "best_epoch_run1": 43,
+          "best_epoch_run2": 43,
+          "identical": true
+        },
+        {
+          "fold": 1,
+          "f1_run1": 0.8548241659152389,
+          "f1_run2": 0.8548241659152389,
+          "f1_delta": 0.0,
+          "threshold_run1": 0.7799999999999999,
+          "threshold_run2": 0.7799999999999999,
+          "best_epoch_run1": 6,
+          "best_epoch_run2": 6,
+          "identical": true
+        },
+        {
+          "fold": 2,
+          "f1_run1": 0.914364640883978,
+          "f1_run2": 0.914364640883978,
+          "f1_delta": 0.0,
+          "threshold_run1": 0.95,
+          "threshold_run2": 0.95,
+          "best_epoch_run1": 24,
+          "best_epoch_run2": 24,
+          "identical": true
+        },
+        {
+          "fold": 3,
+          "f1_run1": 0.8301886792452831,
+          "f1_run2": 0.8301886792452831,
+          "f1_delta": 0.0,
+          "threshold_run1": 0.5199999999999999,
+          "threshold_run2": 0.5199999999999999,
+          "best_epoch_run1": 6,
+          "best_epoch_run2": 6,
+          "identical": true
+        },
+        {
+          "fold": 4,
+          "f1_run1": 0.9483282674772037,
+          "f1_run2": 0.9483282674772037,
+          "f1_delta": 0.0,
+          "threshold_run1": 0.6599999999999999,
+          "threshold_run2": 0.6599999999999999,
+          "best_epoch_run1": 4,
+          "best_epoch_run2": 4,
+          "identical": true
+        }
+      ],
+      "abs_delta_mean": 0.0,
+      "abs_delta_max": 0.0,
+      "delta_sd": 0.0,
+      "delta_mean_signed": 0.0,
+      "n_bit_identical": 5
+    }
+  },
+  "comparison_to_architecture": {
+    "cv_model_means": {
+      "hybrid_gat": 0.8831254352484619,
+      "stanet_gated": 0.8908409687901557,
+      "hybrid_concat": 0.8703402565701449,
+      "hybrid_crossatt": 0.8894285450004066,
+      "lstm_only": 0.8838573958523831
+    },
+    "largest_gap_between_models": 0.02050071222001082,
+    "largest_replication_error_with_gat": 0.04143916601666486,
+    "replication_error_exceeds_architecture_gap": true
+  }
+}

@@ -201,3 +201,135 @@ def compare_models(y, preds: dict, groups, reference: str,
         raw[k]["holm"] = holm[k]
     return {"reference": reference, "alpha": alpha,
             "cluster_info": cluster_summary(groups), "comparisons": raw}
+
+
+# --------------------------------------------------------------- tekrarli CV
+def nadeau_bengio(diffs, n_train, n_test, alpha=0.05):
+    """
+    Tekrarli capraz dogrulama icin duzeltilmis t-testi (Nadeau & Bengio, 2003).
+
+    NEDEN GEREKLI
+    -------------
+    Tekrarli k-fold CV'de egitim kumeleri buyuk olcude ORTUSUR: ayni trip,
+    farkli tekrarlarin cogunda egitimde yer alir. Kosular bu yuzden bagimsiz
+    degildir ve siradan t-testi varyansi oldugundan kucuk tahmin eder; guven
+    araliklari dar, p degerleri kucuk cikar.
+
+    Nadeau-Bengio duzeltmesi varyansa ortusme teriminı ekler:
+
+        sigma^2_duzeltilmis = (1/n + n_test / n_train) * S^2
+
+    Burada n kosu sayisi (tekrar x fold), S^2 kosular arasi ornek varyansi.
+    Bu calismada birim TRIP oldugu icin n_test ve n_train trip sayilaridir
+    (5-fold, 90 trip: 18 / 72 = 0.25).
+
+    degerlendirme notu tam olarak bunu istiyor: "uncertainty estimation that
+    accounts for seed variability and overlapping training sets".
+    """
+    from scipy import stats
+
+    d = np.asarray(diffs, dtype=float)
+    n = len(d)
+    if n < 2:
+        return None
+    mean = float(d.mean())
+    s2 = float(d.var(ddof=1))
+    ratio = n_test / n_train
+    var_corr = (1.0 / n + ratio) * s2
+    se = float(np.sqrt(var_corr))
+    df = n - 1
+    t = mean / se if se > 0 else 0.0
+    p = float(2 * stats.t.sf(abs(t), df))
+    crit = float(stats.t.ppf(1 - alpha / 2, df))
+
+    # karsilastirma icin duzeltilmemis hali
+    se_naive = float(np.sqrt(s2 / n))
+    t_naive = mean / se_naive if se_naive > 0 else 0.0
+    p_naive = float(2 * stats.t.sf(abs(t_naive), df))
+
+    return {
+        "n_runs": int(n), "n_train_units": int(n_train), "n_test_units": int(n_test),
+        "overlap_ratio": float(ratio),
+        "mean_diff": mean, "sd_diff": float(np.sqrt(s2)),
+        "se_corrected": se, "t_corrected": float(t), "p_corrected": p,
+        "ci_lo": mean - crit * se, "ci_hi": mean + crit * se,
+        "significant": bool(p < alpha),
+        "se_naive_INVALID": se_naive, "p_naive_INVALID": p_naive,
+        "ci_widening": float(se / se_naive) if se_naive > 0 else None,
+        "note": ("naive degerler yalnizca karsilastirma icindir; tekrarli CV'de "
+                 "egitim kumeleri ortustugu icin gecersizdir"),
+    }
+
+
+def tost_equivalence(diffs, delta, n_train=None, n_test=None, alpha=0.05):
+    """
+    TOST — iki tek yonlu test ile ESDEGERLIK.
+
+    NEDEN GEREKLI
+    -------------
+    Degerlendirmede isaretlendi: anlamsizlik ne faydanin yoklugunu ne de
+    esdegerligi kurar; esdegerlik iddiasi kendi testini gerektirir. Bizim ana
+    bulgumuz "hicbir fuzyon operatoru ayirt edilemiyor" — bu bir esdegerlik
+    imasi. Anlamsiz bir t-testi bunu KANITLAMAZ; yalnizca "bilmiyoruz" der.
+
+    TOST bunu tersine cevirir. Onceden belirlenmis bir esdegerlik siniri
+    delta icin iki tek yonlu hipotez sinanir:
+
+        H01: mu <= -delta   (A, B'den delta'dan fazla kotu)
+        H02: mu >= +delta   (A, B'den delta'dan fazla iyi)
+
+    Ikisi de reddedilirse |mu| < delta sonucuna varilir: fark, onceden
+    belirlenmis pratik onemsizlik sinirinin icindedir. p_TOST = max(p1, p2).
+    Esdegerlik <=> (1 - 2*alpha) guven araligi tamamen (-delta, +delta)
+    icinde kalir.
+
+    ORTUSME
+    -------
+    `n_train`/`n_test` verilirse standart hata Nadeau-Bengio ile
+    genisletilir. Bu MUHAFAZAKAR yondedir: genis SE esdegerlik ilan etmeyi
+    zorlastirir, kolaylastirmaz. Tekrarli CV farklarinda mutlaka verilmeli.
+
+    delta_min
+    ---------
+    "Hangi sinirdan itibaren esdegerlik ilan edebilirdik" sorusunun cevabi:
+    |ortalama| + t_(1-alpha) * SE. Onceden belirlenmis delta'nin keyfi
+    oldugu itirazini bu sayi karsilar — okur kendi sinirini uygulayabilir.
+    """
+    from scipy import stats
+
+    d = np.asarray(diffs, dtype=float)
+    n = len(d)
+    if n < 2:
+        return None
+    mean = float(d.mean())
+    s2 = float(d.var(ddof=1))
+    if n_train and n_test:
+        se = float(np.sqrt((1.0 / n + n_test / n_train) * s2))
+        se_kind = "nadeau_bengio"
+    else:
+        se = float(np.sqrt(s2 / n))
+        se_kind = "naive"
+    df = n - 1
+    if se <= 0:
+        return None
+
+    t_lo = (mean + delta) / se           # H01: mu <= -delta
+    t_hi = (mean - delta) / se           # H02: mu >= +delta
+    p_lo = float(stats.t.sf(t_lo, df))   # tek yonlu, saga
+    p_hi = float(stats.t.cdf(t_hi, df))  # tek yonlu, sola
+    p_tost = max(p_lo, p_hi)
+
+    crit = float(stats.t.ppf(1 - alpha, df))     # (1-2alpha) GA icin tek yonlu
+    lo, hi = mean - crit * se, mean + crit * se
+
+    return {
+        "n_runs": int(n), "delta": float(delta), "alpha": float(alpha),
+        "se_kind": se_kind, "se": se,
+        "mean_diff": mean, "sd_diff": float(np.sqrt(s2)),
+        "p_lower": p_lo, "p_upper": p_hi, "p_tost": p_tost,
+        "ci_lo_90": lo, "ci_hi_90": hi,
+        "equivalent": bool(p_tost < alpha),
+        "delta_min": float(abs(mean) + crit * se),
+        "note": ("esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; "
+                 "delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"),
+    }

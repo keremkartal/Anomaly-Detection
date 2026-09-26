@@ -114,3 +114,10 @@ gorevdagilim.md
 GRUP_MESAJI.md
 songelen/
 A1_SONUC.md
+B_BULGULAR.md
+
+# Model agirliklari. Metrik ve tahmin onbellegi (json + npz) tablolari birebir
+# yeniden uretmeye yeter ve izlenir; agirliklar yalnizca cikarim anindaki
+# duyarlilik deneyleri (gurultu, kenar silme) icin gerekir, kosu basina ~870 KB
+# tutar ve gerektiginde yeniden uretilir.
+results/_runs/**/*.pt

@@ -151,26 +151,46 @@ def build_dataset(legacy: bool = False, seed: int = C.SPLIT_SEED) -> Dataset:
 
 
 # --------------------------------------------------------------------------- Group K-fold
-def build_cv_folds(n_folds: int = C.N_FOLDS, legacy: bool = False):
+def build_cv_folds(n_folds: int = C.N_FOLDS, legacy: bool = False, repeat: int = 0):
     """
     Trip-bazlı K-fold. Her fold için scaler YALNIZCA o fold'un train'ine fit edilir.
     Döner: fold listesi; her eleman bir Dataset (val = test fold'un yarısı).
+
+    `repeat` — TEKRARLI bölümleme (Hakem 3, madde 3). `GroupKFold`
+    deterministiktir: aynı trip'ler her zaman aynı fold'lara düşer, dolayısıyla
+    tek bir bölümleme elde edilir. `repeat > 0` verildiğinde trip listesi o
+    tekrarın tohumuyla karıştırılıp `n_folds` eşit bloğa ayrılır. Gruplama
+    korunur — bir trip'in pencereleri asla iki fold'a bölünmez.
+
+    `repeat=0` eski davranışı (sade GroupKFold) birebir üretir, böylece
+    önceki sonuçlar geçerliliğini korur.
     """
     df_raw = load_raw()
     cleaning = df_raw.attrs.get("cleaning", {})
     trips_all = df_raw["trip_id"].values
     unique_trips = np.unique(trips_all)
 
-    gkf = GroupKFold(n_splits=n_folds)
-    dummy = np.zeros(len(unique_trips))
+    if repeat == 0:
+        gkf = GroupKFold(n_splits=n_folds)
+        dummy = np.zeros(len(unique_trips))
+        assignment = list(gkf.split(dummy, groups=unique_trips))
+    else:
+        # tekrara özel karıştırma, sonra eşit bloklar
+        rng = np.random.default_rng(C.SPLIT_SEED + 1000 * repeat)
+        perm = rng.permutation(len(unique_trips))
+        blocks = np.array_split(perm, n_folds)
+        assignment = [(np.concatenate([b for j, b in enumerate(blocks) if j != k]),
+                       blocks[k]) for k in range(n_folds)]
+
     folds = []
 
-    for k, (tr_idx, te_idx) in enumerate(gkf.split(dummy, groups=unique_trips)):
+    for k, (tr_idx, te_idx) in enumerate(assignment):
         te_trips = unique_trips[te_idx]
         tr_pool = unique_trips[tr_idx]
-        # train havuzundan val ayır (fold'a göre deterministik)
+        # train havuzundan val ayır (fold ve tekrara göre deterministik)
         tr_trips, va_trips = train_test_split(
-            tr_pool, test_size=0.1765, random_state=C.SPLIT_SEED + k, shuffle=True)
+            tr_pool, test_size=0.1765,
+            random_state=C.SPLIT_SEED + k + 1000 * repeat, shuffle=True)
 
         if legacy:
             scalers = _fit_scalers(df_raw["speed"].values, df_raw["accel"].values)
@@ -189,7 +209,8 @@ def build_cv_folds(n_folds: int = C.N_FOLDS, legacy: bool = False):
             X[va], y[va], meta[va], atype[va],
             X[te], y[te], meta[te], atype[te],
             scalers=scalers,
-            info={"fold": k, "legacy": legacy, "cleaning": cleaning,
+            info={"fold": k, "repeat": repeat, "legacy": legacy,
+                  "cleaning": cleaning,
                   "trips": {"train": len(tr_trips), "val": len(va_trips), "test": len(te_trips)},
                   "sequences": {"train": int(tr.sum()), "val": int(va.sum()), "test": int(te.sum())},
                   "anomaly_ratio": {"train": float(y[tr].mean()), "val": float(y[va].mean()),

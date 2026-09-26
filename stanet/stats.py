@@ -104,3 +104,53 @@ def aggregate_seeds(runs, keys=("f1", "roc_auc", "precision", "recall", "accurac
                       "min": float(v.min()), "max": float(v.max()), "n": int(len(v)),
                       "values": v.tolist()}
     return out
+
+
+def exact_two_sample(a, b, alternative="two-sided"):
+    """
+    Iki tohum kumesi arasinda TAM permutasyon testi (kucuk n icin).
+
+    NEDEN GEREKLI
+    -------------
+    Sabit bolmede her konfigurasyon ayni egitim kumesini gorur; tohum yalnizca
+    baslangic agirliklarini ve yigin sirasini degistirir. Tohum 42'nin A
+    kosusu ile tohum 42'nin B kosusu arasinda ESLESME yoktur — ayni RNG
+    akisini kullanmalari onlari istatistiksel olarak eslestirmez. Eslestirilmis
+    t-testi bu yuzden tartismaya acik; ayrica cokme yasayan konfigurasyonlarda
+    (ornegin uyarlanabilir komsuluk) dagilim iki tepeli oldugu icin ortalama
+    farki anlamli bir ozet degildir.
+
+    Tam permutasyon testi iki sorunu da asar: sifir hipotezi altinda n_a + n_b
+    degerin tum dagilimlari esit olasilikli sayilir, istatistik olarak
+    ortalama farki alinir ve TUM kombinasyonlar sayilir (varsayim yok,
+    yaklasim yok). n_a = n_b = 5 icin 252 kombinasyon vardir; en kucuk
+    iki yonlu p degeri 2/252 = 0.0079'dur.
+    """
+    from itertools import combinations
+
+    a = np.asarray(a, dtype=float).ravel()
+    b = np.asarray(b, dtype=float).ravel()
+    pool = np.concatenate([a, b])
+    n, na = len(pool), len(a)
+    obs = float(a.mean() - b.mean())
+
+    stats_ = []
+    idx = np.arange(n)
+    for c in combinations(idx, na):
+        m = np.zeros(n, dtype=bool)
+        m[list(c)] = True
+        stats_.append(pool[m].mean() - pool[~m].mean())
+    stats_ = np.asarray(stats_)
+
+    if alternative == "two-sided":
+        p = float((np.abs(stats_) >= abs(obs) - 1e-12).mean())
+    elif alternative == "greater":
+        p = float((stats_ >= obs - 1e-12).mean())
+    else:
+        p = float((stats_ <= obs + 1e-12).mean())
+    return {"n_a": int(na), "n_b": int(len(b)), "n_permutations": int(len(stats_)),
+            "mean_a": float(a.mean()), "mean_b": float(b.mean()),
+            "observed_diff": obs, "p_value": p, "alternative": alternative,
+            "significant": bool(p < 0.05),
+            "p_min_possible": float(2.0 / len(stats_)),
+            "complete_separation": bool(a.min() > b.max() or b.min() > a.max())}

@@ -1,0 +1,132 @@
+{
+  "protocol": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "max_epochs": 50,
+    "patience": 15,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "grad_clip": 1.0,
+    "scheduler": [
+      0.5,
+      3
+    ],
+    "dropout": 0.2,
+    "select_by": "val_f1",
+    "threshold_rule": "argmax_val_f1",
+    "cudnn_deterministic": false,
+    "cudnn_benchmark": true,
+    "sequence_length": 50,
+    "step_size": 10,
+    "split_seed": 42,
+    "legacy_pipeline": false,
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "hash": "0902cd97ec17"
+  },
+  "design": {
+    "repeats": [
+      0,
+      1
+    ],
+    "n_folds": 5,
+    "seeds": [
+      42
+    ],
+    "configs": [
+      "hybrid_gat",
+      "lstm_only"
+    ],
+    "graphs": [
+      "trip_instance"
+    ],
+    "note": "graf kurgusu secilmez; onceden belirlenmis faktordur"
+  },
+  "per_run": {
+    "trip_instance": {
+      "hybrid_gat": {
+        "r0_f0_s42": 0.9090909090909091,
+        "r0_f1_s42": 0.8389513108614233,
+        "r0_f2_s42": 0.9068825910931174,
+        "r0_f3_s42": 0.8788368336025848,
+        "r0_f4_s42": 0.9470588235294117,
+        "r1_f0_s42": 0.927536231884058,
+        "r1_f1_s42": 0.9267399267399268,
+        "r1_f2_s42": 0.8822355289421158,
+        "r1_f3_s42": 0.9448051948051948,
+        "r1_f4_s42": 0.8884955752212389
+      },
+      "lstm_only": {
+        "r0_f0_s42": 0.8876080691642652,
+        "r0_f1_s42": 0.8548241659152389,
+        "r0_f2_s42": 0.914364640883978,
+        "r0_f3_s42": 0.8301886792452831,
+        "r0_f4_s42": 0.9483282674772037,
+        "r1_f0_s42": 0.9253472222222222,
+        "r1_f1_s42": 0.9283154121863799,
+        "r1_f2_s42": 0.8141414141414142,
+        "r1_f3_s42": 0.9326923076923077,
+        "r1_f4_s42": 0.8905380333951762
+      }
+    }
+  },
+  "comparisons": {
+    "trip_instance": {
+      "hybrid_gat_vs_lstm_only": {
+        "n_paired": 10,
+        "diffs": [
+          0.021482839926643904,
+          -0.015872855053815638,
+          -0.007482049790860534,
+          0.04864815435730174,
+          -0.0012694439477919373,
+          0.0021890096618357724,
+          -0.0015754854464531398,
+          0.0680941148007016,
+          0.01211288711288705,
+          -0.0020424581739373338
+        ],
+        "nadeau_bengio": {
+          "n_runs": 10,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.012428471344651148,
+          "sd_diff": 0.026641660100908397,
+          "se_corrected": 0.016956422444609223,
+          "t_corrected": 0.732965422703443,
+          "p_corrected": 0.4822326063720448,
+          "ci_lo": -0.025929621144801625,
+          "ci_hi": 0.05078656383410392,
+          "significant": false,
+          "se_naive_INVALID": 0.008424832656690188,
+          "p_naive_INVALID": 0.17425749838949756,
+          "ci_widening": 2.012671721276751,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        }
+      }
+    }
+  },
+  "summary": {
+    "trip_instance": {
+      "hybrid_gat": {
+        "mean": 0.905063292576998,
+        "sd": 0.03365131952496937,
+        "min": 0.8389513108614233,
+        "n": 10
+      },
+      "lstm_only": {
+        "mean": 0.8926348212323468,
+        "sd": 0.04599734171603008,
+        "min": 0.8141414141414142,
+        "n": 10
+      }
+    }
+  },
+  "pilot": true
+}

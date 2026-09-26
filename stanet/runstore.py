@@ -154,6 +154,11 @@ def get_or_train(spec, seed, ds, node_idx, graph, device,
     if gw is not None:
         payload["gate"] = np.asarray(gw)
     np.savez_compressed(nf, **payload)
+    # Agirliklar da saklanir. Cikarim anindaki duyarlilik deneyleri (gurultu,
+    # kenar silme, indukfif kurulum) egitilmis modeli tekrar CALISTIRMAYI
+    # gerektirir; agirlik yoksa yeniden egitmek gerekir ve GAT'in
+    # nondeterminizmi yuzunden onbellekteki sayiyi birebir tutturamayiz.
+    torch.save(out["model"].state_dict(), d / f"{key}.pt")
 
     if verbose:
         print(f"  {key}: F1={m['f1']:.4f} AUC={m.get('roc_auc', float('nan')):.4f} "
@@ -166,6 +171,78 @@ def get_or_train(spec, seed, ds, node_idx, graph, device,
         torch.cuda.empty_cache()
     return {"metrics": m, "spec": spec, "protocol_hash": phash, "cached": False,
             "history": hist, "prob_test": pt, "prob_val": pv, "gate": gw}
+
+
+def weights_path(spec, seed) -> Path:
+    """Bu kosunun agirlik dosyasi (var olmak zorunda degil)."""
+    d, _ = _dirs()
+    return d / f"{spec_key(spec, seed)}.pt"
+
+
+def load_or_train_weights(spec, seed, ds, node_idx, graph, device, verbose=True):
+    """
+    Cikarim deneyleri icin EGITILMIS MODELI dondurur.
+
+    Uc durum var:
+
+      1. Agirlik dosyasi varsa: model kurulur, agirliklar yuklenir. Hicbir
+         sey yeniden egitilmez, metrik onbellegi de degismez.
+      2. Agirlik yok ama metrik onbellegi VAR (eski kosular): model yeniden
+         egitilir ve agirliklar kaydedilir, ama **metrik onbellegine
+         dokunulmaz**. GAT'in `scatter_add` toplamasi GPU'da deterministik
+         olmadigi icin yeniden egitim ayni sayiyi birebir vermez; makaledeki
+         degeri degistirmek yerine ikisini birden raporluyoruz
+         (`f1_cached`, `f1_retrained`) ki okur farki gorsun.
+      3. Hicbiri yoksa: `get_or_train` normal yolu isletir, agirlik da yazilir.
+
+    Doner: dict(model, f1_cached, f1_retrained, weights_reused, threshold_val)
+    """
+    from .train import train_model
+
+    d, _ = _dirs()
+    key = spec_key(spec, seed)
+    jf, wf = d / f"{key}.json", d / f"{key}.pt"
+
+    cached_metrics = None
+    if jf.exists():
+        cached_metrics = json.loads(jf.read_text(encoding="utf-8"))["metrics"]
+
+    if wf.exists():
+        model = _build(spec, graph).to(device)
+        model.load_state_dict(torch.load(wf, map_location=device))
+        model.eval()
+        if verbose:
+            print(f"  [agirlik] {key}", flush=True)
+        return {"model": model, "weights_reused": True,
+                "f1_cached": cached_metrics["f1"] if cached_metrics else None,
+                "f1_retrained": None,
+                "threshold_val": (cached_metrics or {}).get("threshold_val")}
+
+    if cached_metrics is None:                    # 3. durum — normal yol
+        get_or_train(spec, seed, ds, node_idx, graph, device, verbose=verbose)
+        return load_or_train_weights(spec, seed, ds, node_idx, graph, device,
+                                     verbose=False)
+
+    # 2. durum — yalnizca agirlik icin yeniden egit, metrigi BOZMA
+    set_seed(seed)
+    model = _build(spec, graph)
+    out = train_model(model, ds, node_idx, graph, seed=seed, device=device,
+                      select_by="val_f1", verbose=False, tag=key + "-weights")
+    nx_, ei_ = graph.to_tensors(device)
+    yv, pv, _ = predict(out["model"], out["loaders"]["val"], nx_, ei_, device)
+    yt, pt, _ = predict(out["model"], out["loaders"]["test"], nx_, ei_, device)
+    th = pick_threshold(yv, pv)
+    f1_new = compute_metrics(yt, pt, th)["f1"]
+    torch.save(out["model"].state_dict(), wf)
+    if verbose:
+        print(f"  [yeniden egitildi, yalnizca agirlik] {key}: "
+              f"onbellek F1={cached_metrics['f1']:.4f} yeni F1={f1_new:.4f}",
+              flush=True)
+    m = out["model"].to(device)
+    m.eval()
+    return {"model": m, "weights_reused": False,
+            "f1_cached": cached_metrics["f1"], "f1_retrained": float(f1_new),
+            "threshold_val": float(th)}
 
 
 def run_seeds(spec, seeds, ds, node_idx, graph, device, **kw):
