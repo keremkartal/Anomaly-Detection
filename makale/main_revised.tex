@@ -574,6 +574,41 @@ Both quantities are computable in closed form over per-trip contingency counts, 
 
 The consequence is a real loss of statistical power, and we state it plainly rather than absorbing it silently. The dataset contains $90$ trips in total, so the fixed test partition contains roughly $13$ independent units. Interval estimates on that partition are correspondingly wide. Under cross-validation every one of the $90$ trips receives an out-of-fold prediction, which is why the cross-validated results are treated as the primary evidence in this paper and the fixed-partition results as a secondary, more variable view of the same question. Window-level values are additionally reported in the accompanying result files, labelled as such, so that readers can see the magnitude of the difference the correct unit makes.
 
+\subsection{Data Provenance and What the Model Sees}
+\label{sec:provenance}
+A reviewer asked directly whether the graph, the node features or the topology carry information from the test trajectories, and whether the attention layer passes messages over a graph that includes test segments. Both questions have a yes in them, and the answer is more useful stated as a table than as a paragraph. Table~\ref{tab:provenance} lists every input the model or the protocol touches, when it is fixed, and whether anything derived from the test partition reaches it.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Provenance of every input. \emph{Test access} asks whether the item is computed from, or influenced by, data in the test partition.}
+  \label{tab:provenance}
+  \renewcommand{\arraystretch}{1.2}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}llc@{}}
+      \toprule
+      \textbf{Item} & \textbf{Fixed when} & \textbf{Test access} \\ \midrule
+      Road topology (edges) & before any split & \textbf{yes, by design} \\
+      Node features & before any split & \textbf{yes, by design} \\
+      GAT message passing & every forward pass & \textbf{yes, by design} \\
+      Trajectory windows & before split, by trip & no \\
+      Train/val/test partition & once, seed 42, grouped by trip & --- \\
+      Feature scalers & fitted on training trips only & no \\
+      Class weight $w_{pos}$ & from training labels only & no \\
+      Checkpoint selection & validation F1 of the same run & no \\
+      Decision threshold & validation F1 of the same run & no \\
+      Graph construction choice & \emph{not selected}; both reported & no \\
+      Label-purity ceiling & training labels only & no \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+The first three rows are the substantive admission. The road network is built once from the OpenStreetMap extract and held fixed, so every node---including those traversed only by test trips---is present in the graph during training, and the attention layer computes an embedding for all of them on every forward pass. The setting is \textbf{transductive}, and results should be read as such.
+
+This is not by itself label leakage: no test \emph{label} enters the graph, and the node features are static road attributes drawn from OpenStreetMap rather than from the trajectories. It does, however, mean that the model is never asked to embed a road it has not seen, and no result here supports a claim about generalisation to an unseen network. An inductive control, in which the training graph is restricted to training-trip nodes, is reported in Section~\ref{sec:graph_ablation}.
+
+The edge rule is simple enough to state in full. Each segment identifier has the form \texttt{<start node>-<end node>}, taken from the OpenStreetMap node pair it spans; a directed edge runs from segment $A$ to segment $B$ when $A$'s end node equals $B$'s start node. No edge is created from co-occurrence within a trip, from label similarity, or from any learned quantity. On the trip-instance graph this yields $53{,}660$ edges over $4{,}678$ nodes; merging duplicate traversals of the same physical road leaves $699$ edges over $628$ nodes.
+
+The last two rows record the corrections described in Sections~\ref{sec:protocol_note} and \ref{sec:graph_construction}. Earlier versions of this work placed a test-derived quantity in both: a threshold averaged across folds, and a label-purity ceiling computed over all partitions and used to choose a graph. Neither remains.
+
 \subsection{Evaluation Metrics}
 Performance is assessed using accuracy, precision, recall, F1-score, ROC-AUC, average precision, and---for the first time in this line of work---probability calibration via the Brier score and Expected Calibration Error (ECE).
 
@@ -730,6 +765,24 @@ This collapse is reproducible in the strongest sense available to us. The earlie
 
 Paired single-run tests are the wrong instrument for this comparison. On the median seed the gated model is indistinguishable from concatenation ($p = 1.000$) and from cross-attention ($p = 0.727$), and its difference from the static weighted sum is $-0.0379$ with interval $[-0.0708, -0.0119]$; none of these single-partition numbers reflects the $0.35$ standard deviation that is the substantive finding. Across-seed instability is not visible to a test that examines one seed. This is itself an argument for the multi-seed protocol of Section~\ref{sec:repeatability}.
 
+\begin{table}[!htbp]
+  \centering
+  \caption{Cost of the four fusion operators. Fusion parameters counts only the operator; total counts the whole model. Epochs and training time are means over the five fixed-partition seeds, on one NVIDIA RTX 4060 Laptop GPU. Latency is the median over a single window, measured on the trip-instance graph.}
+  \label{tab:fusion_cost}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lrrccccc@{}}
+      \toprule
+      \textbf{Fusion} & \textbf{Fusion par.} & \textbf{Total par.} & \textbf{Epochs} & \textbf{Train (min)} & \textbf{GPU (ms)} & \textbf{GPU cached} & \textbf{CPU (ms)} \\ \midrule
+      Static weighted sum & 1 & 220{,}802 & $34.4$ & $2.72$ & $2.87$ & $0.64$ & $27.82$ \\
+      Fixed concatenation & 0 & 222{,}849 & $19.8$ & $1.50$ & $2.56$ & $0.55$ & $23.14$ \\
+      Sample-wise gate & 4{,}161 & 224{,}962 & $31.4$ & $2.66$ & $2.80$ & $0.78$ & $25.07$ \\
+      Cross-attention & 16{,}640 & 237{,}441 & $30.0$ & $2.49$ & $2.91$ & $0.96$ & $19.83$ \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+Table~\ref{tab:fusion_cost} answers a question the ranking alone leaves open: what the four operators cost. The span in fusion parameters is four orders of magnitude, from none at all for concatenation to $16{,}640$ for cross-attention, yet total model size varies by under $8\%$ because the temporal branch dominates. Training time and single-window latency differ by less than the seed-to-seed variation in either. Cross-attention is the most expensive operator on every axis and finishes second of four under cross-validation and second on the fixed partition; the single scalar of the weighted sum is the cheapest learnable option and finishes third and first respectively. Neither ordering is significant (Section~\ref{sec:cv}), which is the point: the operators differ in cost far more than the measurements can distinguish them in accuracy.
+
 \subsection{Gate Behavior}
 \label{sec:gate_behaviour}
 
@@ -786,20 +839,25 @@ We \textbf{withdraw that claim}. Section~\ref{sec:subtype} examines whether the 
 \label{sec:subtype}
 Section~\ref{sec:reference_points} identified speed-limit violation as the one anomaly subtype whose defining rule depends on a quantity ($v_{\max}$) available only to the spatial branch. Pooling out-of-fold predictions gives 144 such sequences drawn from all 90 trips---enough for a stratified comparison that the single partition, with 13 positives from 14 trips, could not support. Table~\ref{tab:subtype} and Fig.~\ref{fig:subtype} report the result, with all tests at the trip level and Holm correction across the three subtypes.
 
-\begin{table}[!htbp]
+\begin{table*}[!t]
   \centering
-  \caption{Subtype stratification on pooled cross-validated predictions. Intervals and $p$-values are trip-level over all 90 trips; the Holm column corrects across the three subtypes.}
+  \caption{All anomaly subtypes present in the data, on pooled cross-validated predictions. Windows counts positive windows; Trips counts the trips containing at least one. Precision, recall and F1 are for the hybrid with weighted-sum fusion; the final columns compare it against the control without a spatial branch. Intervals and $p$-values are trip-level over the 90 trips and are reported only where the subtype has at least 5 positive trips and 30 positive windows; rows marked $\dagger$ are below that and are given descriptively. False positives are shared across rows: the negative set is held fixed and only the positive subset changes, so the hybrid records 89 false positives against every subtype and differences in F1 arise from recall. Subtype 6 of the taxonomy (GPS speed artefact) does not occur in the generated data.}
   \label{tab:subtype}
-  \renewcommand{\arraystretch}{1.2}
-  \resizebox{\columnwidth}{!}{%
-    \begin{tabular}{@{}lcccccc@{}}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lrrccccccc@{}}
       \toprule
-      \textbf{Subtype} & \textbf{$n$} & \textbf{Hybrid} & \textbf{LSTM-only} & \textbf{$\Delta$} & \textbf{Trip 95\% CI} & \textbf{Holm} \\ \midrule
-      Speed-limit violation & 144 & $0.1508$ & $\bm{0.2288}$ & $-0.0780$ & $[-0.2986, +0.1219]$ & 0.814 \\
-      Abnormal dwell & 1{,}154 & $\bm{0.9381}$ & $0.9307$ & $+0.0074$ & $[-0.0084, +0.0268]$ & 0.814 \\
-      Signal freeze & 62 & $0.0261$ & $\bm{0.0848}$ & $-0.0587$ & $[-0.1238, -0.0065]$ & 0.129 \\ \bottomrule
+      \textbf{Subtype} & \textbf{Windows} & \textbf{Trips} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{LSTM-only F1} & \textbf{$\Delta$} & \textbf{Trip 95\% CI} & \textbf{$p$} \\ \midrule
+      Abnormal dwell & 1{,}154 & 33 & $0.9250$ & $0.9515$ & $0.9381$ & $0.9307$ & $+0.0074$ & $[-0.0080, +0.0265]$ & 0.406 \\
+      Crash & 569 & 7 & $0.8578$ & $0.9438$ & $0.8987$ & $0.8935$ & $+0.0052$ & $[-0.0519, +0.1054]$ & 0.852 \\
+      Speed-limit violation & 144 & 28 & $0.1759$ & $0.1319$ & $0.1508$ & $0.2288$ & $-0.0780$ & $[-0.3044, +0.1152]$ & 0.506 \\
+      Signal freeze & 62 & 24 & $0.0220$ & $0.0323$ & $0.0261$ & $0.0848$ & $-0.0587$ & $[-0.1283, -0.0046]$ & 0.043 \\
+      Abnormal heading change$^{\dagger}$ & 21 & 13 & $0.0220$ & $0.0952$ & $0.0357$ & $0.0336$ & $+0.0021$ & --- & --- \\
+      Abnormal acceleration$^{\dagger}$ & 19 & 15 & $0.0111$ & $0.0526$ & $0.0183$ & $0.0342$ & $-0.0158$ & --- & --- \\
+      GPS acceleration artefact$^{\dagger}$ & 8 & 8 & $0.0111$ & $0.1250$ & $0.0204$ & $0.0377$ & $-0.0173$ & --- & --- \\
+      GPS heading artefact$^{\dagger}$ & 8 & 6 & $0.0000$ & $0.0000$ & $0.0000$ & $0.0000$ & $+0.0000$ & --- & --- \\ \bottomrule
     \end{tabular}}
-\end{table}
+\end{table*}
 
 \begin{figure}[!htbp]
   \centering
@@ -818,6 +876,36 @@ It was an artifact of the pooling defect described in Section~\ref{sec:protocol_
 \textbf{What remains is a hint in the opposite direction.} Signal freeze has an uncorrected trip-level $p$ of $0.0431$ and an interval of $[-0.1238, -0.0065]$ that excludes zero---but the sign is negative: the hybrid is \emph{worse} than the control ($0.0261$ versus $0.0848$). After correction across the three subtypes it is not significant ($0.129$), and with 62 positive windows we do not claim it. We report it because it is now the comparison closest to significance in the study, and reporting only the directions that favour the proposed architecture is the practice this paper argues against.
 
 Across all three subtypes, therefore, \textbf{no evidence remains that the spatial branch contributes to detection}.
+
+\subsection{Effect Sizes and the Distribution Across Trips}
+\label{sec:effect_sizes}
+A pooled difference is a single number, and a reader is entitled to ask whether it summarises a consistent effect or averages over trips that disagree. Fig.~\ref{fig:per_trip} shows the per-trip differences behind the three comparisons that matter most, and Table~\ref{tab:effect_sizes} gives standardised effect sizes for them.
+
+Two features of the design constrain what this can show. Only $39$ of the $90$ trips contain at least one positive window, so a per-trip F1 is defined for those $39$; the remaining $51$ contribute false positives but no recall, and are reported separately in the result files. The effective sample for any trip-level statement about detection quality is therefore smaller than the trip count alone suggests.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Standardised effect sizes over the 39 trips containing at least one positive window. Cohen's $d$ is computed on the paired per-trip differences. The final column counts trips favouring the first model against the second, with ties omitted.}
+  \label{tab:effect_sizes}
+  \renewcommand{\arraystretch}{1.15}
+  \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}lcccc@{}}
+      \toprule
+      \textbf{Comparison} & \textbf{Mean $\Delta$} & \textbf{s.d.} & \textbf{Cohen's $d$} & \textbf{Trips for / against} \\ \midrule
+      Weighted sum vs.\ LSTM only & $-0.0092$ & $0.0885$ & $-0.10$ & 18 / 14 \\
+      Gated vs.\ LSTM only & $-0.0146$ & $0.0899$ & $-0.16$ & 15 / 16 \\
+      Gated vs.\ weighted sum & $-0.0054$ & $0.0330$ & $-0.16$ & 12 / 18 \\ \bottomrule
+    \end{tabular}}
+\end{table}
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_F8_per_trip.png}
+  \caption{Per-trip differences in F1 for the three principal comparisons, over the 39 trips that contain at least one positive window. Each point is one trip; the horizontal band is the trip-level cluster-bootstrap interval for the pooled difference. The differences are centred near zero with trips falling on both sides, and each comparison has one trip whose difference is an order of magnitude larger than the rest.}
+  \label{fig:per_trip}
+\end{figure*}
+
+All three effect sizes are small by any conventional reading: $|d| \leq 0.16$. More informative than the magnitude is the split. For the weighted-sum hybrid against the temporal-only control, 18 trips favour the hybrid and 14 favour the control, with 7 tied. A pooled mean of $-0.0092$ is not a small consistent advantage; it is the average of a distribution straddling zero. The single trip at $-0.4444$ contributes more to that mean than the median trip does, which is the behaviour the trip-level resampling of Section~\ref{sec:statistical_unit} is designed to account for.
 
 \subsection{Calibration}
 \label{sec:calibration}

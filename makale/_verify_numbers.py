@@ -35,7 +35,8 @@ def load(name):
 
 
 NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
-         "F5_cv", "F6_efficiency", "F7_cluster_stats")
+         "F5_cv", "F6_efficiency", "F7_cluster_stats",
+         "F8_effects_subtypes")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -207,6 +208,26 @@ def check_numbers():
         ref = J["F7_cluster_stats"]["families"]["baselines"]["reference_ci"]
         chk("F7 referans trip GA alt", ref["lo"])
         chk("F7 referans trip GA ust", ref["hi"])
+
+    # F8: alt-tip tablosu ve etki boyutlari (A3, A5)
+    f8 = J.get("F8_effects_subtypes")
+    if f8:
+        for name, v in f8["subtypes"].items():
+            en = v["name_en"]
+            chk(f"F8 {en} hibrit P", v["hybrid"]["precision"])
+            chk(f"F8 {en} hibrit R", v["hybrid"]["recall"])
+            chk(f"F8 {en} hibrit F1", v["hybrid"]["f1"])
+            chk(f"F8 {en} lstm F1", v["lstm_only"]["f1"])
+            chk(f"F8 {en} delta", v["delta_f1"])
+            if not v["sparse"]:
+                cb = v["cluster_bootstrap"]
+                chk(f"F8 {en} GA alt", cb["lo"])
+                chk(f"F8 {en} GA ust", cb["hi"])
+        for pair, v in f8["effects"].items():
+            e = v["effect_size"]
+            chk(f"F8 {pair} ort fark", e["mean_delta"])
+            chk(f"F8 {pair} sd", e["sd_delta"])
+            chk(f"F8 {pair} Cohen d", e["cohens_d"], 2)
 
     ok = [c for c in checks if c[2]]
     bad = [c for c in checks if not c[2]]

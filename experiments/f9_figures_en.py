@@ -259,6 +259,55 @@ def fig_benchmark():
     return save(fig, "fig_F4_benchmark.png")
 
 
+def fig_per_trip():
+    """
+    A3 — trip bazli fark dagilimi (Hakem 1, madde 2).
+
+    Hakem "per-trip performance distributions" istedi. Havuzlanmis bir F1
+    farki tek bir sayidir ve 39 trip'in her birinde ayni yonde oldugunu
+    ima eder; bu figur etmedigini gosterir.
+    """
+    p8 = C.RESULTS_DIR / "F8_effects_subtypes.json"
+    if not p8.exists():
+        return None
+    r = load_json(p8)
+    PAIRS = [("hybrid_gat_vs_lstm_only", "Weighted-sum hybrid\nvs LSTM only"),
+             ("stanet_gated_vs_lstm_only", "Gated hybrid\nvs LSTM only"),
+             ("stanet_gated_vs_hybrid_gat", "Gated\nvs weighted sum")]
+    PAIRS = [(k, l) for k, l in PAIRS if k in r["effects"]]
+
+    fig, axes = plt.subplots(1, len(PAIRS), figsize=(4.3 * len(PAIRS), 4.3),
+                             sharey=True, squeeze=False)
+    axes = axes[0]
+    for ax, (key, lbl) in zip(axes, PAIRS):
+        e = r["effects"][key]
+        d = np.array([x["delta"] for x in e["per_trip"]])
+        es = e["effect_size"]
+        ax.axhline(0, color="black", lw=1, zorder=1)
+        jitter = np.linspace(-0.22, 0.22, len(d))
+        ax.scatter(jitter, d, s=34, alpha=0.75, zorder=3,
+                   color=[PALETTE["stanet"] if v > 0 else PALETTE["concat"]
+                          for v in d], edgecolor="black", linewidth=0.4)
+        ax.hlines(es["mean_delta"], -0.30, 0.30, color=PALETTE["lstm"],
+                  lw=2.2, zorder=4, label="mean")
+        cb = e["cluster_bootstrap"]
+        ax.fill_between([-0.30, 0.30], cb["lo"], cb["hi"], color=PALETTE["lstm"],
+                        alpha=0.16, zorder=2, label="95% CI (trip cluster)")
+        ax.set_xlim(-0.42, 0.42)
+        ax.set_xticks([])
+        ax.set_title(f"{lbl}\n$d$ = {es['cohens_d']:+.2f}   "
+                     f"{es['trips_favouring_a']}/{es['trips_favouring_b']} trips",
+                     fontsize=10)
+        ax.grid(axis="y", alpha=0.3)
+    axes[0].set_ylabel("Per-trip difference in F1")
+    axes[0].legend(fontsize=8, loc="lower left")
+    n = r["effects"][PAIRS[0][0]]["effect_size"]["n_trips"]
+    fig.suptitle(f"Per-trip differences over the {n} trips that contain at least "
+                 f"one positive window (of {r['n_trips']} total)", fontsize=10)
+    fig.tight_layout()
+    return save(fig, "fig_F8_per_trip.png")
+
+
 def fig_subtype():
     """F5: alt-tip stratifikasyonu — uzamsal katkının olduğu yer."""
     p = C.RESULTS_DIR / "F5_cv.json"
@@ -366,7 +415,8 @@ def main():
     print("figürler üretiliyor...\n")
     made = []
     for fn in (fig_baseline_comparison, fig_roc_pr, fig_fusion_ablation,
-               fig_gate_distribution, fig_benchmark, fig_subtype,
+               fig_gate_distribution, fig_benchmark, fig_per_trip,
+               fig_subtype,
                fig_calibration, fig_efficiency):
         try:
             p = fn()
