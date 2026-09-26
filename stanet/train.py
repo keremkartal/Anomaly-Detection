@@ -49,12 +49,33 @@ def make_loaders(ds, node_idx, batch_size=C.BATCH_SIZE):
 
 
 def train_model(model, ds, node_idx, graph, seed=42, device=None,
-                max_epochs=C.MAX_EPOCHS, patience=C.PATIENCE,
-                lr=C.LEARNING_RATE, select_by="val_f1", verbose=True, tag=""):
+                max_epochs=None, patience=None,
+                lr=None, select_by="val_f1", verbose=True, tag="",
+                probe=None):
     """
     select_by: 'val_f1' | 'val_loss'  -> hem checkpoint hem early-stop bu kritere bağlı
     Döner: dict(history, best_epoch, best_score, state_dict, params, seconds)
+
+    `probe` — epoch sonunda çağrılan isteğe bağlı ölçüm işlevi:
+    `probe(model, va_loader, node_x, edge_index, device) -> dict`. Dönen
+    alanlar o epoch'un `history` kaydına eklenir. Füzyon kapısının çökme
+    mekanizmasını görmek için epoch bazında kapı dağılımı gerekiyor; bunu
+    son metrikten çıkarmak mümkün değil. Ölçüm `torch.no_grad()` ve `eval()`
+    altında yapılmalıdır — o durumda rastgelelik tüketilmez, dolayısıyla
+    eğitim protokolü değişmez ve önbellekteki koşularla karşılaştırılabilir
+    kalır.
+
+    Gradyan normu her epoch'ta kaydedilir: `clip_grad_norm_` kırpmadan ÖNCEki
+    toplam normu döndürür, biz de onu topluyoruz. Bu da eğitimi değiştirmez.
     """
+    # Varsayilanlar CAGRI aninda okunur, tanim aninda degil. Hiperparametre
+    # taramasi `C.LEARNING_RATE` gibi sabitleri gecici olarak degistirir ve
+    # protokol damgasi da onlari okur; varsayilan tanim aninda baglansaydi
+    # damga degisir ama egitim degismezdi — sessiz ve tehlikeli bir uyumsuzluk.
+    max_epochs = C.MAX_EPOCHS if max_epochs is None else max_epochs
+    patience = C.PATIENCE if patience is None else patience
+    lr = C.LEARNING_RATE if lr is None else lr
+
     device = device or get_device()
     set_seed(seed)
     model = model.to(device)
@@ -76,13 +97,15 @@ def train_model(model, ds, node_idx, graph, seed=42, device=None,
     for epoch in range(max_epochs):
         model.train()
         tl = 0.0
+        gnorms = []
         for x_b, y_b, i_b in tr_loader:
             x_b, y_b, i_b = x_b.to(device), y_b.to(device), i_b.to(device)
             opt.zero_grad()
             pred, _ = model(x_b, node_x, edge_index, i_b)
             loss = weighted_bce(pred, y_b, pw)
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), C.GRAD_CLIP)
+            gn = torch.nn.utils.clip_grad_norm_(model.parameters(), C.GRAD_CLIP)
+            gnorms.append(float(gn))
             opt.step()
             tl += loss.item()
         train_loss = tl / len(tr_loader)
@@ -102,9 +125,17 @@ def train_model(model, ds, node_idx, graph, seed=42, device=None,
         sched.step(val_loss)
 
         score = vm["f1"] if select_by == "val_f1" else -val_loss
-        history.append({"epoch": epoch + 1, "train_loss": train_loss,
-                        "val_loss": val_loss, "val_f1": vm["f1"],
-                        "val_auc": vm.get("roc_auc"), "lr": opt.param_groups[0]["lr"]})
+        rec = {"epoch": epoch + 1, "train_loss": train_loss,
+               "val_loss": val_loss, "val_f1": vm["f1"],
+               "val_auc": vm.get("roc_auc"), "lr": opt.param_groups[0]["lr"],
+               "grad_norm_mean": float(np.mean(gnorms)) if gnorms else None,
+               "grad_norm_max": float(np.max(gnorms)) if gnorms else None,
+               "grad_clipped_frac": (float(np.mean([g > C.GRAD_CLIP for g in gnorms]))
+                                     if gnorms else None)}
+        if probe is not None:
+            with torch.no_grad():
+                rec.update(probe(model, va_loader, node_x, edge_index, device))
+        history.append(rec)
 
         if score > best_score:
             best_score, best_epoch = score, epoch + 1

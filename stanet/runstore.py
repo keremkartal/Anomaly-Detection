@@ -131,6 +131,10 @@ def get_or_train(spec, seed, ds, node_idx, graph, device,
         "sec_per_epoch": out["seconds"] / max(1, len(out["history"])),
         "total_params": out["params"]["total"],
         "seed": seed,
+        # SECIM metrigi. Hiperparametre aramasi bunu kullanmali; test
+        # metrigiyle secim yapmak sizintidir.
+        "best_val_score": float(out["best_score"]),
+        "select_by": out["select_by"],
     })
     if hasattr(model, "fusion_parameters"):
         m["fusion_params"] = model.fusion_parameters()
