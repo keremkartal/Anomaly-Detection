@@ -718,6 +718,31 @@ sets of runs separate completely. This is a property of the design, not of any
 result obtained under it, and it is the reason the cross-validated analysis is
 treated as primary throughout.
 
+\subsubsection{Pooling Uses One Seed, and What That Costs}
+\label{sec:pooling_seed}
+Under cross-validation each configuration is trained at two seeds per fold,
+but the \emph{pooled} analyses---the subtype breakdown and the trip-level
+cluster tests---use the predictions of one seed only. Pooling both would
+enter every window twice and violate the independence the cluster resampling
+assumes at the trip level. The choice is deliberate, and it invites an
+obvious question: does the central negative result depend on which seed was
+pooled?
+
+Repeating the entire pooled analysis with the second seed answers it in two
+parts. The decisions are unchanged: under either seed, none of the four
+hybrid variants differs significantly from the temporal-only control after
+Holm correction. The point estimates are not merely unchanged in magnitude
+but unstable in \emph{sign}---in three of the four comparisons the difference
+against the control reverses direction between the two seeds, and pooled F1
+for fixed concatenation moves from $0.8528$ to $0.8885$ on the seed alone.
+
+We report this because it is a stronger statement than the one the paper
+would otherwise make. The claim is not only that these comparisons are not
+resolvable at this sample size; it is that their point estimates do not even
+retain their direction across two runs of the same configuration on the same
+partitions. Any reading of the pooled differences as small consistent effects
+would be reading run-to-run variation.
+
 \subsection{Data Provenance and What the Model Sees}
 \label{sec:provenance}
 A reviewer asked directly whether the graph, the node features or the topology carry information from the test trajectories, and whether the attention layer passes messages over a graph that includes test segments. Both questions have a yes in them, and the answer is more useful stated as a table than as a paragraph. Table~\ref{tab:provenance} lists every input the model or the protocol touches, when it is fixed, and whether anything derived from the test partition reaches it.

@@ -45,7 +45,8 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
-         "F22_imputation", "F23_data_audit", "F24_model_audit")
+         "F22_imputation", "F23_data_audit", "F24_model_audit",
+         "F25_pooled_seed")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
