@@ -45,7 +45,7 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
-         "F22_imputation", "F23_data_audit")
+         "F22_imputation", "F23_data_audit", "F24_model_audit")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -58,7 +58,7 @@ def check_protocol():
     # Egitim YAPMAYAN sonuc dosyalarinin protokol damgasi olmaz ve olmamalidir:
     # ham veriyi sayan bir denetimin epoch butcesiyle ya da cuDNN ayariyla
     # isi yoktur. Onlari damga karsilastirmasindan muaf tutuyoruz.
-    NO_PROTOCOL = {"F23_data_audit"}
+    NO_PROTOCOL = {"F23_data_audit", "F24_model_audit"}
     stamps = {n: v.get("protocol", {}).get("hash")
               for n, v in J.items()
               if v is not None and n not in NO_PROTOCOL}
@@ -174,6 +174,30 @@ def check_numbers():
                          ("veri: tip1 etiketsiz", rs["labelled_none"])):
             txt = f"{v:,}".replace(",", "{,}")
             checks.append((label, txt, txt in tex))
+
+    # --- mimari: modeller kurulup olculdu (F24). Denklem 15 / Tablo 5
+    # uyusmazligi bu sinifti; artik tablo sayilari koddan denetleniyor.
+    ma = J.get("F24_model_audit")
+    if ma:
+        gr = ma["graph"]
+        for label, v in (("mimari: dugum", gr["num_nodes"]),
+                         ("mimari: kenar", gr["num_edges"]),
+                         ("mimari: tekil yol", gr["num_unique_osm"])):
+            txt = f"{v:,}".replace(",", "{,}")
+            checks.append((label, txt, txt in tex))
+        ref = ma["models"]["gated"]
+        for label, v in (("mimari: zamansal parametre", ref["temporal_params"]),
+                         ("mimari: uzamsal parametre", ref["spatial_params"])):
+            txt = f"{v:,}".replace(",", "{,}")
+            checks.append((label, txt, txt in tex))
+        for f, d in ma["models"].items():
+            fp = d["fusion_params"]
+            if fp is None or fp < 2:      # 0 ve 1 metinde her yerde gecer
+                continue
+            txt = f"{fp:,}".replace(",", "{,}")
+            checks.append((f"mimari: fuzyon {f}", txt, txt in tex))
+        if not ma.get("gate_is_two_layer") or not ma.get("gate_has_tanh"):
+            failures.append("kapi kodda iki katmanli/tanh degil — Denklem 15 gecersiz")
 
     f1b, f3, f4, f5, f6, f2 = (J[n] for n in
                                ("F1b_fair", "F3_fusion", "F4_benchmark",

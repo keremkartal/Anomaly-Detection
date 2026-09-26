@@ -1,0 +1,303 @@
+{
+  "graph": {
+    "num_nodes": 4678,
+    "num_edges": 53660,
+    "num_features": 17,
+    "num_unique_osm": 628,
+    "feature_names": [
+      "length_log",
+      "max_speed",
+      "rarity_score",
+      "betweenness",
+      "closeness",
+      "node_degree",
+      "lanes",
+      "tunnel",
+      "traffic_light",
+      "road_type_motorway",
+      "road_type_motorway_link",
+      "road_type_primary",
+      "road_type_primary_link",
+      "road_type_secondary",
+      "road_type_secondary_link",
+      "road_type_trunk",
+      "road_type_trunk_link"
+    ]
+  },
+  "models": {
+    "gated": {
+      "total_params": 224962,
+      "temporal_params": 200704,
+      "spatial_params": 5568,
+      "fusion_params": 4161,
+      "temporal_share": 0.8921684551168642,
+      "spatial_share": 0.024750846809683414,
+      "layers": {
+        "temporal.lstm": {
+          "type": "LSTM",
+          "in": 4,
+          "hidden": 128,
+          "layers": 2,
+          "dropout": 0.2,
+          "params": 200704
+        },
+        "spatial.conv1": {
+          "type": "GATConv",
+          "in": 17,
+          "out": 32,
+          "heads": 2,
+          "params": 1280
+        },
+        "spatial.conv2": {
+          "type": "GATConv",
+          "in": 64,
+          "out": 64,
+          "heads": 1,
+          "params": 4288
+        },
+        "project_t": {
+          "type": "Linear",
+          "in": 128,
+          "out": 64,
+          "params": 8256
+        },
+        "project_s": {
+          "type": "Linear",
+          "in": 64,
+          "out": 64,
+          "params": 4160
+        },
+        "attention_gate.0": {
+          "type": "Linear",
+          "in": 128,
+          "out": 32,
+          "params": 4128
+        },
+        "attention_gate.1": {
+          "type": "Tanh"
+        },
+        "attention_gate.2": {
+          "type": "Linear",
+          "in": 32,
+          "out": 1,
+          "params": 33
+        },
+        "attention_gate.3": {
+          "type": "Sigmoid"
+        },
+        "classifier.0": {
+          "type": "Linear",
+          "in": 64,
+          "out": 32,
+          "params": 2080
+        },
+        "classifier.1": {
+          "type": "ReLU"
+        },
+        "classifier.3": {
+          "type": "Linear",
+          "in": 32,
+          "out": 1,
+          "params": 33
+        },
+        "classifier.4": {
+          "type": "Sigmoid"
+        }
+      }
+    },
+    "concat": {
+      "total_params": 222849,
+      "temporal_params": 200704,
+      "spatial_params": 5568,
+      "fusion_params": 0,
+      "temporal_share": 0.900627779348348,
+      "spatial_share": 0.024985528317380826,
+      "layers": {
+        "temporal.lstm": {
+          "type": "LSTM",
+          "in": 4,
+          "hidden": 128,
+          "layers": 2,
+          "dropout": 0.2,
+          "params": 200704
+        },
+        "spatial.conv1": {
+          "type": "GATConv",
+          "in": 17,
+          "out": 32,
+          "heads": 2,
+          "params": 1280
+        },
+        "spatial.conv2": {
+          "type": "GATConv",
+          "in": 64,
+          "out": 64,
+          "heads": 1,
+          "params": 4288
+        },
+        "project_t": {
+          "type": "Linear",
+          "in": 128,
+          "out": 64,
+          "params": 8256
+        },
+        "project_s": {
+          "type": "Linear",
+          "in": 64,
+          "out": 64,
+          "params": 4160
+        },
+        "classifier.0": {
+          "type": "Linear",
+          "in": 128,
+          "out": 32,
+          "params": 4128
+        },
+        "classifier.1": {
+          "type": "ReLU"
+        },
+        "classifier.3": {
+          "type": "Linear",
+          "in": 32,
+          "out": 1,
+          "params": 33
+        },
+        "classifier.4": {
+          "type": "Sigmoid"
+        }
+      }
+    },
+    "weighted_sum": {
+      "total_params": 220802,
+      "temporal_params": 200704,
+      "spatial_params": 5568,
+      "fusion_params": 1,
+      "temporal_share": 0.9089772737565783,
+      "spatial_share": 0.025217162888017317,
+      "layers": {
+        "temporal.lstm": {
+          "type": "LSTM",
+          "in": 4,
+          "hidden": 128,
+          "layers": 2,
+          "dropout": 0.2,
+          "params": 200704
+        },
+        "spatial.conv1": {
+          "type": "GATConv",
+          "in": 17,
+          "out": 32,
+          "heads": 2,
+          "params": 1280
+        },
+        "spatial.conv2": {
+          "type": "GATConv",
+          "in": 64,
+          "out": 64,
+          "heads": 1,
+          "params": 4288
+        },
+        "project_t": {
+          "type": "Linear",
+          "in": 128,
+          "out": 64,
+          "params": 8256
+        },
+        "project_s": {
+          "type": "Linear",
+          "in": 64,
+          "out": 64,
+          "params": 4160
+        },
+        "classifier.0": {
+          "type": "Linear",
+          "in": 64,
+          "out": 32,
+          "params": 2080
+        },
+        "classifier.1": {
+          "type": "ReLU"
+        },
+        "classifier.3": {
+          "type": "Linear",
+          "in": 32,
+          "out": 1,
+          "params": 33
+        },
+        "classifier.4": {
+          "type": "Sigmoid"
+        }
+      }
+    },
+    "cross_attention": {
+      "total_params": 237441,
+      "temporal_params": 200704,
+      "spatial_params": 5568,
+      "fusion_params": 16640,
+      "temporal_share": 0.8452794588971576,
+      "spatial_share": 0.02345003600894538,
+      "layers": {
+        "temporal.lstm": {
+          "type": "LSTM",
+          "in": 4,
+          "hidden": 128,
+          "layers": 2,
+          "dropout": 0.2,
+          "params": 200704
+        },
+        "spatial.conv1": {
+          "type": "GATConv",
+          "in": 17,
+          "out": 32,
+          "heads": 2,
+          "params": 1280
+        },
+        "spatial.conv2": {
+          "type": "GATConv",
+          "in": 64,
+          "out": 64,
+          "heads": 1,
+          "params": 4288
+        },
+        "project_t": {
+          "type": "Linear",
+          "in": 128,
+          "out": 64,
+          "params": 8256
+        },
+        "project_s": {
+          "type": "Linear",
+          "in": 64,
+          "out": 64,
+          "params": 4160
+        },
+        "cross_attn.out_proj": {
+          "type": "Linear",
+          "in": 64,
+          "out": 64,
+          "params": 4160
+        },
+        "classifier.0": {
+          "type": "Linear",
+          "in": 64,
+          "out": 32,
+          "params": 2080
+        },
+        "classifier.1": {
+          "type": "ReLU"
+        },
+        "classifier.3": {
+          "type": "Linear",
+          "in": 32,
+          "out": 1,
+          "params": 33
+        },
+        "classifier.4": {
+          "type": "Sigmoid"
+        }
+      }
+    }
+  },
+  "gate_is_two_layer": true,
+  "gate_has_tanh": true
+}
