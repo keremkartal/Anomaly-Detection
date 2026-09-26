@@ -31,7 +31,6 @@ from stanet import config as C
 from stanet.cluster_stats import (cluster_bootstrap_diff, cluster_permutation_test,
                                   cluster_summary, holm_correction)
 from stanet.data import build_cv_folds
-from stanet.evaluate import compute_metrics
 from stanet.graph import build_graph, map_segments
 from stanet.runstore import get_or_train, make_spec
 from stanet.stats import aggregate_seeds, bootstrap_diff, mcnemar
@@ -71,6 +70,59 @@ def calibration(y_true, y_prob, bins=10):
     return {"brier": brier, "ece": float(ece), "reliability": curve}
 
 
+def pooled_metrics(y, prob, binary, threshold_note):
+    """
+    Havuzlanmis metrikler — esik sizintisi olmadan.
+
+    Esige BAGLI olanlar (precision, recall, F1, karmasiklik matrisi) her
+    fold'un KENDI dogrulama esigiyle ikili hale getirilmis tahminlerden
+    hesaplanir. Esikten BAGIMSIZ olanlar (ROC-AUC, PR-AUC) olasiliklardan.
+
+    v1'de bunun yerine tum esiklerin ortalamasi butun tahminlere
+    uygulaniyordu; bu, her fold'un test tahminlerini diger fold'larin
+    dogrulama setlerinden etkilenen bir esikle degerlendiriyordu.
+    """
+    y = np.asarray(y).ravel()
+    prob = np.asarray(prob).ravel()
+    b = np.asarray(binary).ravel().astype(int)
+
+    tp = int(((y == 1) & (b == 1)).sum())
+    fp = int(((y == 0) & (b == 1)).sum())
+    fn = int(((y == 1) & (b == 0)).sum())
+    tn = int(((y == 0) & (b == 0)).sum())
+    prec = tp / max(tp + fp, 1)
+    rec = tp / max(tp + fn, 1)
+    out = {
+        "threshold_policy": threshold_note,
+        "accuracy": (tp + tn) / max(len(y), 1),
+        "precision": prec, "recall": rec,
+        "f1": 2 * prec * rec / max(prec + rec, 1e-12),
+        "n": int(len(y)), "n_pos": int((y == 1).sum()),
+        "tn": tn, "fp": fp, "fn": fn, "tp": tp,
+        "confusion_matrix": [[tn, fp], [fn, tp]],
+    }
+    if len(np.unique(y)) > 1:
+        from sklearn.metrics import average_precision_score, roc_auc_score
+        out["roc_auc"] = float(roc_auc_score(y, prob))
+        out["pr_auc"] = float(average_precision_score(y, prob))
+    return out
+
+
+def pooled_by_type(y, prob, binary, atype, threshold_note):
+    """Alt-tip kirilimini ayni esik politikasiyla hesaplar."""
+    y = np.asarray(y).ravel()
+    atype = np.asarray(atype).ravel()
+    neg = y == 0
+    out = {}
+    for t in np.unique(atype[y == 1]):
+        m = neg | ((y == 1) & (atype == t))
+        name = C.ANOMALY_NAMES.get(int(t), str(t))
+        out[name] = pooled_metrics(y[m], np.asarray(prob)[m],
+                                   np.asarray(binary)[m], threshold_note)
+        out[name]["n_subtype"] = int(((y == 1) & (atype == t)).sum())
+    return out
+
+
 def main():
     device = get_device()
     graph = build_graph(merge_by_osm=MERGE)
@@ -107,6 +159,7 @@ def main():
 
     for name, cfg in CONFIGS.items():
         run_metrics, y_all, p_all, t_all, g_all = [], [], [], [], []
+        b_all, th_all = [], []      # A1: fold bazinda ikili tahmin ve esik
         for f in folds:
             k = f.info["fold"]
             for seed in SEEDS:
@@ -125,31 +178,33 @@ def main():
                     p_all.append(r["prob_test"])
                     t_all.append(f.type_test)
                     g_all.append(fold_trips[k])
+                    # A1: bu fold'un KENDI dogrulama esigi, KENDI tahminlerine
+                    b_all.append((r["prob_test"] > m["threshold_val"]).astype(int))
+                    th_all.append(float(m["threshold_val"]))
 
         y = np.concatenate(y_all); p = np.concatenate(p_all)
         t = np.concatenate(t_all); g = np.concatenate(g_all)
+        b = np.concatenate(b_all)
         agg = aggregate_seeds(run_metrics)
-        th_pool = float(np.mean([m["threshold_val"] for m in run_metrics]))
-        pooled_m = compute_metrics(y, p, th_pool)
-
-        # alt-tip stratifikasyonu (havuzlanmis - tum veri test'e girdi)
-        by_type, neg = {}, y == 0
-        for tt in np.unique(t[y == 1]):
-            mask = neg | ((y == 1) & (t == tt))
-            by_type[C.ANOMALY_NAMES.get(int(tt), str(tt))] = \
-                compute_metrics(y[mask], p[mask], th_pool)
+        note = "per_fold_validation"
+        pooled_m = pooled_metrics(y, p, b, note)
+        by_type = pooled_by_type(y, p, b, t, note)
 
         f1s = np.array([m["f1"] for m in run_metrics])
         results["models"][name] = {
             "config": cfg, "spec_base": {k2: v for k2, v in cfg.items()},
             "runs": run_metrics, "aggregate": agg,
-            "pooled": pooled_m, "pooled_threshold": th_pool,
+            "pooled": pooled_m,
+            # A1: tek bir havuz esigi YOK. Her fold kendi dogrulama esigini
+            # kendi test tahminlerine uyguladi; asagidaki liste o esiklerdir.
+            "pooled_threshold_policy": "per_fold_validation",
+            "pooled_fold_thresholds": th_all,
             "by_type_pooled": by_type, "calibration": calibration(y, p),
             "n_collapsed": int((f1s < COLLAPSE_THRESHOLD).sum()),
             "n_runs": int(len(f1s)), "worst_run_f1": float(f1s.min()),
             "pooled_from_seed": SEEDS[0],
         }
-        pooled[name] = (y, p, t, g, th_pool)
+        pooled[name] = (y, p, t, g, b)     # A1: esik yerine ikili tahmin
         print(f"  -> {name}: kosu-ort F1 {agg['f1']['mean']:.4f}+-{agg['f1']['std']:.4f} | "
               f"havuz F1 {pooled_m['f1']:.4f} | cokme "
               f"{results['models'][name]['n_collapsed']}/{len(f1s)} | "
@@ -188,16 +243,17 @@ def main():
           f"{order.index('stanet_gated')+1}/{len(FUSION_MODELS)}")
 
     # gated vs digerleri — trip duzeyinde, Holm duzeltmeli
-    yg, pg, _, gg, thg = pooled["stanet_gated"]
+    yg, pg, _, gg, bg = pooled["stanet_gated"]
     perm_p = {}
     fus_stats = {}
     for n in FUSION_MODELS:
         if n == "stanet_gated":
             continue
-        yo, po, _, go, tho = pooled[n]
+        yo, po, _, go, bo = pooled[n]
         assert np.array_equal(gg, go), "havuzlama sirasi uyusmuyor"
-        a_bin = (pg > thg).astype(int)
-        b_bin = (po > tho).astype(int)
+        # A1: ikili tahminler zaten her fold'un kendi dogrulama esigiyle
+        # uretildi; burada yeniden esikleme YOK.
+        a_bin, b_bin = bg, bo
         cb = cluster_bootstrap_diff(yg, a_bin, b_bin, gg, seed=0)
         cp = cluster_permutation_test(yg, a_bin, b_bin, gg, seed=0)
         fus_stats[n] = {"cluster_bootstrap": cb, "cluster_permutation": cp,
@@ -223,8 +279,8 @@ def main():
     print("KARAR B — Uzamsal dal, hiz asimi (tip 1) anomalilerinde katki sagliyor mu?")
     print("=" * 84)
     a_name, b_name = ISOLATION_PAIR
-    ya, pa, ta, ga, tha = pooled[a_name]
-    yb, pb, tb, gb, thb = pooled[b_name]
+    ya, pa, ta, ga, ba = pooled[a_name]
+    yb, pb, tb, gb, bb_ = pooled[b_name]
     assert np.array_equal(ya, yb) and np.array_equal(ta, tb), "fold siralari uyusmuyor"
     ci = cluster_summary(ga)
     print(f"  izolasyon: {a_name} (uzamsal var) vs {b_name} (uzamsal yok), "
@@ -239,18 +295,21 @@ def main():
         n_pos = int(((ya == 1) & (ta == tt)).sum())
         if n_pos == 0:
             continue
-        ma = compute_metrics(ya[mask], pa[mask], tha)
-        mb = compute_metrics(yb[mask], pb[mask], thb)
-        abin = (pa[mask] > tha).astype(int)
-        bbin = (pb[mask] > thb).astype(int)
+        note = "per_fold_validation"
+        abin, bbin = ba[mask], bb_[mask]
+        ma = pooled_metrics(ya[mask], pa[mask], abin, note)
+        mb = pooled_metrics(yb[mask], pb[mask], bbin, note)
         gm = ga[mask]
         cb = cluster_bootstrap_diff(ya[mask], abin, bbin, gm, seed=0)
         cp = cluster_permutation_test(ya[mask], abin, bbin, gm, seed=0)
         # pencere duzeyi degerler — ilk surumle karsilastirma icin, gecersiz
         # oldugu acikca etiketlenerek saklanir
         wl_mc = mcnemar(ya[mask], abin, bbin)
-        wl_bd = bootstrap_diff(ya[mask], pa[mask], pb[mask], threshold=tha,
-                               threshold_b=thb, seed=0)
+        # Pencere duzeyi deger yalnizca v1 ile karsilastirma icin saklanir.
+        # Ikili tahminler zaten fold bazinda uretildigi icin esik 0.5 ile
+        # geri okunur; bu bir yeniden esikleme degildir.
+        wl_bd = bootstrap_diff(ya[mask], abin.astype(float), bbin.astype(float),
+                               threshold=0.5, threshold_b=0.5, seed=0)
         karar[tname] = {
             "n_pos": n_pos, "n_trips": cb["n_trips"],
             "hybrid_f1": ma["f1"], "lstm_only_f1": mb["f1"],
@@ -301,10 +360,15 @@ def main():
               f"{cal['brier']:>8.4f} {cal['ece']:>7.4f}")
 
     save_json(results, C.RESULTS_DIR / "F5_cv.json")
-    np.savez_compressed(C.CACHE_DIR / "F5_pooled.npz",
-                        y=pooled[a_name][0], atype=pooled[a_name][2],
-                        trip=pooled[a_name][3].astype(str),
-                        **{f"p_{n}": v[1] for n, v in pooled.items()})
+    # A1: olasiliklarin yaninda IKILI tahminler de saklanir. Havuzlanmis
+    # analizde artik tek bir esik yok; sonradan yapilacak her analiz ayni
+    # fold-bazli ikili tahminleri kullanmali, yeniden esikleme yapmamali.
+    np.savez_compressed(
+        C.CACHE_DIR / "F5_pooled.npz",
+        y=pooled[a_name][0], atype=pooled[a_name][2],
+        trip=pooled[a_name][3].astype(str),
+        **{f"p_{n}": v[1] for n, v in pooled.items()},
+        **{f"b_{n}": v[4] for n, v in pooled.items()})
     print(f"\nkaydedildi: {C.RESULTS_DIR / 'F5_cv.json'} (protokol {stamp['hash']})")
 
 
