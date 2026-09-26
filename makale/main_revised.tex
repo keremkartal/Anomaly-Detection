@@ -497,7 +497,7 @@ Anomalies are injected during simulation according to the two-category, nine-sub
 
 \subsection{Feature Normalization, Sequences, and Partitioning}
 \label{sec:dataset_split}
-Velocity is normalized with Min--Max scaling and acceleration with Z-score standardization. \textbf{Scalers are fitted on the training partition only} and applied to validation and test data, avoiding the distributional leakage that arises when scaling precedes partitioning.
+Velocity is recorded in km/h at one-second resolution, and acceleration is not an independent channel: it is the first difference of velocity, $a_t = (v_t - v_{t-1})/3.6$~m/s$^2$. We state this because the two kinematic inputs are therefore deterministically related, which constrains what an input perturbation can mean---noise added to velocity must be propagated into acceleration, or the network is shown a combination that the data-generating process cannot produce. The relation was verified rather than assumed: over the entire test partition the ratio $(v_t - v_{t-1})/a_t$ equals $3.6000$ at both the 5th and the 95th percentile. Velocity is normalized with Min--Max scaling and acceleration with Z-score standardization. \textbf{Scalers are fitted on the training partition only} and applied to validation and test data, avoiding the distributional leakage that arises when scaling precedes partitioning.
 
 Trajectories are transformed into fixed-length sequences using a sliding window of $\tau = 50$ steps with a stride of 10, yielding 28{,}090 sequences of which 7.07\% are anomalous. The window label and road segment are taken from the final time step.
 
