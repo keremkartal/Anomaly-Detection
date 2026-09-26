@@ -143,8 +143,54 @@ def main(pdf_path):
         "0.1558": "v1 hiz asimi hibrit (yeni: 0.1469)",
         "0.9080": "v1 uzun duraklama hibrit (yeni: 0.9400)",
     }
+    # Bir v1 degeri zamanla mesru bir v2 degeriyle cakisabilir. O yuzden once
+    # guncel sonuc dosyalarindaki tum degerleri toplayip, orada gecen degerleri
+    # eskimis saymiyoruz.
+    live = set()
+
+    def _walk(o):
+        if isinstance(o, dict):
+            for v in o.values():
+                _walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                _walk(v)
+        elif isinstance(o, float):
+            live.add(f"{o:.4f}")
+            live.add(f"{abs(o):.4f}")
+
+    for j in (f1b, f2, f3, f4, f5, f6, f7):
+        if j is not None:
+            _walk(j)
+
+    # Bir eski deger metinde BILEREK anilmis olabilir ("the earlier version
+    # reported ..."). Cevresinde bu ifadelerden biri varsa geri cekme
+    # aciklamasidir, eskimis birakilmis bir sayi degildir.
+    HIST = ("earlier version", "previous version", "we withdraw",
+            "was an artifact", "reported in the previous")
+
+    def _deliberate(v):
+        for m in re.finditer(re.escape(v), text):
+            ctx = text[max(0, m.start() - 260): m.end() + 160].lower()
+            if not any(h in ctx for h in HIST):
+                return False          # en az bir gecis aciklamasiz
+        return True                   # tum gecisler aciklamali
+
     print("ESKIMIS (v1) SAYILAR HALA VAR MI\n")
-    found = [(v, d) for v, d in STALE.items() if v in text]
+    found, collided, historical = [], [], []
+    for v, d in STALE.items():
+        if v not in text:
+            continue
+        if v in live:
+            collided.append(v)
+        elif _deliberate(v):
+            historical.append(v)
+        else:
+            found.append((v, d))
+    if collided:
+        print(f"  (guncel deger olarak da geciyor: {collided})")
+    if historical:
+        print(f"  (geri cekme aciklamasi icinde bilerek aniliyor: {historical})")
     if found:
         print(f"  [DIKKAT] {len(found)} eskimis deger bulundu:")
         for v, desc in found:

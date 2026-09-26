@@ -79,10 +79,17 @@
       "num_features": 17,
       "unmapped": 0,
       "ambiguity": {
-        "nodes_used": 3153,
-        "mixed_label_nodes": 110,
-        "seq_share_in_mixed": 0.18405126379494482,
-        "theoretical_max_accuracy": 0.9512993939418509
+        "splits_used": [
+          "train"
+        ],
+        "nodes_used": 2109,
+        "mixed_label_nodes": 67,
+        "seq_share_in_mixed": 0.20186964424824722,
+        "theoretical_max_accuracy": 0.9457803155146336,
+        "v1_all_splits_INVALID": {
+          "theoretical_max_accuracy": 0.9512993939418509,
+          "note": "test etiketlerini de icerir; yalnizca v1 ile karsilastirma icin"
+        }
       },
       "graph_tag": "trip_instance"
     },
@@ -99,10 +106,17 @@
       "num_features": 17,
       "unmapped": 0,
       "ambiguity": {
-        "nodes_used": 466,
-        "mixed_label_nodes": 87,
-        "seq_share_in_mixed": 0.5449270202919189,
-        "theoretical_max_accuracy": 0.9345318617883058
+        "splits_used": [
+          "train"
+        ],
+        "nodes_used": 440,
+        "mixed_label_nodes": 61,
+        "seq_share_in_mixed": 0.46107504544274214,
+        "theoretical_max_accuracy": 0.9283822393554626,
+        "v1_all_splits_INVALID": {
+          "theoretical_max_accuracy": 0.9345318617883058,
+          "note": "test etiketlerini de icerir; yalnizca v1 ile karsilastirma icin"
+        }
       },
       "graph_tag": "osm_merged"
     }

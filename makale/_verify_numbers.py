@@ -194,6 +194,14 @@ def check_numbers():
         for key, v in f2["runs"].items():
             chk(f"F2 {key} F1", v["f1_mean"])
             chk(f"F2 {key} std", v["f1_std"])
+        # A2: etiket safligi tavani artik YALNIZCA egitim verisinden.
+        # Metindeki yuzde degerleri bu JSON alaniyla eslesmeli; eski
+        # (test etiketli) degerlerin metne geri sizmasini bu kontrol engeller.
+        for tag, v in f2["graphs"].items():
+            amb = v.get("ambiguity", {})
+            if "theoretical_max_accuracy" in amb:
+                chk(f"F2 {tag} etiket tavani %",
+                    amb["theoretical_max_accuracy"] * 100, 2)
 
     if J["F7_cluster_stats"]:
         ref = J["F7_cluster_stats"]["families"]["baselines"]["reference_ci"]
@@ -262,6 +270,10 @@ STALE_PHRASES = [
     (r"five for the fusion ablation, three", "tohum sayilari artik esit"),
     (r"Cross-experiment inconsistencies", "v1 ozet cumlesi"),
     (r"run-level reconciliation", "v1 ifadesi"),
+    # A2: test etiketleriyle hesaplanmis eski tavanlar
+    (r"95\.13", "eski etiket tavani (test etiketli) — yeni: 94.58"),
+    (r"93\.45", "eski etiket tavani (test etiketli) — yeni: 92.84"),
+    (r"the primary setting of the accuracy tables", "graf artik secilmiyor"),
 ]
 
 
@@ -330,7 +342,7 @@ def check_claims():
 
     lines = tex.split("\n")
     cited, skipped = [], 0
-    for m in re.finditer(r"p\s*(?:=|<)\s*([01]\.[0-9]+)", tex):
+    for m in re.finditer(r"p\s*(=|<)\s*([01]\.[0-9]+)", tex):
         idx = tex[:m.start()].count("\n")
         line_txt = lines[idx]
         if "Dropout" in line_txt or "dropout" in line_txt:
@@ -339,14 +351,19 @@ def check_claims():
         if "ESKI-DEGER" in line_txt:
             skipped += 1
             continue
-        cited.append((idx + 1, m.group(1), m.group(0)))
+        cited.append((idx + 1, m.group(1), m.group(2), m.group(0)))
 
     orphan = []
-    for line, txt, raw in cited:
-        dec = len(txt.split(".")[1])          # metinde kac ondalik yazilmis
+    for line, op, txt, raw in cited:
         val = float(txt)
-        # kaynak degeri AYNI hassasiyete yuvarlayip karsilastir
-        if not any(round(k, dec) == round(val, dec) for k in known):
+        if op == "<":
+            # "p < 0.001" bir ust sinirdir: sonuc dosyalarinda bu sinirin
+            # ALTINDA bir deger bulunmasi yeterli, birebir eslesme aranmaz.
+            ok = any(k < val for k in known)
+        else:
+            dec = len(txt.split(".")[1])      # metinde kac ondalik yazilmis
+            ok = any(round(k, dec) == round(val, dec) for k in known)
+        if not ok:
             orphan.append((line, txt, raw))
 
     print(f"    metindeki p degeri : {len(cited)}  (atlanan {skipped})")

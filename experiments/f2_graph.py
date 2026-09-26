@@ -52,10 +52,28 @@ def node_idx_for(ds, graph):
     return {"train": tr, "val": va, "test": te}, m1 + m2 + m3
 
 
-def label_ambiguity(ds, graph):
-    """Ayni dugume dusen sekanslarin etiket tutarliligi — GAT'in teorik tavani."""
+def label_ambiguity(ds, graph, splits=("train",)):
+    """
+    Ayni dugume dusen sekanslarin etiket tutarliligi — GAT'in teorik tavani.
+
+    `splits` VARSAYILAN OLARAK YALNIZCA EGITIM. Gerekce:
+
+    Ilk surumde bu fonksiyon train + val + test uzerinden hesapliyordu ve
+    cikan tavan (%95,13 vs %93,45) makalede graf kurgusunu SECME gerekcesi
+    olarak kullaniliyordu. Yani model secim kriteri test etiketlerini
+    iceriyordu. Hakem 3 (madde 4) bunu isaretledi ve haklıydi.
+
+    Iki degisiklik yapildi. Birincisi, tavan artik yalnizca egitim
+    etiketlerinden hesaplanir. Ikincisi ve daha onemlisi, makale artik graf
+    SECMIYOR: her iki kurgu da onceden belirlenmis bir deney faktoru olarak
+    ele alinip butun ana sonuclar iki grafta da raporlaniyor. Bu haliyle
+    tavan bir secim kriteri degil, verinin betimleyici bir ozelligidir.
+
+    `splits=("train", "val", "test")` ile eski deger yeniden uretilebilir;
+    yalnizca v1 ile karsilastirma icin.
+    """
     rows = []
-    for sp in ("train", "val", "test"):
+    for sp in splits:
         idx, _ = map_segments(getattr(ds, f"meta_{sp}"), graph)
         rows.append(pd.DataFrame({"node": idx, "y": getattr(ds, f"y_{sp}")}))
     df = pd.concat(rows)
@@ -63,7 +81,8 @@ def label_ambiguity(ds, graph):
     mixed = agg[(agg["mean"] > 0) & (agg["mean"] < 1)]
     ceiling = float((agg["mean"].apply(lambda p: max(p, 1 - p)) * agg["count"]).sum()
                     / agg["count"].sum())
-    return {"nodes_used": int(len(agg)), "mixed_label_nodes": int(len(mixed)),
+    return {"splits_used": list(splits),
+            "nodes_used": int(len(agg)), "mixed_label_nodes": int(len(mixed)),
             "seq_share_in_mixed": float(mixed["count"].sum() / agg["count"].sum()),
             "theoretical_max_accuracy": ceiling}
 
@@ -83,7 +102,11 @@ def main():
         tag = "merged" if merge else "original"
         graph = build_graph(merge_by_osm=merge)
         nidx, missing = node_idx_for(ds, graph)
-        amb = label_ambiguity(ds, graph)
+        amb = label_ambiguity(ds, graph)                       # yalnizca egitim
+        amb_v1 = label_ambiguity(ds, graph, ("train", "val", "test"))
+        amb["v1_all_splits_INVALID"] = {
+            "theoretical_max_accuracy": amb_v1["theoretical_max_accuracy"],
+            "note": "test etiketlerini de icerir; yalnizca v1 ile karsilastirma icin"}
         results["graphs"][tag] = {**graph.info, "unmapped": missing,
                                   "ambiguity": amb,
                                   "graph_tag": "osm_merged" if merge else "trip_instance"}
