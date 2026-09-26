@@ -343,10 +343,10 @@ Since $\mathbf{h}_{temp}$ and $\mathbf{h}_{spat}$ originate from different branc
   \mathbf{h}'_{spat} &= \text{ReLU}(\mathbf{W}_s \mathbf{h}_{spat} + \mathbf{b}_s)
 \end{align}
 
-Four fusion operators are considered. The \textbf{sample-wise scalar modality gate} originally proposed computes Eq.~\ref{eq:gate} and applies it in Eq.~\ref{eq:gated_fusion}:
+Four fusion operators are considered. The \textbf{sample-wise scalar modality gate} originally proposed computes Eq.~\ref{eq:gate} and applies it in Eq.~\ref{eq:gated_fusion}. The gate is a two-layer network, not the single projection written in the previous version of this paper: $\mathbf{W}_1 \in \mathbb{R}^{32 \times 128}$ and $\mathbf{w}_2 \in \mathbb{R}^{32}$, giving the $4{,}161$ parameters listed in Table~\ref{tab:fusion_config}. A reviewer noted the discrepancy between the equation and the table; the table and the released code were correct.
 \begin{equation}
   \label{eq:gate}
-  g_{gate} = \sigma(\mathbf{W}_g [\mathbf{h}'_{temp} \Vert \mathbf{h}'_{spat}] + b_g)
+  g_{gate} = \sigma\!\left(\mathbf{w}_2^{\top}\,\tanh\!\left(\mathbf{W}_1 [\mathbf{h}'_{temp} \Vert \mathbf{h}'_{spat}] + \mathbf{b}_1\right) + b_2\right)
 \end{equation}
 \begin{equation}
   \label{eq:gated_fusion}
@@ -369,7 +369,7 @@ The fused representation passes through a two-layer MLP ($64 \rightarrow 32 \rig
     \textbf{Component} & \textbf{Setting} & \textbf{Fusion parameters} \\ \midrule
     Temporal projection & Linear $128 \rightarrow 64$ + ReLU & --- \\
     Spatial projection & Linear $64 \rightarrow 64$ + ReLU & --- \\
-    Gated (proposed) & Linear $128\rightarrow32\rightarrow1$ + sigmoid & 4{,}161 \\
+    Gated (proposed) & Linear $128\rightarrow32$ + tanh, $32\rightarrow1$ + sigmoid & 4{,}161 \\
     Fixed concatenation & $[\mathbf{h}'_{temp} \Vert \mathbf{h}'_{spat}]$ & 0 \\
     Static weighted sum & single learnable scalar $s$ & 1 \\
     Cross-attention & 4-head, $d=64$ & 16{,}640 \\
@@ -628,7 +628,7 @@ Because several anomaly subtypes are defined as threshold functions of the model
 
 \begin{table}[!htbp]
   \centering
-  \caption{Reference points on the fixed test partition ($n=4{,}799$, 157 positives)}
+  \caption{\textbf{[Fixed partition, 5 seeds]}~ Reference points on the fixed test partition ($n=4{,}799$, 157 positives)}
   \label{tab:reference_points}
   \renewcommand{\arraystretch}{1.2}
   \resizebox{\columnwidth}{!}{%
@@ -652,7 +652,7 @@ None of these differences is statistically significant under paired testing (Tab
 
 \begin{table}[!htbp]
   \centering
-  \caption{Paired comparisons against the hybrid LSTM--GAT model. The two
+  \caption{\textbf{[Fixed partition, window-level tests]}~ Paired comparisons against the hybrid LSTM--GAT model. The two
   $\Delta$F1 columns are \emph{different quantities} and are reported
   separately: the first is the difference of five-seed means, the second is
   the difference on the median seed, which is the run the interval and the
@@ -693,7 +693,7 @@ Table~\ref{tab:encoder_benchmark} and Fig.~\ref{fig:encoder_benchmark} report th
 
 \begin{table}[!htbp]
   \centering
-  \caption{Encoder benchmark, five seeds, identical protocol. The $p$-values are paired McNemar tests against the LSTM--GAT row; Table~\ref{tab:trip_level} repeats them at the trip level.}
+  \caption{\textbf{[Fixed partition, 5 seeds, window-level tests]}~ Encoder benchmark, five seeds, identical protocol. The $p$-values are paired McNemar tests against the LSTM--GAT row; Table~\ref{tab:trip_level} repeats them at the trip level.}
   \label{tab:encoder_benchmark}
   \renewcommand{\arraystretch}{1.2}
   \resizebox{\columnwidth}{!}{%
@@ -734,7 +734,7 @@ We now hold both encoders fixed and vary only the fusion operator, over five see
 
 \begin{table}[!htbp]
   \centering
-  \caption{Fusion ablation, five seeds, all other components identical}
+  \caption{\textbf{[Fixed partition, 5 seeds]}~ Fusion ablation, five seeds, all other components identical}
   \label{tab:fusion_ablation}
   \renewcommand{\arraystretch}{1.2}
   \resizebox{\columnwidth}{!}{%
@@ -767,7 +767,7 @@ Paired single-run tests are the wrong instrument for this comparison. On the med
 
 \begin{table}[!htbp]
   \centering
-  \caption{Cost of the four fusion operators. Fusion parameters counts only the operator; total counts the whole model. Epochs and training time are means over the five fixed-partition seeds, on one NVIDIA RTX 4060 Laptop GPU. Latency is the median over a single window, measured on the trip-instance graph.}
+  \caption{\textbf{[Fixed partition, 5 seeds]}~ Cost of the four fusion operators. Fusion parameters counts only the operator; total counts the whole model. Epochs and training time are means over the five fixed-partition seeds, on one NVIDIA RTX 4060 Laptop GPU. Latency is the median over a single window, measured on the trip-instance graph.}
   \label{tab:fusion_cost}
   \renewcommand{\arraystretch}{1.15}
   \resizebox{\columnwidth}{!}{%
@@ -806,7 +806,7 @@ The fixed partition of Table~\ref{tab:dataset_split} contains 157 positive test 
 
 \begin{table}[!htbp]
   \centering
-  \caption{Five-fold trip-grouped cross-validation crossed with two seeds (ten runs per configuration, all 28{,}090 sequences). Collapse counts runs with $\mathrm{F1} < 0.30$.}
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds]}~ Five-fold trip-grouped cross-validation crossed with two seeds (ten runs per configuration, all 28{,}090 sequences). Collapse counts runs with $\mathrm{F1} < 0.30$.}
   \label{tab:cv}
   \renewcommand{\arraystretch}{1.2}
   \resizebox{\columnwidth}{!}{%
@@ -841,7 +841,7 @@ Section~\ref{sec:reference_points} identified speed-limit violation as the one a
 
 \begin{table*}[!t]
   \centering
-  \caption{All anomaly subtypes present in the data, on pooled cross-validated predictions. Windows counts positive windows; Trips counts the trips containing at least one. Precision, recall and F1 are for the hybrid with weighted-sum fusion; the final columns compare it against the control without a spatial branch. Intervals and $p$-values are trip-level over the 90 trips and are reported only where the subtype has at least 5 positive trips and 30 positive windows; rows marked $\dagger$ are below that and are given descriptively. False positives are shared across rows: the negative set is held fixed and only the positive subset changes, so the hybrid records 89 false positives against every subtype and differences in F1 arise from recall. Subtype 6 of the taxonomy (GPS speed artefact) does not occur in the generated data.}
+  \caption{\textbf{[Cross-validation, pooled, trip-level tests]}~ All anomaly subtypes present in the data, on pooled cross-validated predictions. Windows counts positive windows; Trips counts the trips containing at least one. Precision, recall and F1 are for the hybrid with weighted-sum fusion; the final columns compare it against the control without a spatial branch. Intervals and $p$-values are trip-level over the 90 trips and are reported only where the subtype has at least 5 positive trips and 30 positive windows; rows marked $\dagger$ are below that and are given descriptively. False positives are shared across rows: the negative set is held fixed and only the positive subset changes, so the hybrid records 89 false positives against every subtype and differences in F1 arise from recall. Subtype 6 of the taxonomy (GPS speed artefact) does not occur in the generated data.}
   \label{tab:subtype}
   \renewcommand{\arraystretch}{1.15}
   \resizebox{\textwidth}{!}{%
@@ -885,7 +885,7 @@ Two features of the design constrain what this can show. Only $39$ of the $90$ t
 
 \begin{table}[!htbp]
   \centering
-  \caption{Standardised effect sizes over the 39 trips containing at least one positive window. Cohen's $d$ is computed on the paired per-trip differences. The final column counts trips favouring the first model against the second, with ties omitted.}
+  \caption{\textbf{[Cross-validation, pooled, per-trip]}~ Standardised effect sizes over the 39 trips containing at least one positive window. Cohen's $d$ is computed on the paired per-trip differences. The final column counts trips favouring the first model against the second, with ties omitted.}
   \label{tab:effect_sizes}
   \renewcommand{\arraystretch}{1.15}
   \resizebox{\columnwidth}{!}{%
@@ -928,7 +928,7 @@ Section~\ref{sec:graph_construction} noted that the graph can be built from trip
 
 \begin{table}[!htbp]
   \centering
-  \caption{Effect of graph construction, five seeds. The fusion operator is
+  \caption{\textbf{[Fixed partition, 5 seeds]}~ Effect of graph construction, five seeds. The fusion operator is
   named explicitly in every row: an earlier version of this table labelled its
   hybrid rows only as ``hybrid'', which made them appear inconsistent with the
   fusion ablation of Table~\ref{tab:fusion_ablation} when in fact a different
@@ -961,7 +961,7 @@ The fixed test partition contains $4{,}799$ windows drawn from \textbf{14 trips}
 
 \begin{table}[!htbp]
   \centering
-  \caption{The same comparisons at the window level and at the trip level. $\Delta$F1 and intervals are computed on the median seed. Trip-level $p$-values come from sign-flip permutation over trips; the Holm column corrects within each family. Widening is the ratio of trip-level to window-level interval width.}
+  \caption{\textbf{[Fixed partition, window- \emph{and} trip-level]}~ The same comparisons at the window level and at the trip level. $\Delta$F1 and intervals are computed on the median seed. Trip-level $p$-values come from sign-flip permutation over trips; the Holm column corrects within each family. Widening is the ratio of trip-level to window-level interval width.}
   \label{tab:trip_level}
   \renewcommand{\arraystretch}{1.15}
   \resizebox{\columnwidth}{!}{%
@@ -1003,7 +1003,7 @@ Table~\ref{tab:efficiency} and Fig.~\ref{fig:efficiency} report parameter counts
 
 \begin{table}[!htbp]
   \centering
-  \caption{Single-window inference latency (median) and parameter counts, measured on the trip-instance graph ($4{,}678$ nodes)}
+  \caption{\textbf{[Single-window latency, no training]}~ Single-window inference latency (median) and parameter counts, measured on the trip-instance graph ($4{,}678$ nodes)}
   \label{tab:efficiency}
   \renewcommand{\arraystretch}{1.2}
   \resizebox{\columnwidth}{!}{%
