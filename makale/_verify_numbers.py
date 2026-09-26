@@ -14,6 +14,7 @@ Bes bagimsiz kontrol:
 Cikis kodu 0 = hepsi gecti, 1 = en az bir kontrol basarisiz.
 """
 import json
+import pathlib
 import re
 import sys
 from pathlib import Path
@@ -281,6 +282,60 @@ def check_figures():
     print()
 
 
+# =================================================== D2. FIGUR OKUNABILIRLIGI
+# Bir figur kagida girerken kuculurse icindeki yazi da kuculur. Tazelik
+# kontrolu (D) bunu gormez: figur guncel olabilir ama okunamayacak kadar
+# kucuk basilabilir. Bu kontrol, her figurun URETILDIGI genislik ile
+# BASILACAGI genisligi karsilastirir.
+#
+# IEEEtran journal: sutun 252 pt, iki sutun 516 pt (olculdu). Olcek 1'e
+# yakinsa kaynaktaki punto kagitta aynen gorunur; 0,9'un altina dusen her
+# figurde yazi orantili olarak kuculur.
+COL_PT, TEXT_PT, PT_PER_IN = 252.0, 516.0, 72.27
+MIN_SCALE = 0.90
+SMALLEST_SOURCE_PT = 6.5      # f9 betiklerindeki en kucuk punto
+MIN_PRINTED_PT = 6.0          # bunun altinda basili yazi okunmaz
+
+
+def check_figure_scale():
+    print("D2. FIGUR OKUNABILIRLIGI (basili olcek ve punto)")
+    try:
+        from PIL import Image
+    except ImportError:
+        print("    Pillow yok, atlandi\n")
+        return
+    pat = re.compile(
+        r"\\begin\{(figure\*?)\}(?:\[[^\]]*\])?(.*?)\\end\{\1\}", re.S)
+    inc = re.compile(
+        r"\\includegraphics\[width=([0-9.]+)\\(linewidth|textwidth)\]\{([^}]+)\}")
+    bad, checked = [], 0
+    for m in pat.finditer(tex):
+        env, body = m.group(1), m.group(2)
+        for im in inc.finditer(body):
+            frac, unit, fn = float(im.group(1)), im.group(2), im.group(3)
+            fp = pathlib.Path(TEX).parent / fn
+            if not fp.exists():
+                continue
+            base = COL_PT if env == "figure" else TEXT_PT
+            printed_in = frac * base / PT_PER_IN
+            img = Image.open(fp)
+            dpi = float(img.info.get("dpi", (200, 200))[0]) or 200.0
+            scale = printed_in / (img.size[0] / dpi)
+            checked += 1
+            if scale < MIN_SCALE or SMALLEST_SOURCE_PT * scale < MIN_PRINTED_PT:
+                bad.append((fn, env, scale, SMALLEST_SOURCE_PT * scale))
+    print(f"    kontrol edilen figur: {checked}")
+    if bad:
+        print(f"{FAIL} basili olcekte kuculen figurler:")
+        for fn, env, sc, pt in bad:
+            print(f"      {fn:28s} {env:8s} olcek {sc:.3f} -> "
+                  f"en kucuk yazi {pt:.1f} pt")
+        failures.append(f"{len(bad)} figur basili olcekte okunmuyor — "
+                        f"son genislikte uretin ya da figure* yapin")
+    else:
+        print(f"{OK} tum figurler basilacaklari genislikte uretilmis")
+    print()
+
 # ======================================================== E2. ESKIMIS IFADE
 # Sayi kontrolu (C) bir degerin metinde BULUNDUGUNU dogrular; metinde kalmis
 # ESKI bir ifadeyi yakalamaz. Tablo 11'in basligi "three seeds" derken tablo
@@ -443,6 +498,7 @@ if __name__ == "__main__":
     check_shared_run()
     check_numbers()
     check_figures()
+    check_figure_scale()
     check_stale_phrases()
     check_claims()
     check_placeholders()

@@ -20,15 +20,46 @@ from stanet import config as C
 from stanet.utils import init_console, load_json
 
 init_console()
-plt.rcParams.update({"font.size": 11, "figure.dpi": 150,
-                     "axes.grid": True, "grid.alpha": 0.3})
+# Figurler BASILACAKLARI genislikte uretilir (bkz. COL_IN / FULL_IN), bu
+# yuzden buradaki punto degerleri kagit uzerindeki punto degerleridir.
+# Onceki surumde figurler 8-12 in genisliginde cizilip 0,29-0,53 olcekle
+# kuculuyordu ve 7,5 pt'lik bir etiket kagitta 2,2 pt'ye dusuyordu.
+COL_IN = 3.42          # IEEEtran tek sutun: 0.98 x 252 pt
+FULL_IN = 6.78         # iki sutun: 0.95 x 516 pt
+plt.rcParams.update({
+    "font.size": 8, "figure.dpi": 150,
+    "axes.titlesize": 9, "axes.labelsize": 8,
+    "xtick.labelsize": 7.5, "ytick.labelsize": 7.5,
+    "legend.fontsize": 7.5, "figure.titlesize": 9,
+    "axes.grid": True, "grid.alpha": 0.25,
+    "axes.linewidth": 0.7, "grid.linewidth": 0.5,
+    "lines.linewidth": 1.2, "lines.markersize": 4,
+    "text.color": "black", "axes.labelcolor": "black",
+    "xtick.color": "black", "ytick.color": "black",
+    # savefig.bbox ozellikle "tight" DEGIL: kirpma tuvali buyutur ve
+    # dosya istenen genisligi asar (bkz. save()).
+    "savefig.bbox": "standard",
+})
 PALETTE = {"stanet": "#2E5EAA", "concat": "#D1495B", "lstm": "#00798C",
            "rule": "#8B8B8B", "ml": "#EDAE49", "other": "#66A182"}
 
 
 def save(fig, name):
+    """Figuru TAM olarak istenen genislikte kaydeder.
+
+    `bbox_inches="tight"` eksen disina tasan etiketleri korumak icin tuvali
+    BUYUTUR; sonucta dosya istenen genislikten genis cikar ve LaTeX onu geri
+    kucultur. Boylece basili punto yeniden dusuyordu. Bunun yerine once
+    `tight_layout` ile etiketler tuvalin ICINE yerlestirilir, sonra kirpma
+    yapilmadan kaydedilir: dosya genisligi figsize ile birebir ayni olur ve
+    basili punto kaynaktakiyle esitlenir.
+    """
     p = C.FIG_DIR / name
-    fig.savefig(p, bbox_inches="tight", dpi=200)
+    try:
+        fig.tight_layout(pad=0.35)
+    except Exception:
+        pass
+    fig.savefig(p, dpi=200)
     plt.close(fig)
     print(f"  -> {p.name}")
     return p
@@ -62,10 +93,10 @@ def fig_baseline_comparison():
     ref = r["hybrid_lstm_gat"]["aggregate"]["f1"]["mean"]
     n_seed = len(d["config"]["seeds"])
 
-    fig, ax = plt.subplots(figsize=(8, 4.4))
+    fig, ax = plt.subplots(figsize=(COL_IN, 2.45))
     b = ax.barh(names, f1, xerr=err, color=cols, edgecolor="black",
                 linewidth=0.5, error_kw={"ecolor": "black", "capsize": 3, "lw": 1})
-    ax.bar_label(b, labels=[f"{v:.4f}" for v in f1], padding=14, fontsize=9)
+    ax.bar_label(b, labels=[f"{v:.4f}" for v in f1], padding=14, fontsize=7.5)
     ax.set_xlabel(f"F1-Score (test set, threshold selected on validation; "
                   f"mean $\pm$ s.d. over {n_seed} seeds)")
     ax.set_xlim(0, 1.05)
@@ -84,7 +115,7 @@ def fig_roc_pr():
             ("lightgbm_median", "LightGBM", PALETTE["ml"]),
             ("xgboost_median", "XGBoost", PALETTE["other"]),
             ("random_forest_median", "Random Forest", PALETTE["concat"])]
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.4))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_IN, 2.9))
     for k, lbl, c in keys:
         if k not in d.files:
             continue
@@ -101,9 +132,9 @@ def fig_roc_pr():
     axes[1].axhline(y.mean(), color="gray", ls=":", lw=1,
                     label=f"chance ({y.mean():.3f})")
     for a in axes:
-        a.legend(fontsize=8, loc="lower left" if a is axes[1] else "lower right")
+        a.legend(fontsize=7, loc="lower left" if a is axes[1] else "lower right")
     fig.suptitle("Median-seed predictions from the same runs reported in Table 9",
-                 fontsize=9, y=1.02)
+                 fontsize=7.5, y=1.02)
     fig.tight_layout()
     return save(fig, "fig_F1_roc_pr.png")
 
@@ -130,7 +161,7 @@ def fig_fusion_ablation():
 
     r5 = load_json(p5) if p5.exists() else None
     ncol = 2 if r5 else 1
-    fig, axes = plt.subplots(1, ncol, figsize=(6.0 * ncol, 4.6), squeeze=False)
+    fig, axes = plt.subplots(1, ncol, figsize=(FULL_IN, 3.0), squeeze=False)
     axes = axes[0]
 
     def panel(ax, values, title, sub):
@@ -144,11 +175,11 @@ def fig_fusion_ablation():
             ax.scatter(np.full(len(v), i) + np.linspace(-0.14, 0.14, len(v)), v,
                        s=22, color="black", alpha=0.55, zorder=3)
             ax.text(i, means[i] + stds[i] + 0.03, f"{means[i]:.4f}",
-                    ha="center", fontsize=8.5)
+                    ha="center", fontsize=7)
         ax.set_xticks(x)
-        ax.set_xticklabels([labels[f] for f in order], fontsize=9)
+        ax.set_xticklabels([labels[f] for f in order], fontsize=7.5)
         ax.set_ylabel("F1-Score")
-        ax.set_title(f"{title}\n{sub}", fontsize=10.5)
+        ax.set_title(f"{title}\n{sub}", fontsize=9)
         ax.set_ylim(0, 1.18)
 
     v3 = {f: [run["f1"] for run in r3["variants"][f]["runs"]] for f in order}
@@ -168,7 +199,7 @@ def fig_fusion_ablation():
             axes[1].set_ylabel("")
 
     fig.suptitle("The fusion ranking is partition-dependent: bars are means, "
-                 "dots are individual runs", fontsize=10, y=1.00)
+                 "dots are individual runs", fontsize=8.5, y=1.00)
     fig.tight_layout()
     return save(fig, "fig_F3_fusion_ablation.png")
 
@@ -180,7 +211,7 @@ def fig_gate_distribution():
         return None
     r = load_json(p)
     runs = r["variants"]["gated"]["runs"]
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_IN, 2.7))
     seeds = [x["seed"] for x in runs]
     lo = [x["gate"]["min"] for x in runs]
     hi = [x["gate"]["max"] for x in runs]
@@ -194,22 +225,22 @@ def fig_gate_distribution():
     axes[0].axhline(0.5, color="k", ls="--", lw=0.9, alpha=0.6,
                     label="0.5 (equal weight)")
     axes[0].set_xticks(xs)
-    axes[0].set_xticklabels([f"seed {s}" for s in seeds], fontsize=9)
+    axes[0].set_xticklabels([f"seed {s}" for s in seeds], fontsize=7.5)
     axes[0].set_ylabel(r"$g_{gate}$")
     axes[0].set_ylim(0, 1)
     axes[0].set_title("Modality gate: range and class means")
-    axes[0].legend(fontsize=8, loc="lower right")
+    axes[0].legend(fontsize=7, loc="lower right")
 
     delta = np.array(ma) - np.array(mn)
     axes[1].bar(xs, delta, color=PALETTE["stanet"], edgecolor="black", linewidth=0.5)
     axes[1].axhline(0, color="k", lw=0.9)
     axes[1].set_xticks(xs)
-    axes[1].set_xticklabels([f"seed {s}" for s in seeds], fontsize=9)
+    axes[1].set_xticklabels([f"seed {s}" for s in seeds], fontsize=7.5)
     axes[1].set_ylabel(r"$g_{gate}$(anomalous) $-$ $g_{gate}$(normal)")
     axes[1].set_title("Class-conditional shift (adaptivity indicator)")
     for i, dv in enumerate(delta):
         axes[1].text(i, dv, f"{dv:+.4f}", ha="center",
-                     va="bottom" if dv >= 0 else "top", fontsize=8)
+                     va="bottom" if dv >= 0 else "top", fontsize=7)
     fig.tight_layout()
     return save(fig, "fig_F3_gate.png")
 
@@ -225,14 +256,14 @@ def fig_benchmark():
         a = v["aggregate"]
         rows.append((name, a["f1"]["mean"], a["f1"]["std"], v["origin"], v["axis"]))
     rows.sort(key=lambda x: x[1])
-    fig, ax = plt.subplots(figsize=(9.5, 5.2))
+    fig, ax = plt.subplots(figsize=(FULL_IN, 3.3))
     cols = [PALETTE["stanet"] if n == "T:lstm" else
             (PALETTE["ml"] if ax_ == "temporal" else PALETTE["other"])
             for n, _, _, _, ax_ in rows]
     b = ax.barh([f"{n}" for n, _, _, _, _ in rows], [x[1] for x in rows],
                 xerr=[x[2] for x in rows], capsize=4, color=cols,
                 edgecolor="black", linewidth=0.5)
-    ax.bar_label(b, fmt="%.4f", padding=3, fontsize=8)
+    ax.bar_label(b, fmt="%.4f", padding=3, fontsize=7)
     # `origin` alani JSON'da Turkce yazilmis; makale Ingilizce oldugu icin
     # figurde Ingilizce karsiliklari kullanilir.
     EN_ORIGIN = {
@@ -248,7 +279,7 @@ def fig_benchmark():
     }
     for i, (_, _, _, org, _) in enumerate(rows):
         ax.text(0.01, i, f"  {EN_ORIGIN.get(org, org)}", va="center",
-                fontsize=7.5, color="white")
+                fontsize=6.5, color="white")
     # Tohum sayisi sabit yazilmamali: sonuc dosyasindan okunur.
     n_seed = len(r.get("config", {}).get("seeds", [])) or len(
         next(iter(r["configs"].values()))["runs"])
@@ -276,7 +307,7 @@ def fig_per_trip():
              ("stanet_gated_vs_hybrid_gat", "Gated\nvs weighted sum")]
     PAIRS = [(k, l) for k, l in PAIRS if k in r["effects"]]
 
-    fig, axes = plt.subplots(1, len(PAIRS), figsize=(4.3 * len(PAIRS), 4.3),
+    fig, axes = plt.subplots(1, len(PAIRS), figsize=(FULL_IN, 2.5),
                              sharey=True, squeeze=False)
     axes = axes[0]
     for ax, (key, lbl) in zip(axes, PAIRS):
@@ -297,13 +328,13 @@ def fig_per_trip():
         ax.set_xticks([])
         ax.set_title(f"{lbl}\n$d$ = {es['cohens_d']:+.2f}   "
                      f"{es['trips_favouring_a']}/{es['trips_favouring_b']} trips",
-                     fontsize=10)
+                     fontsize=8.5)
         ax.grid(axis="y", alpha=0.3)
     axes[0].set_ylabel("Per-trip difference in F1")
-    axes[0].legend(fontsize=8, loc="lower left")
+    axes[0].legend(fontsize=7, loc="lower left")
     n = r["effects"][PAIRS[0][0]]["effect_size"]["n_trips"]
     fig.suptitle(f"Per-trip differences over the {n} trips that contain at least "
-                 f"one positive window (of {r['n_trips']} total)", fontsize=10)
+                 f"one positive window (of {r['n_trips']} total)", fontsize=8.5)
     fig.tight_layout()
     return save(fig, "fig_F8_per_trip.png")
 
@@ -324,14 +355,14 @@ def fig_subtype():
     x = np.arange(len(types))
     st = [kb[t]["hybrid_f1"] for t in types]
     ls = [kb[t]["lstm_only_f1"] for t in types]
-    fig, ax = plt.subplots(figsize=(8, 4.2))
+    fig, ax = plt.subplots(figsize=(FULL_IN, 3.0))
     w = 0.36
     b1 = ax.bar(x - w / 2, st, w, label="Hybrid (with spatial branch)",
                 color=PALETTE["stanet"], edgecolor="black", linewidth=0.5)
     b2 = ax.bar(x + w / 2, ls, w, label="LSTM-only (no spatial branch)",
                 color=PALETTE["lstm"], edgecolor="black", linewidth=0.5)
-    ax.bar_label(b1, fmt="%.3f", fontsize=8, padding=2)
-    ax.bar_label(b2, fmt="%.3f", fontsize=8, padding=2)
+    ax.bar_label(b1, fmt="%.3f", fontsize=7, padding=2)
+    ax.bar_label(b2, fmt="%.3f", fontsize=7, padding=2)
     ax.set_xticks(x)
     # Turkce alt-tip adlarini Ingilizceye cevir (makale Ingilizce)
     EN = {"hiz_asimi": "Speed-limit violation",
@@ -342,11 +373,11 @@ def fig_subtype():
           "anormal_yon_degisimi": "Abnormal heading change"}
     ax.set_xticklabels(
         [f"{EN.get(t, t.replace('_', ' '))}\n(n={kb[t]['n_pos']}, "
-         f"Holm $p$={kb[t]['holm']['p_holm']:.3f})" for t in types], fontsize=9)
+         f"Holm $p$={kb[t]['holm']['p_holm']:.3f})" for t in types], fontsize=7.5)
     ax.set_ylabel("F1-Score (5-fold pooled)")
     ax.set_title("Where does spatial context contribute? "
-                 "(trip-level tests over 90 trips, Holm-corrected)", fontsize=11)
-    ax.legend(fontsize=9)
+                 "(trip-level tests over 90 trips, Holm-corrected)", fontsize=9)
+    ax.legend(fontsize=7.5)
     ax.set_ylim(0, 1.05)
     fig.tight_layout()
     return save(fig, "fig_F5_subtype.png")
@@ -358,7 +389,7 @@ def fig_calibration():
     if not p.exists():
         return None
     r = load_json(p)
-    fig, ax = plt.subplots(figsize=(6.2, 5.4))
+    fig, ax = plt.subplots(figsize=(COL_IN, 2.95))
     ax.plot([0, 1], [0, 1], "k--", lw=1, label="perfect calibration")
     # v2: dort fuzyonun tamami + kontrol, Ingilizce etiketlerle
     SERIES = [("hybrid_gat", "Weighted-sum hybrid", PALETTE["stanet"]),
@@ -376,7 +407,7 @@ def fig_calibration():
                 label=f"{lbl} (Brier {cal['brier']:.4f}, ECE {cal['ece']:.4f})")
     ax.set(xlabel="Mean predicted probability", ylabel="Observed anomaly frequency",
            title="Calibration (pooled cross-validated predictions)")
-    ax.legend(fontsize=7.5, loc="upper left")
+    ax.legend(fontsize=6.5, loc="upper left")
     fig.tight_layout()
     return save(fig, "fig_F5_calibration.png")
 
@@ -388,7 +419,7 @@ def fig_efficiency():
         return None
     r = load_json(p)["models"]
     names = list(r)
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.6))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_IN, 2.9))
     x = np.arange(len(names))
     w = 0.36
     gpu = [r[n].get("cuda_single_window", {}).get("p50_ms", np.nan) for n in names]
@@ -404,8 +435,8 @@ def fig_efficiency():
     axes[1].set_title("CPU (edge scenario)")
     for a in axes:
         a.set_xticks(x)
-        a.set_xticklabels(names, rotation=38, ha="right", fontsize=8)
-        a.legend(fontsize=8)
+        a.set_xticklabels(names, rotation=38, ha="right", fontsize=7)
+        a.legend(fontsize=7)
         a.set_yscale("log")
     fig.tight_layout()
     return save(fig, "fig_F6_efficiency.png")

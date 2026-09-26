@@ -677,7 +677,7 @@ Two corrections to the previous version of this table are worth recording, becau
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=0.95\linewidth]{fig_F1_baselines.png}
+  \includegraphics[width=0.98\linewidth]{fig_F1_baselines.png}
   \caption{Reference points: zero-parameter rules and classical feature-based models against the hybrid neural model on the fixed test partition.}
   \label{fig:reference_points}
 \end{figure}
@@ -712,12 +712,12 @@ Table~\ref{tab:encoder_benchmark} and Fig.~\ref{fig:encoder_benchmark} report th
     \end{tabular}}
 \end{table}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
   \centering
-  \includegraphics[width=0.98\linewidth]{fig_F4_benchmark.png}
+  \includegraphics[width=0.95\textwidth]{fig_F4_benchmark.png}
   \caption{Encoder benchmark. Bars show mean F1 over five seeds; error bars show standard deviation.}
   \label{fig:encoder_benchmark}
-\end{figure}
+\end{figure*}
 
 The LSTM--GAT pairing attains the highest mean F1 among the nine configurations, but the margin is significant against only four of the eight alternatives, and the identity of those four is the substantive result. The pairing separates cleanly from the STGCN gated temporal convolution ($p = 0.003$) and from all three alternative \emph{spatial} operators---Chebyshev convolution ($p = 0.007$), diffusion convolution ($p = 0.003$), and adaptive adjacency ($p < 0.001$). It does \emph{not} separate from any of the remaining strong temporal encoders: the GRU backbone ($0.8701 \pm 0.0102$, $p = 0.118$), the Transformer encoder ($0.8698 \pm 0.0081$, $p = 0.815$), or the dilated causal convolution stack ($0.8535 \pm 0.0114$, $p = 0.115$). The top three configurations lie within $0.0015$ F1 of one another, an order of magnitude below the leader's own seed standard deviation.
 
@@ -748,12 +748,12 @@ We now hold both encoders fixed and vary only the fusion operator, over five see
     \end{tabular}}
 \end{table}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
   \centering
-  \includegraphics[width=0.98\linewidth]{fig_F3_fusion_ablation.png}
+  \includegraphics[width=0.95\textwidth]{fig_F3_fusion_ablation.png}
   \caption{The fusion ranking is partition-dependent. Left: the fixed partition (five seeds, 14 trips), where the gated operator ranks fourth of four and one run collapses. Right: trip-grouped cross-validation (ten runs, 90 trips), where the same operator ranks first of four and no run collapses. Bars are means with standard deviation; dots are individual runs. Under cross-validation no pairwise difference is significant at the trip level after Holm correction (Section~\ref{sec:cv}).}
   \label{fig:fusion_ablation}
-\end{figure}
+\end{figure*}
 
 The sample-wise gate ranks \textbf{last of four}. Two aspects of this result matter more than the ranking itself.
 
@@ -788,12 +788,12 @@ Table~\ref{tab:fusion_cost} answers a question the ranking alone leaves open: wh
 
 Section~\ref{sec:fusion_module} established that gating can only outperform concatenation through genuinely sample-dependent behavior. Fig.~\ref{fig:gate} examines whether such behavior is observed, by measuring the class-conditional shift $\bar{g}_{\text{anomalous}} - \bar{g}_{\text{normal}}$ across seeds.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
   \centering
-  \includegraphics[width=0.98\linewidth]{fig_F3_gate.png}
+  \includegraphics[width=0.95\textwidth]{fig_F3_gate.png}
   \caption{Modality gate behavior across five seeds. Left: observed range and class means. Right: class-conditional shift, which is inconsistent in both magnitude and sign.}
   \label{fig:gate}
-\end{figure}
+\end{figure*}
 
 The measured shifts are $+0.0602$, $-0.0774$, $-0.0535$, $-0.0135$, and $-0.2427$. Both the magnitude and the \emph{sign} vary across seeds. A class-conditional interpretation of the gate---for instance, that anomalous samples shift weight toward the temporal branch---is therefore not a stable property of the trained model but an observation that holds in one run and reverses in the other four.
 
@@ -859,12 +859,12 @@ Section~\ref{sec:reference_points} identified speed-limit violation as the one a
     \end{tabular}}
 \end{table*}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
   \centering
-  \includegraphics[width=0.95\linewidth]{fig_F5_subtype.png}
+  \includegraphics[width=0.95\textwidth]{fig_F5_subtype.png}
   \caption{Subtype stratification on pooled cross-validated predictions. The spatial branch helps where it was not predicted to (abnormal dwell) and does not help where it holds the decisive feature (speed-limit violation).}
   \label{fig:subtype}
-\end{figure}
+\end{figure*}
 
 No comparison in this table is significant at the trip level after Holm correction, and the table is worth reading carefully because an earlier version of this work reported one that was.
 
@@ -915,7 +915,7 @@ We note this as a correction to the earlier version of this work, which reported
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=0.75\linewidth]{fig_F5_calibration.png}
+  \includegraphics[width=0.98\linewidth]{fig_F5_calibration.png}
   \caption{Reliability diagram from pooled cross-validated predictions.}
   \label{fig:calibration}
 \end{figure}
@@ -1023,12 +1023,12 @@ Table~\ref{tab:efficiency} and Fig.~\ref{fig:efficiency} report parameter counts
     \end{tabular}}
 \end{table}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
   \centering
-  \includegraphics[width=0.98\linewidth]{fig_F6_efficiency.png}
+  \includegraphics[width=0.95\textwidth]{fig_F6_efficiency.png}
   \caption{Single-window latency with and without graph-embedding caching, on GPU and CPU (log scale).}
   \label{fig:efficiency}
-\end{figure}
+\end{figure*}
 
 The primary model contains $220{,}802$ parameters ($\approx 0.9$~MB in fp32), of which the temporal branch accounts for $200{,}704$ ($90.9\%$), the projection layers $12{,}416$, the classifier $2{,}113$, the spatial branch only $5{,}568$ ($2.5\%$), and the fusion operator a single scalar. Peak GPU memory is $66$~MB.
 
