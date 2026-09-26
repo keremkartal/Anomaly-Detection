@@ -44,7 +44,8 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F10_pilot", "F10_repeated_cv", "F11_classic_cv",
          "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
-         "F19_noise", "F20_window_stride", "F21_baseline_search")
+         "F19_noise", "F20_window_stride", "F21_baseline_search",
+         "F22_imputation", "F23_data_audit")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -54,8 +55,13 @@ if missing:
 # ======================================================== A. PROTOKOL
 def check_protocol():
     print("A. PROTOKOL TUTARLILIGI")
+    # Egitim YAPMAYAN sonuc dosyalarinin protokol damgasi olmaz ve olmamalidir:
+    # ham veriyi sayan bir denetimin epoch butcesiyle ya da cuDNN ayariyla
+    # isi yoktur. Onlari damga karsilastirmasindan muaf tutuyoruz.
+    NO_PROTOCOL = {"F23_data_audit"}
     stamps = {n: v.get("protocol", {}).get("hash")
-              for n, v in J.items() if v is not None}
+              for n, v in J.items()
+              if v is not None and n not in NO_PROTOCOL}
     have = {n: h for n, h in stamps.items() if h}
     if not have:
         failures.append("hicbir JSON protokol damgasi tasimiyor")
@@ -73,7 +79,8 @@ def check_protocol():
 
     # seed listeleri
     seeds = {n: tuple(v.get("config", {}).get("seeds", []))
-             for n, v in J.items() if v is not None and "config" in v}
+             for n, v in J.items()
+             if v is not None and "config" in v and n not in NO_PROTOCOL}
     seeds = {n: s for n, s in seeds.items() if s}
     su = set(seeds.values())
     if len(su) <= 1:
@@ -144,6 +151,29 @@ def check_numbers():
             return
         s = f"{value:.{decimals}f}"
         checks.append((label, s, s in tex))
+
+    # --- veri karti: ham CSV'den uretilen sayilar (F23). Bunlar daha once
+    # elle yazilmisti ve kaynaksizdi; artik denetleniyorlar.
+    da = J.get("F23_data_audit")
+    if da:
+        r = da["records"]
+        for label, v in (("veri: uretilen kayit", r["generated"]),
+                         ("veri: kalan kayit", r["retained"]),
+                         ("veri: silinen kayit", r["removed_union"]),
+                         ("veri: hiz disi", r["speed_out_of_range"]),
+                         ("veri: egim disi", r["gradient_out_of_range"])):
+            txt = f"{v:,}".replace(",", "{,}")
+            checks.append((label, txt, txt in tex))
+        for t, d in da["subtypes"].items():
+            for stage in ("generated", "cleaned"):
+                txt = f"{d[stage]:,}".replace(",", "{,}")
+                checks.append((f"veri: tip {t} {stage}", txt, txt in tex))
+        rs = da["rule_sufficiency"]["subtype1"]
+        for label, v in (("veri: tip1 kurali saglayan", rs["records_satisfying_rule"]),
+                         ("veri: tip1 etiketli", rs["labelled_subtype1"]),
+                         ("veri: tip1 etiketsiz", rs["labelled_none"])):
+            txt = f"{v:,}".replace(",", "{,}")
+            checks.append((label, txt, txt in tex))
 
     f1b, f3, f4, f5, f6, f2 = (J[n] for n in
                                ("F1b_fair", "F3_fusion", "F4_benchmark",

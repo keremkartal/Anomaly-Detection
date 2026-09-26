@@ -462,7 +462,7 @@ We therefore do not select a graph at all. Both constructions are treated as \te
 The label-purity figures quoted above are now computed from training labels alone and are reported as a descriptive property of the data, not as grounds for a choice. The structural trade-off remains worth stating: the merged graph is the faithful representation of the physical road network, while the trip-instance graph distributes sequences over more nodes and raises per-node label purity at the cost of duplicating each road once per traversal, which inflates the average degree and weakens message passing between genuinely adjacent roads.
 
 \subsection{Data Cleaning and Feature Engineering}
-Records with implausible sensor readings were removed before sequence construction. Speed values outside $[0,200]$~km/h were excluded ($n=60$), and road-gradient values outside $[-50\%,50\%]$ were excluded ($n=8{,}185$). In total, 8{,}245 records (2.81\%) were removed, yielding 284{,}923 records:
+Records with implausible sensor readings were removed before sequence construction. Of $293{,}168$ generated records, $60$ carry a speed outside $[0,200]$~km/h and $8{,}186$ a road gradient outside $[-50\%,50\%]$; one record violates both, so the union is $8{,}245$ records ($2.81\%$), leaving $284{,}923$:
 \begin{equation}
   \text{retain row }i \iff 0 \leq v_i \leq 200
   \;\land\; -50 \leq r_i \leq 50.
@@ -470,28 +470,63 @@ Records with implausible sensor readings were removed before sequence constructi
 The raw heading angle is transformed into sine and cosine components to prevent discontinuities at the $0^\circ/360^\circ$ boundary \cite{taheri_sarteshnizi_applicability_2026}.
 
 \subsection{Anomaly Taxonomy and Label Generation}
-Anomalies are injected during simulation according to the two-category, nine-subtype taxonomy in Table~\ref{tab:anomaly_taxonomy}. 6.86\% of simulated rows carry a non-zero anomaly label; after windowing, 7.07\% of sequences are anomalous.
+Anomalies are injected during simulation according to the two-category, nine-subtype taxonomy in Table~\ref{tab:anomaly_taxonomy}. Of the records the simulator produces, $6.86\%$ carry a non-zero anomaly label; after cleaning this becomes $7.01\%$, and after windowing $7.07\%$ of sequences are anomalous. The three figures are quoted at three different stages of the pipeline and are not interchangeable.
 
 \begin{table}[!htbp]
   \centering
-  \caption{Anomaly taxonomy, generation rules, and observed shares}
+  \caption{\textbf{[Record level, before and after cleaning]}~ Anomaly taxonomy, generation rules, and observed counts. The two count columns differ because the cleaning rules of Section~\ref{sec:cleaning_conflict} remove anomalous records, most severely for subtype~6.}
   \label{tab:anomaly_taxonomy}
   \renewcommand{\arraystretch}{1.15}
   \footnotesize
-  \begin{tabularx}{\columnwidth}{@{}c>{\raggedright\arraybackslash}p{0.17\columnwidth}>{\raggedright\arraybackslash}X c@{}}
+  \begin{tabularx}{\columnwidth}{@{}c>{\raggedright\arraybackslash}p{0.16\columnwidth}>{\raggedright\arraybackslash}X c c@{}}
     \toprule
-    \textbf{No.} & \textbf{Subtype} & \textbf{Generation Rule} & \textbf{Rows} \\ \midrule
-    1 & Speed-limit violation & $v_t > 1.10\,v_{\max}$ & 1{,}405 \\
-    2 & Abnormal dwell & Stationary for $>30$ s & 11{,}610 \\
-    3 & Abnormal acceleration & $a_t\in[-6,-3]\cup[1.5,2.5]$ m/s$^2$ & 299 \\
-    4 & Accident & Composite perturbation + prolonged stop & 5{,}741 \\
-    5 & Abnormal heading change & $|\Delta\theta_t|>10^\circ$ & 213 \\
-    6 & GPS speed artifact & Perturbation from kinematic history & 66 \\
-    7 & GPS acceleration artifact & Perturbation from kinematic history & 76 \\
-    8 & GPS heading artifact & Perturbation from kinematic history & 94 \\
-    9 & Signal freeze & Identical values for $\geq2$ s & 606 \\ \bottomrule
+    \textbf{No.} & \textbf{Subtype} & \textbf{Generation Rule} & \textbf{Gen.} & \textbf{Clean} \\ \midrule
+    1 & Speed-limit violation & $v_t > 1.10\,v_{\max}$ & 1{,}405 & 1{,}353 \\
+    2 & Abnormal dwell & Stationary for $>30$ s & 11{,}610 & 11{,}610 \\
+    3 & Abnormal acceleration & $a_t\in[-6,-3]\cup[1.5,2.5]$ m/s$^2$ & 299 & 287 \\
+    4 & Accident & Composite perturbation + prolonged stop & 5{,}741 & 5{,}740 \\
+    5 & Abnormal heading change & $|\Delta\theta_t|>10^\circ$ & 213 & 208 \\
+    6 & GPS speed artifact & Perturbation from kinematic history & 66 & \textbf{11} \\
+    7 & GPS acceleration artifact & Perturbation from kinematic history & 76 & 75 \\
+    8 & GPS heading artifact & Perturbation from kinematic history & 94 & 93 \\
+    9 & Signal freeze & Identical values for $\geq2$ s & 606 & 593 \\ \bottomrule
   \end{tabularx}
 \end{table}
+
+\subsubsection{A Conflict Between the Generation and Cleaning Rules}
+\label{sec:cleaning_conflict}
+Auditing the two rule sets against each other exposes a problem that the
+aggregate counts hide. Subtype~6, the GPS speed artifact, is produced by
+perturbing the speed channel to an implausible value; the cleaning rule
+discards records whose speed is implausible. The two rules act on the same
+records, and the cleaning rule wins: of the $60$ records removed by the speed
+filter, $55$ are subtype~6, and the subtype falls from $66$ generated records
+to $11$ surviving ones. Their speeds span $95.6$ to $462.1$~km/h, so every
+instance above $200$~km/h is deleted by construction.
+
+This is not a rounding detail. It means the evaluation set contains almost
+none of an anomaly class the generator was designed to create, and it explains
+why subtype~6 carries so little weight in the per-subtype results of
+Section~\ref{sec:subtype}: there is nearly nothing left to detect. We report
+the subtype rather than dropping it, and we state that its numbers describe
+eleven records. A pipeline intended to evaluate detection of implausible
+sensor readings should not filter implausible sensor readings beforehand;
+correcting this requires regenerating the dataset with the two rule sets
+reconciled, which is outside the scope of this revision and is recorded as a
+limitation.
+
+\textbf{The generation rules are necessary but not always sufficient.} A
+second audit compared each printed rule against the labels actually assigned.
+For subtype~1 the rule holds in one direction only: every record labelled
+speed-limit violation satisfies $v_t > 1.10\,v_{\max}$, but of the $1{,}400$
+cleaned records that satisfy it, $1{,}353$ carry that label, $9$ carry
+subtype~6 instead---a GPS artifact takes precedence---and $38$ carry no
+anomaly label at all. The rules in Table~\ref{tab:anomaly_taxonomy} are
+therefore the conditions under which a subtype \emph{may} be injected, not a
+complete specification of the labelling function; the remaining condition was
+not recoverable from the released data. Readers reproducing the labels from
+the table alone will obtain $3.5\%$ more positives for subtype~1 than the
+dataset contains.
 
 \textbf{Label--input dependence.} Subtypes 1, 2, 3, 5, and 9 are threshold functions of the same kinematic channels supplied to the temporal branch. This is a property of the dataset, not an artifact of the models, and it is quantified directly in Section~\ref{sec:reference_points} through a zero-parameter rule classifier. One subtype is an informative exception: speed-limit violation depends on $v_{\max}$, which is \emph{not} an input to the temporal branch and is available only as a graph node feature. Section~\ref{sec:subtype} tests whether the spatial branch exploits this.
 

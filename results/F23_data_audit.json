@@ -1,0 +1,127 @@
+{
+  "source": "lstm_data.csv",
+  "cleaning_rule": {
+    "speed_kmh": [
+      0.0,
+      200.0
+    ],
+    "gradient_percent": [
+      -50.0,
+      50.0
+    ],
+    "gradient_column": "percent"
+  },
+  "records": {
+    "generated": 293168,
+    "speed_out_of_range": 60,
+    "gradient_out_of_range": 8186,
+    "violating_both": 1,
+    "removed_union": 8245,
+    "removed_fraction": 0.028123806145281885,
+    "retained": 284923
+  },
+  "anomaly_rate": {
+    "generated": 0.06859548108934127,
+    "cleaned": 0.07008911179511658
+  },
+  "subtypes": {
+    "1": {
+      "generated": 1405,
+      "cleaned": 1353,
+      "removed": 52,
+      "removed_fraction": 0.03701067615658363,
+      "name": "hiz_asimi"
+    },
+    "2": {
+      "generated": 11610,
+      "cleaned": 11610,
+      "removed": 0,
+      "removed_fraction": 0.0,
+      "name": "uzun_duraklama"
+    },
+    "3": {
+      "generated": 299,
+      "cleaned": 287,
+      "removed": 12,
+      "removed_fraction": 0.04013377926421405,
+      "name": "anormal_ivme"
+    },
+    "4": {
+      "generated": 5741,
+      "cleaned": 5740,
+      "removed": 1,
+      "removed_fraction": 0.00017418568193694478,
+      "name": "kaza"
+    },
+    "5": {
+      "generated": 213,
+      "cleaned": 208,
+      "removed": 5,
+      "removed_fraction": 0.023474178403755867,
+      "name": "anormal_yon_degisimi"
+    },
+    "6": {
+      "generated": 66,
+      "cleaned": 11,
+      "removed": 55,
+      "removed_fraction": 0.8333333333333334,
+      "name": "gps_hiz_artefakti"
+    },
+    "7": {
+      "generated": 76,
+      "cleaned": 75,
+      "removed": 1,
+      "removed_fraction": 0.013157894736842105,
+      "name": "gps_ivme_artefakti"
+    },
+    "8": {
+      "generated": 94,
+      "cleaned": 93,
+      "removed": 1,
+      "removed_fraction": 0.010638297872340425,
+      "name": "gps_yon_artefakti"
+    },
+    "9": {
+      "generated": 606,
+      "cleaned": 593,
+      "removed": 13,
+      "removed_fraction": 0.02145214521452145,
+      "name": "sinyal_donmasi"
+    }
+  },
+  "cleaning_conflict": {
+    "removed_by_speed_filter_by_subtype": {
+      "6": 55,
+      "3": 4,
+      "0": 1
+    },
+    "worst_hit_subtype": "6",
+    "worst_hit": {
+      "generated": 66,
+      "cleaned": 11,
+      "removed": 55,
+      "removed_fraction": 0.8333333333333334,
+      "name": "gps_hiz_artefakti"
+    },
+    "subtype6_speed_range_kmh": [
+      95.58817847785411,
+      462.0532723867185
+    ],
+    "note": "uretici imkansiz hiz enjekte ediyor, temizleyici imkansiz hizi siliyor; iki kural ayni kayitlar uzerinde calisiyor"
+  },
+  "rule_sufficiency": {
+    "subtype1": {
+      "rule": "v_t > 1.10 * v_max",
+      "records_satisfying_rule": 1400,
+      "labelled_subtype1": 1353,
+      "labelled_other": {
+        "0": 38,
+        "6": 9
+      },
+      "labelled_none": 38,
+      "subtype1_not_satisfying_rule": 0,
+      "excess_if_rule_applied_literally": 0.03473762010347376,
+      "note": "kural GEREK ama YETER degil; eksik kosul yayinlanan veriden geri cikarilamadi"
+    }
+  }
+}
