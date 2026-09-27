@@ -1,0 +1,1572 @@
+{
+  "protocol": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "max_epochs": 50,
+    "patience": 15,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "grad_clip": 1.0,
+    "scheduler": [
+      0.5,
+      3
+    ],
+    "dropout": 0.2,
+    "select_by": "val_f1",
+    "threshold_rule": "argmax_val_f1",
+    "cudnn_deterministic": false,
+    "cudnn_benchmark": true,
+    "sequence_length": 50,
+    "step_size": 10,
+    "split_seed": 42,
+    "legacy_pipeline": false,
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "hash": "0902cd97ec17"
+  },
+  "source": "F10_repeated_cv.json",
+  "design": {
+    "repeats": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "n_folds": 5,
+    "seeds": [
+      42,
+      43
+    ],
+    "configs": [
+      "hybrid_gat",
+      "stanet_gated",
+      "hybrid_concat",
+      "hybrid_crossatt",
+      "lstm_only"
+    ],
+    "graphs": [
+      "trip_instance",
+      "osm_merged"
+    ],
+    "note": "graf kurgusu secilmez; onceden belirlenmis faktordur"
+  },
+  "delta": 0.02,
+  "collapse_threshold": 0.3,
+  "variance_components": {
+    "trip_instance": {
+      "hybrid_gat": {
+        "all": {
+          "repeat": 0.000202376034312802,
+          "fold": 2.9939174218962935e-05,
+          "seed": 2.186768501028796e-05,
+          "residual": 0.0016726645191583512,
+          "total": 0.001926847412700404,
+          "sd_total": 0.04434152488679349,
+          "share": {
+            "repeat": 0.10502961105216921,
+            "fold": 0.015537906126673679,
+            "seed": 0.011348944844387664,
+            "residual": 0.8680835379767695
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.000202376034312802,
+          "fold": 2.9939174218962935e-05,
+          "seed": 2.186768501028796e-05,
+          "residual": 0.0016726645191583512,
+          "total": 0.001926847412700404,
+          "sd_total": 0.04434152488679349,
+          "share": {
+            "repeat": 0.10502961105216921,
+            "fold": 0.015537906126673679,
+            "seed": 0.011348944844387664,
+            "residual": 0.8680835379767695
+          }
+        }
+      },
+      "stanet_gated": {
+        "all": {
+          "repeat": 0.002271736872746867,
+          "fold": 0.0012323381857629486,
+          "seed": 6.878538433413066e-05,
+          "residual": 0.011999889591829469,
+          "total": 0.015572750034673415,
+          "sd_total": 0.12605776953393563,
+          "share": {
+            "repeat": 0.14587897883731163,
+            "fold": 0.07913426870778079,
+            "seed": 0.004417035153134608,
+            "residual": 0.770569717301773
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.0003429967051219717,
+          "fold": 0.00020338140422795936,
+          "seed": 6.116223015664661e-05,
+          "residual": 0.0025579119960590425,
+          "total": 0.00316545233556562,
+          "sd_total": 0.05684539787197586,
+          "share": {
+            "repeat": 0.1083563006993385,
+            "fold": 0.06425034486946968,
+            "seed": 0.01932179785790956,
+            "residual": 0.8080715565732823
+          }
+        }
+      },
+      "hybrid_concat": {
+        "all": {
+          "repeat": 0.0003795871100822474,
+          "fold": 0.00038748528285348545,
+          "seed": 8.206756734488258e-05,
+          "residual": 0.003551748194238515,
+          "total": 0.0044008881545191305,
+          "sd_total": 0.06701270176980562,
+          "share": {
+            "repeat": 0.08625238741694936,
+            "fold": 0.08804706442166435,
+            "seed": 0.018647955699717122,
+            "residual": 0.8070525924616692
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.0003795871100822474,
+          "fold": 0.00038748528285348545,
+          "seed": 8.206756734488258e-05,
+          "residual": 0.003551748194238515,
+          "total": 0.0044008881545191305,
+          "sd_total": 0.06701270176980562,
+          "share": {
+            "repeat": 0.08625238741694936,
+            "fold": 0.08804706442166435,
+            "seed": 0.018647955699717122,
+            "residual": 0.8070525924616692
+          }
+        }
+      },
+      "hybrid_crossatt": {
+        "all": {
+          "repeat": 0.001017301159766226,
+          "fold": 0.007293462327817221,
+          "seed": 1.2675905487174818e-06,
+          "residual": 0.030329665113403445,
+          "total": 0.03864169619153561,
+          "sd_total": 0.1985706479726065,
+          "share": {
+            "repeat": 0.026326514103412052,
+            "fold": 0.18874591559505197,
+            "seed": 3.280369843069014e-05,
+            "residual": 0.7848947666031053
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.0006456113446998443,
+          "fold": 0.0009649092053998082,
+          "seed": 0.00016882202369407654,
+          "residual": 0.005184436753469331,
+          "total": 0.00696377932726306,
+          "sd_total": 0.08435144239654396,
+          "share": {
+            "repeat": 0.09270990856535165,
+            "fold": 0.13856114044599424,
+            "seed": 0.024242873841958435,
+            "residual": 0.7444860771466957
+          }
+        }
+      },
+      "lstm_only": {
+        "all": {
+          "repeat": 0.00010034011752831388,
+          "fold": 7.197629359804837e-05,
+          "seed": 1.9693292831687596e-07,
+          "residual": 0.0012884078727259424,
+          "total": 0.0014609212167806215,
+          "sd_total": 0.03861004966961879,
+          "share": {
+            "repeat": 0.0686827711007098,
+            "fold": 0.04926774474304637,
+            "seed": 0.00013480051220753016,
+            "residual": 0.8819146836440364
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.00010034011752831388,
+          "fold": 7.197629359804837e-05,
+          "seed": 1.9693292831687596e-07,
+          "residual": 0.0012884078727259424,
+          "total": 0.0014609212167806215,
+          "sd_total": 0.03861004966961879,
+          "share": {
+            "repeat": 0.0686827711007098,
+            "fold": 0.04926774474304637,
+            "seed": 0.00013480051220753016,
+            "residual": 0.8819146836440364
+          }
+        }
+      }
+    },
+    "osm_merged": {
+      "hybrid_gat": {
+        "all": {
+          "repeat": 0.00015183252233960654,
+          "fold": 0.00019457020074487597,
+          "seed": 1.1095482450551979e-06,
+          "residual": 0.0018528809251849646,
+          "total": 0.0022003931965145023,
+          "sd_total": 0.04738458800197422,
+          "share": {
+            "repeat": 0.06900245037119476,
+            "fold": 0.0884251964844655,
+            "seed": 0.0005042499889623182,
+            "residual": 0.8420681031553774
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.00015183252233960654,
+          "fold": 0.00019457020074487597,
+          "seed": 1.1095482450551979e-06,
+          "residual": 0.0018528809251849646,
+          "total": 0.0022003931965145023,
+          "sd_total": 0.04738458800197422,
+          "share": {
+            "repeat": 0.06900245037119476,
+            "fold": 0.0884251964844655,
+            "seed": 0.0005042499889623182,
+            "residual": 0.8420681031553774
+          }
+        }
+      },
+      "stanet_gated": {
+        "all": {
+          "repeat": 0.003931897535537349,
+          "fold": 0.0016712821714961485,
+          "seed": 0.0014098473206207687,
+          "residual": 0.02158058895861452,
+          "total": 0.028593615986268785,
+          "sd_total": 0.1708132289070786,
+          "share": {
+            "repeat": 0.13750962933213914,
+            "fold": 0.0584494864972213,
+            "seed": 0.049306366893148636,
+            "residual": 0.754734517277491
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.00013375669790263703,
+          "fold": 0.00024439651280600753,
+          "seed": 1.4642512569363814e-05,
+          "residual": 0.001616181840112839,
+          "total": 0.0020089775633908473,
+          "sd_total": 0.04530619150493619,
+          "share": {
+            "repeat": 0.06657948816355926,
+            "fold": 0.12165218629595023,
+            "seed": 0.0072885396214428045,
+            "residual": 0.8044797859190478
+          }
+        }
+      },
+      "hybrid_concat": {
+        "all": {
+          "repeat": 4.297765198593068e-05,
+          "fold": 4.000832279273833e-05,
+          "seed": 4.2730913968794696e-06,
+          "residual": 0.0014779589753889993,
+          "total": 0.0015652180415645478,
+          "sd_total": 0.039964500083231366,
+          "share": {
+            "repeat": 0.027457932917110663,
+            "fold": 0.02556086227625331,
+            "seed": 0.0027300294804985816,
+            "residual": 0.9442511753261374
+          }
+        },
+        "no_collapse": {
+          "repeat": 4.297765198593068e-05,
+          "fold": 4.000832279273833e-05,
+          "seed": 4.2730913968794696e-06,
+          "residual": 0.0014779589753889993,
+          "total": 0.0015652180415645478,
+          "sd_total": 0.039964500083231366,
+          "share": {
+            "repeat": 0.027457932917110663,
+            "fold": 0.02556086227625331,
+            "seed": 0.0027300294804985816,
+            "residual": 0.9442511753261374
+          }
+        }
+      },
+      "hybrid_crossatt": {
+        "all": {
+          "repeat": 0.002975329944402909,
+          "fold": 0.0026826153837379687,
+          "seed": 0.00012116530502027893,
+          "residual": 0.017302572425814195,
+          "total": 0.02308168305897535,
+          "sd_total": 0.1534690125571966,
+          "share": {
+            "repeat": 0.12890437568182217,
+            "fold": 0.11622269385138399,
+            "seed": 0.005249413775879901,
+            "residual": 0.749623516690914
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.00304693621030726,
+          "fold": 0.0007269732696094163,
+          "seed": 1.8732746571339373e-05,
+          "residual": 0.0081374085826039,
+          "total": 0.011930050809091916,
+          "sd_total": 0.11035666511036536,
+          "share": {
+            "repeat": 0.2554001034082088,
+            "fold": 0.06093630959688692,
+            "seed": 0.0015702151542441973,
+            "residual": 0.6820933718406601
+          }
+        }
+      },
+      "lstm_only": {
+        "all": {
+          "repeat": 0.00010034011752831388,
+          "fold": 7.197629359804837e-05,
+          "seed": 1.9693292831687596e-07,
+          "residual": 0.0012884078727259424,
+          "total": 0.0014609212167806215,
+          "sd_total": 0.03861004966961879,
+          "share": {
+            "repeat": 0.0686827711007098,
+            "fold": 0.04926774474304637,
+            "seed": 0.00013480051220753016,
+            "residual": 0.8819146836440364
+          }
+        },
+        "no_collapse": {
+          "repeat": 0.00010034011752831388,
+          "fold": 7.197629359804837e-05,
+          "seed": 1.9693292831687596e-07,
+          "residual": 0.0012884078727259424,
+          "total": 0.0014609212167806215,
+          "sd_total": 0.03861004966961879,
+          "share": {
+            "repeat": 0.0686827711007098,
+            "fold": 0.04926774474304637,
+            "seed": 0.00013480051220753016,
+            "residual": 0.8819146836440364
+          }
+        }
+      }
+    }
+  },
+  "collapse": {
+    "hybrid_gat": {
+      "by_graph": {
+        "trip_instance": {
+          "n": 0,
+          "of": 50
+        },
+        "osm_merged": {
+          "n": 0,
+          "of": 50
+        }
+      },
+      "total": 0,
+      "of": 100,
+      "learns_mixing_weight": false
+    },
+    "stanet_gated": {
+      "by_graph": {
+        "trip_instance": {
+          "n": 1,
+          "of": 50
+        },
+        "osm_merged": {
+          "n": 3,
+          "of": 50
+        }
+      },
+      "total": 4,
+      "of": 100,
+      "learns_mixing_weight": true
+    },
+    "hybrid_concat": {
+      "by_graph": {
+        "trip_instance": {
+          "n": 0,
+          "of": 50
+        },
+        "osm_merged": {
+          "n": 0,
+          "of": 50
+        }
+      },
+      "total": 0,
+      "of": 100,
+      "learns_mixing_weight": false
+    },
+    "hybrid_crossatt": {
+      "by_graph": {
+        "trip_instance": {
+          "n": 3,
+          "of": 50
+        },
+        "osm_merged": {
+          "n": 1,
+          "of": 50
+        }
+      },
+      "total": 4,
+      "of": 100,
+      "learns_mixing_weight": true
+    },
+    "lstm_only": {
+      "by_graph": {
+        "trip_instance": {
+          "n": 0,
+          "of": 50
+        },
+        "osm_merged": {
+          "n": 0,
+          "of": 50
+        }
+      },
+      "total": 0,
+      "of": 100,
+      "learns_mixing_weight": false
+    }
+  },
+  "comparisons": {
+    "trip_instance": {
+      "hybrid_gat_vs_stanet_gated": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.023348852363082654,
+          "sd_diff": 0.10855451131494842,
+          "se_corrected": 0.0618936610423847,
+          "t_corrected": 0.3772414164851775,
+          "p_corrected": 0.7076231830684725,
+          "ci_lo": -0.10103111620296437,
+          "ci_hi": 0.14772882092912967,
+          "significant": false,
+          "se_naive_INVALID": 0.015351926215838366,
+          "p_naive_INVALID": 0.13471055165449014,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.0618936610423847,
+          "mean_diff": 0.023348852363082654,
+          "sd_diff": 0.10855451131494842,
+          "p_lower": 0.2435023503306477,
+          "p_upper": 0.5214648610995385,
+          "p_tost": 0.5214648610995385,
+          "ci_lo_90": -0.08041902030485241,
+          "ci_hi_90": 0.12711672503101773,
+          "equivalent": false,
+          "delta_min": 0.12711672503101773,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7076231830684725,
+          "p_holm": 1.0,
+          "rank": 3,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_gat_vs_hybrid_concat": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.013000452411601901,
+          "sd_diff": 0.06404523333433658,
+          "se_corrected": 0.03651616054790352,
+          "t_corrected": 0.35601914923523603,
+          "p_corrected": 0.7233545239195687,
+          "ci_lo": -0.0603815195805007,
+          "ci_hi": 0.0863824244037045,
+          "significant": false,
+          "se_naive_INVALID": 0.009057363758676823,
+          "p_naive_INVALID": 0.15754137753262634,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.03651616054790352,
+          "mean_diff": 0.013000452411601901,
+          "sd_diff": 0.06404523333433658,
+          "p_lower": 0.18528228496356014,
+          "p_upper": 0.42439110655810386,
+          "p_tost": 0.42439110655810386,
+          "ci_lo_90": -0.048220749149926086,
+          "ci_hi_90": 0.07422165397312988,
+          "equivalent": false,
+          "delta_min": 0.07422165397312988,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7233545239195687,
+          "p_holm": 1.0,
+          "rank": 4,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_gat_vs_hybrid_crossatt": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.05406596029217637,
+          "sd_diff": 0.20340719290598389,
+          "se_corrected": 0.11597505897087743,
+          "t_corrected": 0.4661860987348401,
+          "p_corrected": 0.6431481673671632,
+          "ci_lo": -0.1789946463403022,
+          "ci_hi": 0.28712656692465494,
+          "significant": false,
+          "se_naive_INVALID": 0.02876612108918828,
+          "p_naive_INVALID": 0.06612942424387441,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.11597505897087743,
+          "mean_diff": 0.05406596029217637,
+          "sd_diff": 0.20340719290598389,
+          "p_lower": 0.2630165432761431,
+          "p_upper": 0.6148995786808097,
+          "p_tost": 0.6148995786808097,
+          "ci_lo_90": -0.14037212834674043,
+          "ci_hi_90": 0.24850404893109315,
+          "equivalent": false,
+          "delta_min": 0.24850404893109315,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.6431481673671632,
+          "p_holm": 1.0,
+          "rank": 1,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_gat_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.004906945928528634,
+          "sd_diff": 0.03168751151522113,
+          "se_corrected": 0.018067016038693966,
+          "t_corrected": 0.2715969210421617,
+          "p_corrected": 0.7870730067999696,
+          "ci_lo": -0.031400082111647576,
+          "ci_hi": 0.04121397396870484,
+          "significant": false,
+          "se_naive_INVALID": 0.004481290854267935,
+          "p_naive_INVALID": 0.2788764509122799,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.018067016038693966,
+          "mean_diff": 0.004906945928528634,
+          "sd_diff": 0.03168751151522113,
+          "p_lower": 0.08714199169744058,
+          "p_upper": 0.20377580512631593,
+          "p_tost": 0.20377580512631593,
+          "ci_lo_90": -0.025383325938066748,
+          "ci_hi_90": 0.03519721779512402,
+          "equivalent": false,
+          "delta_min": 0.03519721779512402,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7870730067999696,
+          "p_holm": 1.0,
+          "rank": 7,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "stanet_gated_vs_hybrid_concat": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.010348399951480753,
+          "sd_diff": 0.13324700116952143,
+          "se_corrected": 0.07597238129858294,
+          "t_corrected": -0.13621265747627387,
+          "p_corrected": 0.8922112603414183,
+          "ci_lo": -0.1630206161148536,
+          "ci_hi": 0.14232381621189208,
+          "significant": false,
+          "se_naive_INVALID": 0.018843971619948087,
+          "p_naive_INVALID": 0.5853880974286534,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.07597238129858294,
+          "mean_diff": -0.010348399951480753,
+          "sd_diff": 0.13324700116952143,
+          "p_lower": 0.4497139659103462,
+          "p_upper": 0.34564280006312365,
+          "p_tost": 0.4497139659103462,
+          "ci_lo_90": -0.13771996363184796,
+          "ci_hi_90": 0.11702316372888645,
+          "equivalent": false,
+          "delta_min": 0.13771996363184796,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.8922112603414183,
+          "p_holm": 1.0,
+          "rank": 10,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "stanet_gated_vs_hybrid_crossatt": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.03071710792909372,
+          "sd_diff": 0.23512909078395605,
+          "se_corrected": 0.13406168080812195,
+          "t_corrected": 0.22912668067363784,
+          "p_corrected": 0.8197241341417416,
+          "ci_lo": -0.2386899260708324,
+          "ci_hi": 0.3001241419290198,
+          "significant": false,
+          "se_naive_INVALID": 0.03325227490951254,
+          "p_naive_INVALID": 0.3601382860835026,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.13406168080812195,
+          "mean_diff": 0.03071710792909372,
+          "sd_diff": 0.23512909078395605,
+          "p_lower": 0.3534165585308019,
+          "p_upper": 0.5316953525969591,
+          "p_tost": 0.5316953525969591,
+          "ci_lo_90": -0.19404412269547888,
+          "ci_hi_90": 0.2554783385536663,
+          "equivalent": false,
+          "delta_min": 0.2554783385536663,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.8197241341417416,
+          "p_holm": 1.0,
+          "rank": 8,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "stanet_gated_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.01844190643455402,
+          "sd_diff": 0.1185037116533921,
+          "se_corrected": 0.06756631735054879,
+          "t_corrected": -0.2729452655954799,
+          "p_corrected": 0.7860423555997715,
+          "ci_lo": -0.15422150464623255,
+          "ci_hi": 0.11733769177712453,
+          "significant": false,
+          "se_naive_INVALID": 0.01675895562117777,
+          "p_naive_INVALID": 0.2765254819996544,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.06756631735054879,
+          "mean_diff": -0.01844190643455402,
+          "sd_diff": 0.1185037116533921,
+          "p_lower": 0.4908479487862859,
+          "p_upper": 0.2859941747299577,
+          "p_tost": 0.4908479487862859,
+          "ci_lo_90": -0.1317202760994502,
+          "ci_hi_90": 0.09483646323034217,
+          "equivalent": false,
+          "delta_min": 0.1317202760994502,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7860423555997715,
+          "p_holm": 1.0,
+          "rank": 6,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_concat_vs_hybrid_crossatt": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.04106550788057446,
+          "sd_diff": 0.21272996387748266,
+          "se_corrected": 0.12129054903661614,
+          "t_corrected": 0.33857137433005835,
+          "p_corrected": 0.7363791995662274,
+          "ci_lo": -0.20267697596121909,
+          "ci_hi": 0.28480799172236804,
+          "significant": false,
+          "se_naive_INVALID": 0.030084560003867458,
+          "p_naive_INVALID": 0.1784872309841589,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.12129054903661614,
+          "mean_diff": 0.04106550788057446,
+          "sd_diff": 0.21272996387748266,
+          "p_lower": 0.30844677129687803,
+          "p_upper": 0.568582999214698,
+          "p_tost": 0.568582999214698,
+          "ci_lo_90": -0.16228427037275261,
+          "ci_hi_90": 0.2444152861339015,
+          "equivalent": false,
+          "delta_min": 0.2444152861339015,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7363791995662274,
+          "p_holm": 1.0,
+          "rank": 5,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_concat_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.008093506483073267,
+          "sd_diff": 0.06304361065387298,
+          "se_corrected": 0.035945073322453114,
+          "t_corrected": -0.22516316521234228,
+          "p_corrected": 0.8227887666644931,
+          "ci_lo": -0.08032783572866989,
+          "ci_hi": 0.06414082276252336,
+          "significant": false,
+          "se_naive_INVALID": 0.00891571292076761,
+          "p_naive_INVALID": 0.3684374885095769,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.035945073322453114,
+          "mean_diff": -0.008093506483073267,
+          "sd_diff": 0.06304361065387298,
+          "p_lower": 0.37093734462976563,
+          "p_upper": 0.21911445837489002,
+          "p_tost": 0.37093734462976563,
+          "ci_lo_90": -0.0683572512470103,
+          "ci_hi_90": 0.05217023828086376,
+          "equivalent": false,
+          "delta_min": 0.0683572512470103,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.8227887666644931,
+          "p_holm": 1.0,
+          "rank": 9,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_crossatt_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.04915901436364774,
+          "sd_diff": 0.19923514067797465,
+          "se_corrected": 0.1135963131838659,
+          "t_corrected": -0.43275184718433096,
+          "p_corrected": 0.6670938937854178,
+          "ci_lo": -0.2774393523671224,
+          "ci_hi": 0.17912132363982697,
+          "significant": false,
+          "se_naive_INVALID": 0.02817610380481033,
+          "p_naive_INVALID": 0.08730576745115734,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.1135963131838659,
+          "mean_diff": -0.04915901436364774,
+          "sd_diff": 0.19923514067797465,
+          "p_lower": 0.6007535030469737,
+          "p_upper": 0.2727300491553263,
+          "p_tost": 0.6007535030469737,
+          "ci_lo_90": -0.2396090146300418,
+          "ci_hi_90": 0.1412909859027463,
+          "equivalent": false,
+          "delta_min": 0.2396090146300418,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.6670938937854178,
+          "p_holm": 1.0,
+          "rank": 2,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      }
+    },
+    "osm_merged": {
+      "hybrid_gat_vs_stanet_gated": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.046975726210005286,
+          "sd_diff": 0.16860416076284906,
+          "se_corrected": 0.09613169135196042,
+          "t_corrected": 0.4886601447384948,
+          "p_corrected": 0.6272623099557508,
+          "ci_lo": -0.14620814023424547,
+          "ci_hi": 0.24015959265425604,
+          "significant": false,
+          "se_naive_INVALID": 0.02384422908233548,
+          "p_naive_INVALID": 0.05449096689501631,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.09613169135196042,
+          "mean_diff": 0.046975726210005286,
+          "sd_diff": 0.16860416076284906,
+          "p_lower": 0.24463882744015747,
+          "p_upper": 0.6099053627410711,
+          "p_tost": 0.6099053627410711,
+          "ci_lo_90": -0.11419394673489183,
+          "ci_hi_90": 0.2081453991549024,
+          "equivalent": false,
+          "delta_min": 0.2081453991549024,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.6272623099557508,
+          "p_holm": 1.0,
+          "rank": 2,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_gat_vs_hybrid_concat": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.00015278881777674113,
+          "sd_diff": 0.0301323889832271,
+          "se_corrected": 0.017180344211713345,
+          "t_corrected": 0.008893233796361985,
+          "p_corrected": 0.9929404292456339,
+          "ci_lo": -0.034372405475439065,
+          "ci_hi": 0.03467798311099255,
+          "significant": false,
+          "se_naive_INVALID": 0.00426136331667814,
+          "p_naive_INVALID": 0.9715440889890331,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.017180344211713345,
+          "mean_diff": 0.00015278881777674113,
+          "sd_diff": 0.0301323889832271,
+          "p_lower": 0.12323046975483469,
+          "p_upper": 0.12679978633835765,
+          "p_tost": 0.12679978633835765,
+          "ci_lo_90": -0.028650932605836066,
+          "ci_hi_90": 0.028956510241389545,
+          "equivalent": false,
+          "delta_min": 0.028956510241389545,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.9929404292456339,
+          "p_holm": 1.0,
+          "rank": 10,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_gat_vs_hybrid_crossatt": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.030270121330665808,
+          "sd_diff": 0.15351216570137557,
+          "se_corrected": 0.08752680874069714,
+          "t_corrected": 0.34583828390616483,
+          "p_corrected": 0.7309447383979764,
+          "ci_lo": -0.14562158609958625,
+          "ci_hi": 0.20616182876091788,
+          "significant": false,
+          "se_naive_INVALID": 0.021709898672415122,
+          "p_naive_INVALID": 0.16951715990329896,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.08752680874069714,
+          "mean_diff": 0.030270121330665808,
+          "sd_diff": 0.15351216570137557,
+          "p_lower": 0.2841826999330612,
+          "p_upper": 0.5464636212338327,
+          "p_tost": 0.5464636212338327,
+          "ci_lo_90": -0.11647302799145462,
+          "ci_hi_90": 0.17701327065278624,
+          "equivalent": false,
+          "delta_min": 0.17701327065278624,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7309447383979764,
+          "p_holm": 1.0,
+          "rank": 4,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_gat_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.0016267613347868304,
+          "sd_diff": 0.031108969454749134,
+          "se_corrected": 0.01773715332036136,
+          "t_corrected": 0.09171490517136084,
+          "p_corrected": 0.9272984857566149,
+          "ci_lo": -0.03401738275497604,
+          "ci_hi": 0.037270905424549694,
+          "significant": false,
+          "se_naive_INVALID": 0.004399472651435658,
+          "p_naive_INVALID": 0.7131525768978983,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.01773715332036136,
+          "mean_diff": 0.0016267613347868304,
+          "sd_diff": 0.031108969454749134,
+          "p_lower": 0.11428526791388073,
+          "p_upper": 0.15267592142507755,
+          "p_tost": 0.15267592142507755,
+          "ci_lo_90": -0.028110478896947,
+          "ci_hi_90": 0.03136400156652066,
+          "equivalent": false,
+          "delta_min": 0.03136400156652066,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.9272984857566149,
+          "p_holm": 1.0,
+          "rank": 9,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "stanet_gated_vs_hybrid_concat": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.04682293739222853,
+          "sd_diff": 0.16668189543838152,
+          "se_corrected": 0.09503568864341394,
+          "t_corrected": -0.4926879371381648,
+          "p_corrected": 0.6244336914682161,
+          "ci_lo": -0.2378043039335577,
+          "ci_hi": 0.14415842914910063,
+          "significant": false,
+          "se_naive_INVALID": 0.023572379713101325,
+          "p_naive_INVALID": 0.052602755292105174,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.09503568864341394,
+          "mean_diff": -0.04682293739222853,
+          "sd_diff": 0.16668189543838152,
+          "p_lower": 0.6105261453212721,
+          "p_upper": 0.24264952995178024,
+          "p_tost": 0.6105261453212721,
+          "ci_lo_90": -0.20615510601780157,
+          "ci_hi_90": 0.1125092312333445,
+          "equivalent": false,
+          "delta_min": 0.20615510601780157,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.6244336914682161,
+          "p_holm": 1.0,
+          "rank": 1,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "stanet_gated_vs_hybrid_crossatt": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.016705604879339465,
+          "sd_diff": 0.19276366213295204,
+          "se_corrected": 0.10990652180940517,
+          "t_corrected": -0.1519983036885614,
+          "p_corrected": 0.8798123968931872,
+          "ci_lo": -0.23757102950652484,
+          "ci_hi": 0.2041598197478459,
+          "significant": false,
+          "se_naive_INVALID": 0.02726089853211258,
+          "p_naive_INVALID": 0.5428393724774132,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.10990652180940517,
+          "mean_diff": -0.016705604879339465,
+          "sd_diff": 0.19276366213295204,
+          "p_lower": 0.48810456585477746,
+          "p_upper": 0.3699132471976671,
+          "p_tost": 0.48810456585477746,
+          "ci_lo_90": -0.20096948212331142,
+          "ci_hi_90": 0.16755827236463247,
+          "equivalent": false,
+          "delta_min": 0.20096948212331142,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.8798123968931872,
+          "p_holm": 1.0,
+          "rank": 7,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "stanet_gated_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.04534896487521845,
+          "sd_diff": 0.16424158901162414,
+          "se_corrected": 0.09364431856595061,
+          "t_corrected": -0.48426819234399865,
+          "p_corrected": 0.6303531174156001,
+          "ci_lo": -0.2335342685631947,
+          "ci_hi": 0.1428363388127578,
+          "significant": false,
+          "se_naive_INVALID": 0.023227268268594677,
+          "p_naive_INVALID": 0.05661603024020117,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.09364431856595061,
+          "mean_diff": -0.04534896487521845,
+          "sd_diff": 0.16424158901162414,
+          "p_lower": 0.6061183400670214,
+          "p_upper": 0.24428711719578133,
+          "p_tost": 0.6061183400670214,
+          "ci_lo_90": -0.20234843075545994,
+          "ci_hi_90": 0.11165050100502305,
+          "equivalent": false,
+          "delta_min": 0.20234843075545994,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.6303531174156001,
+          "p_holm": 1.0,
+          "rank": 3,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_concat_vs_hybrid_crossatt": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.030117332512889075,
+          "sd_diff": 0.1532823861572528,
+          "se_corrected": 0.08739579716829785,
+          "t_corrected": 0.3446084764796208,
+          "p_corrected": 0.7318634643711732,
+          "ci_lo": -0.145511097305692,
+          "ci_hi": 0.20574576233147013,
+          "significant": false,
+          "se_naive_INVALID": 0.02167740293764969,
+          "p_naive_INVALID": 0.171010221253401,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.08739579716829785,
+          "mean_diff": 0.030117332512889075,
+          "sd_diff": 0.1532823861572528,
+          "p_lower": 0.2844805625017567,
+          "p_upper": 0.5458438482201389,
+          "p_tost": 0.5458438482201389,
+          "ci_lo_90": -0.11640616924058218,
+          "ci_hi_90": 0.17664083426636035,
+          "equivalent": false,
+          "delta_min": 0.17664083426636035,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7318634643711732,
+          "p_holm": 1.0,
+          "rank": 5,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_concat_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": 0.0014739725170100893,
+          "sd_diff": 0.025855063439606845,
+          "se_corrected": 0.014741575576878083,
+          "t_corrected": 0.0999874477000946,
+          "p_corrected": 0.9207622662092619,
+          "ci_lo": -0.028150332718553293,
+          "ci_hi": 0.03109827775257347,
+          "significant": false,
+          "se_naive_INVALID": 0.003656458137230877,
+          "p_naive_INVALID": 0.6886173347673358,
+          "ci_widening": 4.03165441080155,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.014741575576878083,
+          "mean_diff": 0.0014739725170100893,
+          "sd_diff": 0.025855063439606845,
+          "p_lower": 0.07578966619033997,
+          "p_upper": 0.10740659162798105,
+          "p_tost": 0.10740659162798105,
+          "ci_lo_90": -0.023241029174983673,
+          "ci_hi_90": 0.02618897420900385,
+          "equivalent": false,
+          "delta_min": 0.02618897420900385,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.9207622662092619,
+          "p_holm": 1.0,
+          "rank": 8,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      },
+      "hybrid_crossatt_vs_lstm_only": {
+        "n_paired": 50,
+        "nadeau_bengio": {
+          "n_runs": 50,
+          "n_train_units": 59,
+          "n_test_units": 18,
+          "overlap_ratio": 0.3050847457627119,
+          "mean_diff": -0.028643359995878984,
+          "sd_diff": 0.15213328810259016,
+          "se_corrected": 0.08674062508343251,
+          "t_corrected": -0.3302185102808289,
+          "p_corrected": 0.7426425973812729,
+          "ci_lo": -0.20295517221665638,
+          "ci_hi": 0.14566845222489838,
+          "significant": false,
+          "se_naive_INVALID": 0.021514895932309645,
+          "p_naive_INVALID": 0.18924246219879157,
+          "ci_widening": 4.031654410801551,
+          "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+        },
+        "tost": {
+          "n_runs": 50,
+          "delta": 0.02,
+          "alpha": 0.05,
+          "se_kind": "nadeau_bengio",
+          "se": 0.08674062508343251,
+          "mean_diff": -0.028643359995878984,
+          "sd_diff": 0.15213328810259016,
+          "p_lower": 0.539484045949438,
+          "p_upper": 0.2887477647199484,
+          "p_tost": 0.539484045949438,
+          "ci_lo_90": -0.17406843240565162,
+          "ci_hi_90": 0.11678171241389364,
+          "equivalent": false,
+          "delta_min": 0.17406843240565162,
+          "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+        },
+        "holm": {
+          "p_raw": 0.7426425973812729,
+          "p_holm": 1.0,
+          "rank": 6,
+          "n_family": 10,
+          "significant": false
+        },
+        "verdict": "KARARSIZ"
+      }
+    }
+  },
+  "graph_effect": {
+    "hybrid_gat": {
+      "n_paired": 50,
+      "nadeau_bengio": {
+        "n_runs": 50,
+        "n_train_units": 59,
+        "n_test_units": 18,
+        "overlap_ratio": 0.3050847457627119,
+        "mean_diff": -0.0032801845937418038,
+        "sd_diff": 0.034413805219351314,
+        "se_corrected": 0.019621445204109817,
+        "t_corrected": -0.1671734451575846,
+        "p_corrected": 0.8679215875896957,
+        "ci_lo": -0.04271095499260917,
+        "ci_hi": 0.03615058580512556,
+        "significant": false,
+        "se_naive_INVALID": 0.004866847007407264,
+        "p_naive_INVALID": 0.5034877254243961,
+        "ci_widening": 4.03165441080155,
+        "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+      },
+      "tost": {
+        "n_runs": 50,
+        "delta": 0.02,
+        "alpha": 0.05,
+        "se_kind": "nadeau_bengio",
+        "se": 0.019621445204109817,
+        "mean_diff": -0.0032801845937418038,
+        "sd_diff": 0.034413805219351314,
+        "p_lower": 0.19914675764116196,
+        "p_upper": 0.12057956786398108,
+        "p_tost": 0.19914675764116196,
+        "ci_lo_90": -0.036176536065124804,
+        "ci_hi_90": 0.029616166877641195,
+        "equivalent": false,
+        "delta_min": 0.036176536065124804,
+        "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+      },
+      "holm": {
+        "p_raw": 0.8679215875896957,
+        "p_holm": 1.0,
+        "rank": 3,
+        "n_family": 4,
+        "significant": false
+      },
+      "verdict": "KARARSIZ"
+    },
+    "stanet_gated": {
+      "n_paired": 50,
+      "nadeau_bengio": {
+        "n_runs": 50,
+        "n_train_units": 59,
+        "n_test_units": 18,
+        "overlap_ratio": 0.3050847457627119,
+        "mean_diff": -0.02690705844066443,
+        "sd_diff": 0.20451010157638147,
+        "se_corrected": 0.11660389562243072,
+        "t_corrected": -0.23075608492353325,
+        "p_corrected": 0.8184650811880051,
+        "ci_lo": -0.26123135963630373,
+        "ci_hi": 0.2074172427549749,
+        "significant": false,
+        "se_naive_INVALID": 0.028922095929161798,
+        "p_naive_INVALID": 0.35676183929668626,
+        "ci_widening": 4.03165441080155,
+        "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+      },
+      "tost": {
+        "n_runs": 50,
+        "delta": 0.02,
+        "alpha": 0.05,
+        "se_kind": "nadeau_bengio",
+        "se": 0.11660389562243072,
+        "mean_diff": -0.02690705844066443,
+        "sd_diff": 0.20451010157638147,
+        "p_lower": 0.5234971619326844,
+        "p_upper": 0.34461487111998257,
+        "p_tost": 0.5234971619326844,
+        "ci_lo_90": -0.2223994237290531,
+        "ci_hi_90": 0.16858530684772424,
+        "equivalent": false,
+        "delta_min": 0.2223994237290531,
+        "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+      },
+      "holm": {
+        "p_raw": 0.8184650811880051,
+        "p_holm": 1.0,
+        "rank": 2,
+        "n_family": 4,
+        "significant": false
+      },
+      "verdict": "KARARSIZ"
+    },
+    "hybrid_concat": {
+      "n_paired": 50,
+      "nadeau_bengio": {
+        "n_runs": 50,
+        "n_train_units": 59,
+        "n_test_units": 18,
+        "overlap_ratio": 0.3050847457627119,
+        "mean_diff": 0.009567479000083357,
+        "sd_diff": 0.06467609430902882,
+        "se_corrected": 0.03687585352481892,
+        "t_corrected": 0.2594510522622632,
+        "p_corrected": 0.7963742233225803,
+        "ci_lo": -0.06453732309139773,
+        "ci_hi": 0.08367228109156444,
+        "significant": false,
+        "se_naive_INVALID": 0.009146580973314989,
+        "p_naive_INVALID": 0.30068591764187136,
+        "ci_widening": 4.031654410801551,
+        "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+      },
+      "tost": {
+        "n_runs": 50,
+        "delta": 0.02,
+        "alpha": 0.05,
+        "se_kind": "nadeau_bengio",
+        "se": 0.03687585352481892,
+        "mean_diff": 0.009567479000083357,
+        "sd_diff": 0.06467609430902882,
+        "p_lower": 0.21326677754702605,
+        "p_upper": 0.38921906642607434,
+        "p_tost": 0.38921906642607434,
+        "ci_lo_90": -0.052256766142960154,
+        "ci_hi_90": 0.07139172414312686,
+        "equivalent": false,
+        "delta_min": 0.07139172414312686,
+        "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+      },
+      "holm": {
+        "p_raw": 0.7963742233225803,
+        "p_holm": 1.0,
+        "rank": 1,
+        "n_family": 4,
+        "significant": false
+      },
+      "verdict": "KARARSIZ"
+    },
+    "hybrid_crossatt": {
+      "n_paired": 50,
+      "nadeau_bengio": {
+        "n_runs": 50,
+        "n_train_units": 59,
+        "n_test_units": 18,
+        "overlap_ratio": 0.3050847457627119,
+        "mean_diff": 0.02051565436776875,
+        "sd_diff": 0.2586376797067877,
+        "se_corrected": 0.14746538570024773,
+        "t_corrected": 0.1391218303220719,
+        "p_corrected": 0.8899241074907316,
+        "ci_lo": -0.27582713306916135,
+        "ci_hi": 0.31685844180469885,
+        "significant": false,
+        "se_naive_INVALID": 0.03657689143820477,
+        "p_naive_INVALID": 0.5774277720409366,
+        "ci_widening": 4.031654410801551,
+        "note": "naive degerler yalnizca karsilastirma icindir; tekrarli CV'de egitim kumeleri ortustugu icin gecersizdir"
+      },
+      "tost": {
+        "n_runs": 50,
+        "delta": 0.02,
+        "alpha": 0.05,
+        "se_kind": "nadeau_bengio",
+        "se": 0.14746538570024773,
+        "mean_diff": 0.02051565436776875,
+        "sd_diff": 0.2586376797067877,
+        "p_lower": 0.3923329187491562,
+        "p_upper": 0.501387912662146,
+        "p_tost": 0.501387912662146,
+        "ci_lo_90": -0.2267175696580702,
+        "ci_hi_90": 0.26774887839360767,
+        "equivalent": false,
+        "delta_min": 0.26774887839360767,
+        "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+      },
+      "holm": {
+        "p_raw": 0.8899241074907316,
+        "p_holm": 1.0,
+        "rank": 4,
+        "n_family": 4,
+        "significant": false
+      },
+      "verdict": "KARARSIZ"
+    },
+    "lstm_only": {
+      "identical": true,
+      "n_paired": 50
+    }
+  },
+  "collapse_summary": {
+    "learned_weight": {
+      "n": 8,
+      "of": 200,
+      "rate": 0.04
+    },
+    "fixed_or_control": {
+      "n": 0,
+      "of": 300,
+      "rate": 0.0
+    }
+  }
+}
