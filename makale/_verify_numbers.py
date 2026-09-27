@@ -59,7 +59,13 @@ def check_protocol():
     # Egitim YAPMAYAN sonuc dosyalarinin protokol damgasi olmaz ve olmamalidir:
     # ham veriyi sayan bir denetimin epoch butcesiyle ya da cuDNN ayariyla
     # isi yoktur. Onlari damga karsilastirmasindan muaf tutuyoruz.
-    NO_PROTOCOL = {"F23_data_audit", "F24_model_audit"}
+    # Egitim YAPMAYAN denetimler (F23 veri, F24 mimari) damga tasimaz.
+    # F20 ve F21 ise BILEREK birden cok protokolde kosar: pencere/adim ve
+    # ogrenme orani damganin icindedir, o yuzden her arama noktasi kendi
+    # ozetini alir. Ikisi de `baseline_protocol` altinda hangi damgadan
+    # tureidigini soyler ve asagida ayrica denetlenir.
+    NO_PROTOCOL = {"F23_data_audit", "F24_model_audit",
+                   "F20_window_stride", "F21_baseline_search"}
     stamps = {n: v.get("protocol", {}).get("hash")
               for n, v in J.items()
               if v is not None and n not in NO_PROTOCOL}
@@ -78,6 +84,24 @@ def check_protocol():
         failures.append(msg)
         print(f"{FAIL} {msg}")
 
+    # Cok protokollu deneyler: her biri KENDI damgasini uretir ama hepsinin
+    # TABANI ana protokol olmali; degilse tarama baska bir zeminden baslamis
+    # demektir ve sonuclari ana tablolarla karsilastirilamaz.
+    base = {n: (J[n] or {}).get("baseline_protocol", {}).get("hash")
+            for n in ("F20_window_stride", "F21_baseline_search")
+            if J.get(n) is not None}
+    # NOT: yukaridaki basari dalinda `uniq.pop()` kumeyi bosaltiyor,
+    # o yuzden damgayi `have`den okuyoruz.
+    main_hash = sorted(set(have.values()))[0] if have else None
+    for n, h in base.items():
+        if h != main_hash:
+            msg = f"{n} tabani {h}, ana protokol {main_hash}"
+            failures.append(msg)
+            print(f"{FAIL} {msg}")
+    if base:
+        print(f"{OK} cok protokollu deneyler ana damgadan turuyor: "
+              f"{', '.join(sorted(base))}")
+
     # seed listeleri
     seeds = {n: tuple(v.get("config", {}).get("seeds", []))
              for n, v in J.items()
@@ -94,7 +118,8 @@ def check_protocol():
         # aralarinda ayni seed listesini kullanmak zorunda.
         CV_FILES = {"F5_cv", "F10_repeated_cv", "F10_pilot", "F11_classic_cv",
                     "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
-                    "F18_inductive", "F19_noise", "F20_window_stride"}
+                    "F18_inductive", "F19_noise", "F20_window_stride",
+                    "F22_imputation", "F25_pooled_seed", "F26_repeated_analysis"}
         non_cv = {n: s for n, s in seeds.items() if n not in CV_FILES}
         cv = {n: s for n, s in seeds.items() if n in CV_FILES}
         if len(set(non_cv.values())) <= 1 and len(set(cv.values())) <= 1:

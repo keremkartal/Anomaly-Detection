@@ -60,9 +60,11 @@ CANDIDATES = {
     "stgcn_cheb":         dict(temporal="lstm",        spatial="cheb"),
     "dcrnn_diffusion":    dict(temporal="lstm",        spatial="diffusion"),
     "gwn_adaptive":       dict(temporal="lstm",        spatial="adaptive"),
-    "stgcn_temporal":     dict(temporal="stgcn",       spatial="gat"),
-    "gwn_temporal":       dict(temporal="wavenet",     spatial="gat"),
-    "transformer":        dict(temporal="transformer", spatial="gat"),
+    # kayit adlari `stanet/encoders.py` ile birebir ayni olmali; F4 de
+    # bunlari kullaniyor, boylece arama sonuclari Tablo 11 ile karsilastirilabilir
+    "stgcn_temporal":     dict(temporal="stgcn_temporal",       spatial="gat"),
+    "gwn_temporal":       dict(temporal="wavenet_temporal",     spatial="gat"),
+    "transformer":        dict(temporal="transformer_temporal", spatial="gat"),
     "gru":                dict(temporal="gru",         spatial="gat"),
 }
 FUSION = "weighted_sum"

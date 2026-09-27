@@ -90,7 +90,7 @@
 % sonuclar bu iddiayi desteklemedigi icin cerceve degistirildi.
 % =====================================================================
 \begin{abstract}
-Hybrid spatio-temporal architectures for traffic anomaly detection are typically reported through a single training run on a single data partition, with overlapping sliding windows treated as independent observations. This paper asks how much of such evidence survives a controlled protocol. Using a physics-informed synthetic trajectory dataset over an OpenStreetMap-derived road network, we hold the task, optimization budget, checkpoint criterion, and threshold rule fixed; vary one component at a time across nine encoder configurations, four fusion operators, and two graph constructions; and report every result over multiple seeds. Because windows are cut with stride 10 from length-50 sequences and therefore overlap by $80\%$, all inference uses the \emph{trip} as the statistical unit, with cluster bootstrap, sign-flip permutation tests, and Holm correction. Four findings emerge. First, on the fixed partition---which contains 4{,}799 windows but only 14 trips---\emph{no} comparison remains significant once the correct unit and multiplicity correction are applied; seven comparisons that are significant at the window level are not. Second, under five-fold trip-grouped cross-validation, in which all 90 trips receive an out-of-fold prediction, the four fusion operators span $0.0205$ F1 with a within-configuration standard deviation of $0.04$--$0.05$, and none is distinguishable from any other: the sample-wise gate that motivated the original design ranks last on the fixed partition and first under cross-validation, so the choice of fusion operator is not resolvable on this data in either direction. Third, a reproducible degenerate failure mode of the gate is documented---it collapses to $\mathrm{F1}=0.0715$ at one seed, recurring at the same seed across an independent re-run---and localized: it occurs only when the gate locks onto a spatial branch with near-chance standalone discriminative power, and disappears on a graph construction where that branch is more informative. Fourth, no comparison survives at all. Under cross-validation the spatial branch shows no significant benefit on any anomaly subtype, and the one comparison nearest to significance runs against it. An earlier version of this study reported a spatial gain on abnormal-dwell detection; it was produced by applying a threshold averaged across folds rather than each fold's own, and disappears when that is corrected. We additionally report a zero-parameter threshold-rule reference ($\mathrm{F1}=0.8536$), gradient-boosting baselines that match the hybrid model to within $0.0014$ F1, probability calibration, and single-window latency. The study argues that architectural claims in this problem setting require multi-partition evidence at the correct statistical unit, and demonstrates on its own earlier results what happens when they do not have it.
+Hybrid spatio-temporal architectures for traffic anomaly detection are typically reported through a single training run on a single data partition, with overlapping sliding windows treated as independent observations. This paper asks how much of such evidence survives a controlled protocol. Using a physics-informed synthetic trajectory dataset over an OpenStreetMap-derived road network, we hold the task, optimization budget, checkpoint criterion, and threshold rule fixed; vary one component at a time across nine encoder configurations, four fusion operators, and two graph constructions; and report every result over multiple seeds. Because windows are cut with stride 10 from length-50 sequences and therefore overlap by $80\%$, all inference uses the \emph{trip} as the statistical unit, with cluster bootstrap, sign-flip permutation tests, and Holm correction. Four findings emerge. First, on the fixed partition---which contains 4{,}799 windows but only 14 trips---\emph{no} comparison remains significant once the correct unit and multiplicity correction are applied; seven comparisons that are significant at the window level are not. Second, under five-fold trip-grouped cross-validation, in which all 90 trips receive an out-of-fold prediction, the four fusion operators span $0.0205$ F1 with a within-configuration standard deviation of $0.04$--$0.05$, and none is distinguishable from any other: the sample-wise gate that motivated the original design ranks last on the fixed partition and first under cross-validation, so the choice of fusion operator is not resolvable on this data in either direction. Third, a reproducible degenerate failure mode is documented and attributed. Across $500$ runs it occurs in $8$, and every one of them belongs to an operator that \emph{learns} a mixing weight: $4.0\%$ for the sample-wise gate and multi-head cross-attention against $0.0\%$ for fixed concatenation, static weighted summation, and the temporal-only control. Epoch-level measurement shows the mechanism---the gate drives its class-conditional separation negative within two epochs and stays weighted towards a spatial branch that carries almost no standalone signal---so the failure is a property of learning the mixing weight, not of the proposed operator in particular. Fourth, no comparison survives at all. Under cross-validation the spatial branch shows no significant benefit on any anomaly subtype, and the one comparison nearest to significance runs against it. An earlier version of this study reported a spatial gain on abnormal-dwell detection; it was produced by applying a threshold averaged across folds rather than each fold's own, and disappears when that is corrected. We additionally report a zero-parameter threshold-rule reference ($\mathrm{F1}=0.8536$), gradient-boosting baselines that match the hybrid model to within $0.0014$ F1, probability calibration, and single-window latency. The study argues that architectural claims in this problem setting require multi-partition evidence at the correct statistical unit, and demonstrates on its own earlier results what happens when they do not have it.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -998,7 +998,7 @@ The comparison against concatenation is the closest to significance (uncorrected
 
 This is the paper's central empirical statement, and it cuts in both directions. It does not vindicate the sample-wise gate: nothing here shows the gate helping. It equally does not condemn it: the fixed-partition result that placed it last, including its collapse, is not reproduced when five partitions are used instead of one. \textbf{What the data supports is that the choice of fusion operator in this setting is not resolvable}---and that a study reporting a ranking from a single partition, as the earlier version of this work did, would have reported one of two opposite orderings depending on which partition it happened to use.
 
-The collapse mode of Section~\ref{sec:fusion_ablation} remains a real and reproducible phenomenon; it recurred at the same seed across a full re-run under a different backend configuration. What these ten cross-validated runs establish is that it is \emph{rare} rather than systematic, and Section~\ref{sec:graph_ablation} shows it is conditional on the spatial branch being nearly uninformative. A failure mode that appears in one of fifteen runs is worth documenting for practitioners; it is not evidence that one operator is generally worse than another.
+The collapse mode of Section~\ref{sec:fusion_ablation} remains a real and reproducible phenomenon; it recurred at the same seed across a full re-run under a different backend configuration. Ten cross-validated runs are too few to say more than that it is not systematic, and an earlier version of this paper said exactly that---\emph{none of ten} runs collapsed---which is a statement about ten runs rather than about the phenomenon. The repeated-partition campaign of Section~\ref{sec:repeated_cv} puts a rate on it instead, and the rate separates the operators cleanly (Table~\ref{tab:collapse}). It is not evidence that one operator is generally worse than another; it is evidence about a class of operators.
 
 The spatial-branch control is equally instructive: removing the spatial branch entirely yields $0.8839 \pm 0.0436$, and no test reported here separates it from any hybrid variant. Following Section~\ref{sec:equivalence}, that is an undetermined comparison rather than a demonstration that the branch contributes nothing. On the fixed partition the same ablation appeared to cost $3.5$ F1 points
 at $p = 0.035$.  % ESKI-DEGER: geri cekilen v1 iddiasi, bilerek aniliyor
@@ -1045,6 +1045,169 @@ It was an artifact of the pooling defect described in Section~\ref{sec:protocol_
 \textbf{What remains is a hint in the opposite direction.} Signal freeze has an uncorrected trip-level $p$ of $0.0431$ and an interval of $[-0.1238, -0.0065]$ that excludes zero---but the sign is negative: the hybrid is \emph{worse} than the control ($0.0261$ versus $0.0848$). After correction across the three subtypes it is not significant ($0.129$), and with 62 positive windows we do not claim it. We report it because it is now the comparison closest to significance in the study, and reporting only the directions that favour the proposed architecture is the practice this paper argues against.
 
 Across all three subtypes, therefore, \textbf{no evidence remains that the spatial branch contributes to detection}.
+
+\subsection{Repeated Grouped Partitions}
+\label{sec:repeated_cv}
+Cross-validation as reported above uses one grouped partition of the 90 trips.
+\texttt{GroupKFold} is deterministic, so that partition is a single draw, and
+every cross-validated number in this paper is conditional on it. To separate
+what depends on the partition from what depends on the architecture, the
+entire design was repeated over five partitions: the trip list is permuted
+with a partition-specific seed and split into five equal blocks, which
+preserves the grouping---no trip's windows are ever split across folds---while
+changing which trips are tested together. Five partitions $\times$ five folds
+$\times$ two seeds $\times$ five configurations $\times$ two graph
+constructions gives $500$ runs, all under one protocol stamp. The first
+partition reproduces the ordinary \texttt{GroupKFold} split and reuses its
+cached runs, so the first slice of this design \emph{is}
+Table~\ref{tab:cv} rather than a second set of numbers for the same models.
+
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Repeated cross-validation, 5 partitions $\times$ 5 folds
+  $\times$ 2 seeds = 50 runs per cell]}~ Every configuration under both graph
+  constructions. The worst run is reported because the mean alone hides the
+  collapse mode of Table~\ref{tab:collapse}.}
+  \label{tab:repeated_cv}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    & \multicolumn{2}{c}{\textbf{Trip-instance graph}}
+    & \multicolumn{2}{c}{\textbf{OSM-merged graph}} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    \textbf{Fusion operator} & \textbf{F1 (mean $\pm$ s.d.)} & \textbf{Worst}
+    & \textbf{F1 (mean $\pm$ s.d.)} & \textbf{Worst} \\ \midrule
+    Gated (proposed) & $0.8612 \pm 0.1261$ & $0.0795$ & $0.8342 \pm 0.1708$ & $0.1063$ \\
+    Weighted sum & $0.8845 \pm 0.0443$ & $0.7519$ & $0.8812 \pm 0.0474$ & $0.7149$ \\
+    Concatenation & $0.8715 \pm 0.0670$ & $0.5154$ & $0.8811 \pm 0.0400$ & $0.7950$ \\
+    Cross-attention & $0.8304 \pm 0.1986$ & $0.0789$ & $0.8510 \pm 0.1535$ & $0.1039$ \\
+    No spatial branch & $0.8796 \pm 0.0386$ & $0.7902$ & $0.8796 \pm 0.0386$ & $0.7902$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\textbf{Uncertainty.} Training sets overlap heavily across folds and
+partitions, so paired differences are analysed with the Nadeau--Bengio
+correction of Eq.~\ref{eq:nadeau_bengio}. With 18 test trips against 59
+training trips the correction widens intervals by a factor of $4.03$, and it
+changes conclusions rather than decorating them: on the merged graph three
+comparisons sit at uncorrected $p$ of $0.0526$, $0.0545$ and $0.0566$---all of
+which a reader would take as marginal---and move to $0.62$ and above once the
+shared training data is accounted for.
+
+\textbf{Result.} None of the twenty paired comparisons---ten within each
+graph construction---is significant after Holm correction, and none is
+equivalent at the pre-specified bound of $0.02$ F1 either. Both statements
+matter. The tightest comparison, fixed concatenation against the
+temporal-only control on the merged graph, would support an equivalence claim
+at a bound of $0.0262$; the honest summary is therefore that these operators
+differ by less than about $0.026$ F1, not that they are the same. The
+spatial branch's contribution is the most precisely estimated quantity here
+and the smallest: $+0.0049$ F1 on the trip-instance graph and $+0.0016$ on
+the merged graph, with intervals spanning zero in both.
+
+\textbf{The graph construction is not a hidden variable.} Treated as the
+prespecified factor it is, rather than as a choice, it moves nothing: paired
+within each cell, the difference between constructions is between $-0.0269$
+and $+0.0205$ F1 for the four hybrids and exactly zero for the temporal-only
+control, which has no spatial branch to be affected and therefore serves as
+the design's own consistency check.
+
+
+\begin{table}[!htbp]
+  \centering
+  \caption{\textbf{[Repeated cross-validation, 50 runs per row]}~ Where the
+  variation in F1 comes from, as a percentage of total variance. The seed is
+  the smallest identified source in every row.}
+  \label{tab:variance_components}
+  \renewcommand{\arraystretch}{1.15}
+  \footnotesize
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{@{}llccccc@{}}
+    \toprule
+    \textbf{Graph} & \textbf{Operator} & \textbf{s.d.} & \textbf{Part.}
+    & \textbf{Fold} & \textbf{Seed} & \textbf{Resid.} \\ \midrule
+    Trip-instance & Gated (proposed) & $0.1261$ & $14.6$ & $7.9$ & $0.4$ & $77.1$ \\
+    Trip-instance & Weighted sum & $0.0443$ & $10.5$ & $1.6$ & $1.1$ & $86.8$ \\
+    Trip-instance & Concatenation & $0.0670$ & $8.6$ & $8.8$ & $1.9$ & $80.7$ \\
+    Trip-instance & Cross-attention & $0.1986$ & $2.6$ & $18.9$ & $0.0$ & $78.5$ \\
+    Trip-instance & No spatial branch & $0.0386$ & $6.9$ & $4.9$ & $0.0$ & $88.2$ \\
+    OSM-merged & Gated (proposed) & $0.1708$ & $13.8$ & $5.8$ & $4.9$ & $75.5$ \\
+    OSM-merged & Weighted sum & $0.0474$ & $6.9$ & $8.8$ & $0.1$ & $84.2$ \\
+    OSM-merged & Concatenation & $0.0400$ & $2.7$ & $2.6$ & $0.3$ & $94.4$ \\
+    OSM-merged & Cross-attention & $0.1535$ & $12.9$ & $11.6$ & $0.5$ & $75.0$ \\
+    OSM-merged & No spatial branch & $0.0386$ & $6.9$ & $4.9$ & $0.0$ & $88.2$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Where the variation lives.} Decomposing F1 over the three design
+factors (Table~\ref{tab:variance_components}) gives the partition $8.6\%$ of
+the variance on average, the fold $7.6\%$, and the seed $0.9\%$; the
+remainder is interaction and run-to-run noise, which a design with one
+observation per cell cannot separate further. The ordering is the point. The
+earlier version of this study varied the seed and held the partition fixed,
+which is to say it sampled the smallest identified source of variation while
+holding constant a larger one. This is the quantitative case for repeated
+partitions, and it is why the single-partition results of
+Section~\ref{sec:reference_points} are reported here as a secondary view.
+
+\subsubsection{The Collapse Mode Belongs to a Class of Operators}
+\label{sec:collapse_class}
+Eight of the $500$ runs are degenerate ($\mathrm{F1} < 0.30$), and they are
+not distributed the way the earlier account implied
+(Table~\ref{tab:collapse}). Every one occurs in an operator that learns a
+mixing weight---the sample-wise gate or multi-head cross-attention---at a rate
+of $4.0\%$, against $0.0\%$ across $300$ runs of fixed concatenation, static
+weighted summation, and the temporal-only control. Nor is it confined to one
+graph: the gate collapses in $3$ of $50$ runs on the merged graph against $1$
+of $50$ on the trip-instance graph. A previous version reported the opposite,
+that the collapse disappeared on the merged graph, on the basis of five seeds
+on one partition; with fifty runs per cell that reading does not hold.
+
+
+\begin{table}[!htbp]
+  \centering
+  \caption{\textbf{[Repeated cross-validation, 500 runs]}~ Degenerate runs
+  ($\mathrm{F1} < 0.30$). Every collapse belongs to an operator that learns
+  its mixing weight.}
+  \label{tab:collapse}
+  \renewcommand{\arraystretch}{1.15}
+  \footnotesize
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Fusion operator} & \textbf{Learns w.} & \textbf{Trip-inst.}
+    & \textbf{OSM-mrg.} & \textbf{Total} \\ \midrule
+    Gated (proposed) & yes & $1/50$ & $3/50$ & $4/100$ \\
+    Weighted sum & no & $0/50$ & $0/50$ & $0/100$ \\
+    Concatenation & no & $0/50$ & $0/50$ & $0/100$ \\
+    Cross-attention & yes & $3/50$ & $1/50$ & $4/100$ \\
+    No spatial branch & no & $0/50$ & $0/50$ & $0/100$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Mechanism.} Recording the gate's distribution after every epoch
+separates a collapsed run from a healthy one within two epochs. In the
+collapsed run the gate's class-conditional separation---mean gate value on
+anomalous windows minus mean on normal windows---is already negative at epoch
+two ($-0.0009$) and falls to $-0.1622$: the gate assigns \emph{less} temporal
+weight to the windows it is supposed to detect. Its mean rises only from
+$0.0181$ to $0.3751$, so the representation stays weighted towards the
+spatial branch, which Section~\ref{sec:graph_ablation} shows carries almost
+no standalone signal. Gradient norms climb from $0.79$ to $2.08$ while
+validation loss does not improve: the run is training, not learning. In a
+healthy run at the same configuration the same separation is $+0.1418$ at
+epoch two and the gate mean reaches $0.8705$.
+
+This confirms the mechanism the earlier version proposed---the gate locks
+onto an uninformative spatial branch---while correcting its scope. The
+failure is not a property of the proposed operator. It is what can happen
+when a fusion stage is free to learn how much of an uninformative branch to
+admit, and it is worth reporting for that reason.
 
 \subsection{Effect Sizes and the Distribution Across Trips}
 \label{sec:effect_sizes}
@@ -1239,7 +1402,7 @@ This study evaluated the components of a hybrid LSTM--GAT traffic anomaly detect
 \begin{itemize}
   \item \textbf{The fixed partition supports no claim at all.} It holds $4{,}799$ windows but $14$ trips. At the trip level, after Holm correction, none of sixteen comparisons is significant---including seven that are significant when windows are treated as independent. The hybrid model's own F1 on that partition carries an interval of $[0.7231, 0.9470]$.
   \item \textbf{The fusion ranking is partition-dependent, in both directions.} The sample-wise gate ranks last of four on the fixed partition and first of four under cross-validation, where no operator differs significantly from any other. We therefore make no accuracy claim for or against the gating mechanism, and we withdraw the earlier claim against it.
-  \item \textbf{A reproducible collapse mode exists and is conditional.} The gate collapsed to $\mathrm{F1}=0.0715$ at one of five seeds on the fixed partition, recurring at the same seed in an independent re-run under a different backend configuration. It occurred in none of ten cross-validated runs, and it disappears on a graph construction where the spatial branch carries more standalone signal. It is a rare, conditional failure mode worth documenting for practitioners---not evidence of general inferiority.
+  \item \textbf{A reproducible collapse mode belongs to a class of operators, not to one of them.} The gate collapsed to $\mathrm{F1}=0.0715$ at one of five seeds on the fixed partition, recurring at the same seed in an independent re-run under a different backend configuration. Over $500$ repeated-partition runs the rate is $4.0\%$ for the two operators that learn a mixing weight and $0.0\%$ for the three that do not, and it is not confined to one graph construction: the gate collapses in $3$ of $50$ runs on the merged graph against $1$ of $50$ on the trip-instance graph, the opposite of what the five-seed fixed partition suggested. Epoch-level measurement identifies the mechanism. This is a failure mode practitioners should know about when a fusion stage learns its own weighting---not evidence of general inferiority of the proposed operator.
   \item \textbf{No benefit from the spatial branch is demonstrated.} Under cross-validation no anomaly subtype shows a significant gain from the spatial branch after correction, and pooled F1 is highest for the control that has no spatial branch at all. This is an absence of demonstrated benefit, not a demonstration of absence: where the distinction matters we test it directly (Section~\ref{sec:equivalence}) rather than reading it off a large $p$-value. A gain on abnormal-dwell detection reported in the previous version was an artifact of a pooled threshold and is withdrawn (Section~\ref{sec:subtype}); the comparison now closest to significance has the hybrid performing \emph{worse} on signal-freeze events.
   \item \textbf{Encoder choice separates along one axis only.} Graph attention ranks above Chebyshev convolution, diffusion convolution, and adaptive adjacency, and the separation is clearest against adaptive adjacency, which is the only one of the three that the fixed-partition design resolves after correction (Section~\ref{sec:equivalence}); the LSTM, a GRU, and a Transformer encoder finish within $0.0015$ F1 of one another. The spatial axis is the one along which differences appear at all; the recurrence axis is not.
   \item \textbf{Gate interpretability is seed-dependent.} The class-conditional shift in $g_{gate}$ varies in magnitude and sign across seeds and does not constitute a stable model property.
