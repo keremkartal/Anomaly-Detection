@@ -1209,6 +1209,136 @@ failure is not a property of the proposed operator. It is what can happen
 when a fusion stage is free to learn how much of an uninformative branch to
 admit, and it is worth reporting for that reason.
 
+\subsection{What the Spatial Branch Contributes}
+\label{sec:graph_controls}
+Removing the spatial branch entirely, as in Section~\ref{sec:cv}, cannot say
+\emph{why} it makes no difference. The branch supplies two distinct things: a
+set of node features describing each road segment, and message passing over
+the road topology that mixes a segment's representation with its neighbours'.
+An ablation that deletes both at once leaves the attribution open.
+
+Three controls separate them. Each is trained from scratch under its own
+condition rather than applied to a trained model at inference, because the
+question is what the branch \emph{contributes}, not how robust it is to
+perturbation. Removing the edges and keeping only self-loops leaves the node
+features intact but reduces the graph layer to a per-node transformation, so
+no message passing occurs. Shuffling the node feature rows across segments
+preserves the topology and the degree distribution while destroying the
+correspondence between a segment and its description. Replacing the edges with
+random pairs of the same density preserves both the features and the amount of
+message passing while discarding the road network itself.
+
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds = 10 runs per
+  row]}~ What the spatial branch contributes. Each condition is trained from
+  scratch under that condition; the comparison against the reference is paired
+  within run and corrected for overlapping training sets.}
+  \label{tab:graph_controls}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccc c@{}}
+    \toprule
+    \textbf{Condition} & \textbf{Edges} & \textbf{F1 (mean $\pm$ s.d.)}
+    & \textbf{$\Delta$ vs reference} & \textbf{95\% CI} & \textbf{Holm $p$} \\ \midrule
+    Reference (real features, real topology) & $53{,}660$ & $0.8831 \pm 0.0412$ & --- & --- & --- \\
+    Edges removed (self-loops only) & $4{,}678$ & $0.8925 \pm 0.0370$ & $+0.0094$ & $[-0.0068, +0.0256]$ & $0.664$ \\
+    Node features shuffled & $53{,}660$ & $0.8954 \pm 0.0323$ & $+0.0123$ & $[-0.0205, +0.0451]$ & $0.838$ \\
+    Random edges, same density & $53{,}660$ & $0.8825 \pm 0.0348$ & $-0.0006$ & $[-0.0279, +0.0267]$ & $0.962$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+None of the three differs from the reference after correction, and the point
+estimates run the wrong way for two of them: removing message passing scores
+$+0.0094$ F1, and shuffling the node features $+0.0123$. Replacing the real
+topology with random edges of matched density costs $-0.0006$. Read together,
+neither the features nor the message passing carries measurable signal here,
+and the road network is interchangeable with an arbitrary graph of the same
+density.
+
+The pooled trip-level tests reach significance for two of the three
+conditions---shuffled features at Holm $p = 0.0094$ and random edges at
+$0.0495$---but these use a single seed's predictions, and
+Section~\ref{sec:pooling_seed} shows that pooled differences on this data do
+not retain their sign across seeds. The run-level comparison above uses both
+seeds and accounts for the overlap between training sets, and we base the
+conclusion on it. Both are in the released result files.
+
+This is the most direct evidence in the paper for the scope stated in
+Section~\ref{sec:scope}: on this dataset the task is solved from the kinematic
+channels, and the graph is not contributing to the solution. Whether that is a
+property of hybrid architectures or of a generator whose anomalies are defined
+almost entirely by kinematic thresholds is a question this dataset alone
+cannot settle, and we return to it among the limitations.
+
+\subsection{Classical Baselines on Equal Footing}
+\label{sec:classic_cv}
+In the previous version the gradient-boosting baselines and the
+threshold rule were evaluated only on the fixed partition while the neural
+models were additionally cross-validated, so the numbers placed side by side
+came from different evaluation designs. All of them now run inside the same
+folds, with each fold's own validation-selected threshold applied to that
+fold's test predictions, and with the trip as the unit of inference.
+
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds; identical
+  folds and threshold policy for every row]}~ Learned and classical models on
+  equal footing. The last two columns compare each classical model with the
+  proposed gated hybrid at the trip level, pooled over all 90 trips.}
+  \label{tab:classic_cv}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Model} & \textbf{F1 (mean $\pm$ s.d.)} & \textbf{Pooled F1}
+    & \textbf{$\Delta$ vs proposed} & \textbf{Holm $p$} \\ \midrule
+    Gated hybrid (proposed) & $0.8908 \pm 0.0429$ & $0.8849$ & --- & --- \\
+    Weighted-sum hybrid & $0.8831 \pm 0.0412$ & $0.8891$ & --- & --- \\
+    Cross-attention hybrid & $0.8894 \pm 0.0510$ & $0.8838$ & --- & --- \\
+    Concatenation hybrid & $0.8703 \pm 0.0543$ & $0.8528$ & --- & --- \\
+    Temporal only (no graph) & $0.8839 \pm 0.0436$ & $0.8901$ & --- & --- \\
+    \midrule
+    LightGBM on window aggregates & $0.9180 \pm 0.0316$ & $0.9258$ & $+0.0409$ & $0.0002$ \\
+    XGBoost on window aggregates & $0.9108 \pm 0.0348$ & $0.9156$ & $+0.0307$ & $0.0002$ \\
+    Random forest on window aggregates & $0.9070 \pm 0.0312$ & $0.9106$ & $+0.0257$ & $0.0082$ \\
+    Three-threshold rule (zero parameters) & $0.8938 \pm 0.0375$ & $0.9020$ & $+0.0171$ & $0.2288$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+The ordering is not the one the architecture section would predict. Gradient
+boosting on window aggregates reaches $0.9180 \pm 0.0316$ against
+$0.8908 \pm 0.0429$ for the proposed gated hybrid, and the zero-parameter
+threshold rule reaches $0.8938 \pm 0.0375$, which is within the spread of
+every learned model in the table. Whatever the hybrid architecture is doing on
+this dataset, four window statistics and a gradient-boosted tree ensemble do
+at least as well.
+
+\textbf{The two levels of analysis disagree, and the disagreement is the
+point.} Pooled at the trip level, LightGBM exceeds the proposed model by
+$+0.0409$ F1 with a cluster interval of $[+0.0278, +0.0552]$ and
+$\mathrm{Holm}\ p = 0.0002$; XGBoost and the random forest are significant
+too. At the run level, pairing the same ten fold--seed runs and correcting for
+overlapping training sets, the same comparison is $+0.0272$ with interval
+$[-0.0106, +0.0650]$ and $\mathrm{Holm}\ p = 1.000$. Neither number is wrong.
+The trip-level test conditions on one seed's predictions and resamples trips,
+so it describes the sampling of trips only; the run-level test additionally
+carries seed and partition variability but has ten observations. We report
+both and draw the conclusion from the run-level test, consistently with
+Section~\ref{sec:pooling_seed}: the direction is reproducible, the magnitude
+is not resolvable, and a reader should not take $+0.0409$ as an estimate of
+how much better gradient boosting is.
+
+What the comparison does support is narrower and still useful. There is no
+evidence here that the additional capacity of the hybrid architecture buys
+accuracy over a standard tabular baseline on aggregated window features, and
+the burden of showing otherwise falls on a design that can resolve differences
+of this size.
+
 \subsection{Effect Sizes and the Distribution Across Trips}
 \label{sec:effect_sizes}
 A pooled difference is a single number, and a reader is entitled to ask whether it summarises a consistent effect or averages over trips that disagree. Fig.~\ref{fig:per_trip} shows the per-trip differences behind the three comparisons that matter most, and Table~\ref{tab:effect_sizes} gives standardised effect sizes for them.
