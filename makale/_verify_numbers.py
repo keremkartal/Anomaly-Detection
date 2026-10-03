@@ -47,7 +47,7 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
          "F22_imputation", "F23_data_audit", "F24_model_audit",
          "F25_pooled_seed", "F26_repeated_analysis",
-         "F27_new_data_audit")
+         "F27_new_data_audit", "F29_collapse_mechanism")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -66,6 +66,7 @@ def check_protocol():
     # ozetini alir. Ikisi de `baseline_protocol` altinda hangi damgadan
     # tureidigini soyler ve asagida ayrica denetlenir.
     NO_PROTOCOL = {"F23_data_audit", "F24_model_audit", "F27_new_data_audit",
+                   "F29_collapse_mechanism",
                    "F20_window_stride", "F21_baseline_search"}
     stamps = {n: v.get("protocol", {}).get("hash")
               for n, v in J.items()
@@ -343,6 +344,7 @@ def check_numbers():
 
 # ======================================================== D. FIGURLER
 FIG_SOURCES = {
+    "fig_F17_collapse.png": ["F17_gate_collapse", "F29_collapse_mechanism"],
     "fig_F1_baselines.png":   ["F1b_fair"],
     "fig_F1_roc_pr.png":      ["F1b_fair"],
     "fig_F3_fusion_ablation.png": ["F3_fusion"],

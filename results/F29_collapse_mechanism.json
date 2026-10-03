@@ -1,0 +1,105 @@
+{
+  "escape_threshold": 0.5,
+  "n_runs": 10,
+  "n_crossed_and_healthy": 9,
+  "n_never_crossed_and_collapsed": 1,
+  "crossing_epoch_min": 4,
+  "crossing_epoch_max": 19,
+  "collapsed_max_gate": [
+    0.38148683309555054
+  ],
+  "healthy_min_max_gate": 0.7402287125587463,
+  "verdict": "cokme, kapinin 0,5'i gecip temsili zamansal dal agirlikli hale getirememesidir; sinif ayriminin isareti ayirt edici degildir",
+  "runs": [
+    {
+      "graph": "trip_instance",
+      "seed": "42",
+      "max_gate": 0.8883368968963623,
+      "epoch_crossed": 16,
+      "f1": 0.8758620689655172,
+      "collapsed": false,
+      "epochs_run": 50
+    },
+    {
+      "graph": "trip_instance",
+      "seed": "43",
+      "max_gate": 0.8325746059417725,
+      "epoch_crossed": 6,
+      "f1": 0.7557251908396947,
+      "collapsed": false,
+      "epochs_run": 22
+    },
+    {
+      "graph": "trip_instance",
+      "seed": "44",
+      "max_gate": 0.9186080098152161,
+      "epoch_crossed": 19,
+      "f1": 0.8719723183391004,
+      "collapsed": false,
+      "epochs_run": 47
+    },
+    {
+      "graph": "trip_instance",
+      "seed": "45",
+      "max_gate": 0.38148683309555054,
+      "epoch_crossed": null,
+      "f1": 0.07586763518966909,
+      "collapsed": true,
+      "epochs_run": 18
+    },
+    {
+      "graph": "trip_instance",
+      "seed": "46",
+      "max_gate": 0.8461057543754578,
+      "epoch_crossed": 11,
+      "f1": 0.8686868686868687,
+      "collapsed": false,
+      "epochs_run": 48
+    },
+    {
+      "graph": "osm_merged",
+      "seed": "42",
+      "max_gate": 0.915687620639801,
+      "epoch_crossed": 6,
+      "f1": 0.8541666666666666,
+      "collapsed": false,
+      "epochs_run": 35
+    },
+    {
+      "graph": "osm_merged",
+      "seed": "43",
+      "max_gate": 0.8501459956169128,
+      "epoch_crossed": 6,
+      "f1": 0.8741721854304636,
+      "collapsed": false,
+      "epochs_run": 50
+    },
+    {
+      "graph": "osm_merged",
+      "seed": "44",
+      "max_gate": 0.7402287125587463,
+      "epoch_crossed": 8,
+      "f1": 0.8571428571428571,
+      "collapsed": false,
+      "epochs_run": 50
+    },
+    {
+      "graph": "osm_merged",
+      "seed": "45",
+      "max_gate": 0.9156609177589417,
+      "epoch_crossed": 4,
+      "f1": 0.8571428571428571,
+      "collapsed": false,
+      "epochs_run": 46
+    },
+    {
+      "graph": "osm_merged",
+      "seed": "46",
+      "max_gate": 0.926135778427124,
+      "epoch_crossed": 4,
+      "f1": 0.8733333333333333,
+      "collapsed": false,
+      "epochs_run": 49
+    }
+  ]
+}

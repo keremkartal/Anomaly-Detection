@@ -90,7 +90,7 @@
 % sonuclar bu iddiayi desteklemedigi icin cerceve degistirildi.
 % =====================================================================
 \begin{abstract}
-Hybrid spatio-temporal architectures for traffic anomaly detection are typically reported through a single training run on a single data partition, with overlapping sliding windows treated as independent observations. This paper asks how much of such evidence survives a controlled protocol. Using a physics-informed synthetic trajectory dataset over an OpenStreetMap-derived road network, we hold the task, optimization budget, checkpoint criterion, and threshold rule fixed; vary one component at a time across nine encoder configurations, four fusion operators, and two graph constructions; and report every result over multiple seeds. Because windows are cut with stride 10 from length-50 sequences and therefore overlap by $80\%$, all inference uses the \emph{trip} as the statistical unit, with cluster bootstrap, sign-flip permutation tests, and Holm correction. Four findings emerge. First, on the fixed partition---which contains 4{,}799 windows but only 14 trips---\emph{no} comparison remains significant once the correct unit and multiplicity correction are applied; seven comparisons that are significant at the window level are not. Second, under five-fold trip-grouped cross-validation, in which all 90 trips receive an out-of-fold prediction, the four fusion operators span $0.0205$ F1 with a within-configuration standard deviation of $0.04$--$0.05$, and none is distinguishable from any other: the sample-wise gate that motivated the original design ranks last on the fixed partition and first under cross-validation, so the choice of fusion operator is not resolvable on this data in either direction. Third, a reproducible degenerate failure mode is documented and attributed. Across $500$ runs it occurs in $8$, and every one of them belongs to an operator that \emph{learns} a mixing weight: $4.0\%$ for the sample-wise gate and multi-head cross-attention against $0.0\%$ for fixed concatenation, static weighted summation, and the temporal-only control. Epoch-level measurement shows the mechanism---the gate drives its class-conditional separation negative within two epochs and stays weighted towards a spatial branch that carries almost no standalone signal---so the failure is a property of learning the mixing weight, not of the proposed operator in particular. Fourth, no comparison survives at all. Under cross-validation the spatial branch shows no significant benefit on any anomaly subtype, and the one comparison nearest to significance runs against it. An earlier version of this study reported a spatial gain on abnormal-dwell detection; it was produced by applying a threshold averaged across folds rather than each fold's own, and disappears when that is corrected. We additionally report a zero-parameter threshold-rule reference ($\mathrm{F1}=0.8536$), gradient-boosting baselines that match the hybrid model to within $0.0014$ F1, probability calibration, and single-window latency. The study argues that architectural claims in this problem setting require multi-partition evidence at the correct statistical unit, and demonstrates on its own earlier results what happens when they do not have it.
+Hybrid spatio-temporal architectures for traffic anomaly detection are typically reported through a single training run on a single data partition, with overlapping sliding windows treated as independent observations. This paper asks how much of such evidence survives a controlled protocol. Using a physics-informed synthetic trajectory dataset over an OpenStreetMap-derived road network, we hold the task, optimization budget, checkpoint criterion, and threshold rule fixed; vary one component at a time across nine encoder configurations, four fusion operators, and two graph constructions; and report every result over multiple seeds. Because windows are cut with stride 10 from length-50 sequences and therefore overlap by $80\%$, all inference uses the \emph{trip} as the statistical unit, with cluster bootstrap, sign-flip permutation tests, and Holm correction. Four findings emerge. First, on the fixed partition---which contains 4{,}799 windows but only 14 trips---\emph{no} comparison remains significant once the correct unit and multiplicity correction are applied; seven comparisons that are significant at the window level are not. Second, under five-fold trip-grouped cross-validation, in which all 90 trips receive an out-of-fold prediction, the four fusion operators span $0.0205$ F1 with a within-configuration standard deviation of $0.04$--$0.05$, and none is distinguishable from any other: the sample-wise gate that motivated the original design ranks last on the fixed partition and first under cross-validation, so the choice of fusion operator is not resolvable on this data in either direction. Third, a reproducible degenerate failure mode is documented and attributed. Across $500$ runs it occurs in $8$, and every one of them belongs to an operator that \emph{learns} a mixing weight: $4.0\%$ for the sample-wise gate and multi-head cross-attention against $0.0\%$ for fixed concatenation, static weighted summation, and the temporal-only control. Epoch-level measurement identifies the mechanism: the gate has to escape towards the temporal branch to learn at all, and in nine of ten instrumented runs it does, between epochs $4$ and $19$; the run that never crosses stays weighted towards a spatial branch that carries almost no standalone signal and never leaves $\mathrm{F1} \approx 0.08$. The failure is a property of learning the mixing weight, not of the proposed operator in particular. Fourth, no comparison survives at all. Under cross-validation the spatial branch shows no significant benefit on any anomaly subtype, and the one comparison nearest to significance runs against it. An earlier version of this study reported a spatial gain on abnormal-dwell detection; it was produced by applying a threshold averaged across folds rather than each fold's own, and disappears when that is corrected. We additionally report a zero-parameter threshold-rule reference ($\mathrm{F1}=0.8536$), gradient-boosting baselines that match the hybrid model to within $0.0014$ F1, probability calibration, and single-window latency. The study argues that architectural claims in this problem setting require multi-partition evidence at the correct statistical unit, and demonstrates on its own earlier results what happens when they do not have it.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -1190,24 +1190,50 @@ on one partition; with fifty runs per cell that reading does not hold.
   \end{tabular}
 \end{table}
 
-\textbf{Mechanism.} Recording the gate's distribution after every epoch
-separates a collapsed run from a healthy one within two epochs. In the
-collapsed run the gate's class-conditional separation---mean gate value on
-anomalous windows minus mean on normal windows---is already negative at epoch
-two ($-0.0009$) and falls to $-0.1622$: the gate assigns \emph{less} temporal
-weight to the windows it is supposed to detect. Its mean rises only from
-$0.0181$ to $0.3751$, so the representation stays weighted towards the
-spatial branch, which Section~\ref{sec:graph_ablation} shows carries almost
-no standalone signal. Gradient norms climb from $0.79$ to $2.08$ while
-validation loss does not improve: the run is training, not learning. In a
-healthy run at the same configuration the same separation is $+0.1418$ at
-epoch two and the gate mean reaches $0.8705$.
 
-This confirms the mechanism the earlier version proposed---the gate locks
-onto an uninformative spatial branch---while correcting its scope. The
-failure is not a property of the proposed operator. It is what can happen
-when a fusion stage is free to learn how much of an uninformative branch to
-admit, and it is worth reporting for that reason.
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_F17_collapse.png}
+  \caption{\textbf{[Fixed partition, 5 seeds per graph construction, measured
+  every epoch]}~ Why one run collapses. (a) and (b) show the five seeds of the
+  trip-instance graph, with the collapsed run in red. The gate must cross
+  $\bar{g} = 0.5$ for the representation to become temporal-dominant; the
+  collapsed run never does. (c) pools all ten instrumented runs: the highest
+  mean gate value a run reaches separates the outcomes completely.}
+  \label{fig:collapse}
+\end{figure*}
+
+\textbf{Mechanism.} The gate was instrumented to record its distribution
+over the validation set after every epoch, under \texttt{eval} mode and
+without gradients, so the measurement consumes no randomness and the protocol
+is unchanged. Ten runs were instrumented: five seeds on each graph
+construction.
+
+What separates a collapsed run from a healthy one is whether the gate escapes
+towards the temporal branch. The fusion output is
+$g\,\mathbf{h}'_{temp} + (1-g)\,\mathbf{h}'_{spat}$, so $\bar{g} > 0.5$ means
+the representation is temporal-dominant. In nine of the ten runs the gate
+crosses that line, between epochs $4$ and $19$, and validation F1 rises at
+about the same time; all nine finish between $0.7557$ and $0.8742$. The tenth
+never crosses: its mean peaks at $0.3815$, and it stops at
+$\mathrm{F1} = 0.0759$ when early stopping ends it at epoch $18$. The gap is
+clean---the lowest peak among the nine is $0.7402$, against $0.3815$ for the
+one that fails---and Figure~\ref{fig:collapse} shows it.
+
+An earlier reading of this experiment attributed the collapse to the sign of
+the gate's class-conditional separation, which is negative from the second
+epoch in the failing run. Examining all ten runs does not support that. On
+the merged graph two healthy runs have separations of $-0.1900$ and $-0.3380$
+at epoch two, far more negative than the $-0.0009$ of the collapsed run, and
+both reach $\mathrm{F1} \approx 0.86$. The sign is not what decides the
+outcome; the escape is.
+
+This confirms the mechanism the earlier version proposed---the gate remains
+attached to an uninformative spatial branch---and replaces an inference drawn
+from two runs with a separation measured across ten. The failure is not a
+property of the proposed operator. It is what can happen when a fusion stage
+is free to learn how much of an uninformative branch to admit, and it is
+worth reporting for that reason.
 
 \subsection{What the Spatial Branch Contributes}
 \label{sec:graph_controls}
