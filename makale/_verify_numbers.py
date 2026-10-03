@@ -46,7 +46,8 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
          "F22_imputation", "F23_data_audit", "F24_model_audit",
-         "F25_pooled_seed")
+         "F25_pooled_seed", "F26_repeated_analysis",
+         "F27_new_data_audit")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -64,7 +65,7 @@ def check_protocol():
     # ogrenme orani damganin icindedir, o yuzden her arama noktasi kendi
     # ozetini alir. Ikisi de `baseline_protocol` altinda hangi damgadan
     # tureidigini soyler ve asagida ayrica denetlenir.
-    NO_PROTOCOL = {"F23_data_audit", "F24_model_audit",
+    NO_PROTOCOL = {"F23_data_audit", "F24_model_audit", "F27_new_data_audit",
                    "F20_window_stride", "F21_baseline_search"}
     stamps = {n: v.get("protocol", {}).get("hash")
               for n, v in J.items()

@@ -1339,6 +1339,122 @@ accuracy over a standard tabular baseline on aggregated window features, and
 the burden of showing otherwise falls on a design that can resolve differences
 of this size.
 
+\subsection{Which Comparisons Are Resolved, and Which Are Not}
+\label{sec:equivalence_results}
+Section~\ref{sec:equivalence} defines three outcomes. Table~\ref{tab:equivalence}
+reports which one each comparison in this paper receives.
+
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Equivalence bound $\delta = 0.02$ F1, fixed before the
+  comparisons]}~ Outcome of every comparison the paper describes as showing no
+  difference. \emph{Different} means significant after Holm correction;
+  \emph{equivalent} means the difference lies inside $\pm\delta$;
+  \emph{undetermined} means neither. The last column is the smallest bound at
+  which the tightest comparison in that family could have been declared
+  equivalent.}
+  \label{tab:equivalence}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}llccccc@{}}
+    \toprule
+    \textbf{Family} & \textbf{Structure} & \textbf{$n$} & \textbf{Different}
+    & \textbf{Equivalent} & \textbf{Undetermined}
+    & \textbf{Smallest $\delta$} \\ \midrule
+    Repeated CV, trip-instance graph & all pairs & $10$ & $0$ & $0$ & $10$ & $0.0352$ \\
+    Repeated CV, OSM-merged graph & all pairs & $10$ & $0$ & $0$ & $10$ & $0.0262$ \\
+    Cross-validation, proposed vs others & reference & $4$ & $0$ & $0$ & $4$ & $0.0316$ \\
+    Fixed split, fusion operators & reference & $3$ & $0$ & $0$ & $3$ & $0.4787$ \\
+    Fixed split, temporal encoders & all pairs & $10$ & $4$ & $1$ & $5$ & $0.0133$ \\
+    Fixed split, spatial operators & reference & $4$ & $1$ & $0$ & $3$ & $0.0450$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+Of the forty-one comparisons, five are resolved and one is equivalent; the
+remaining thirty-five are undetermined. Every comparison under repeated
+cross-validation---the paper's primary design, with fifty runs per
+configuration on each of two graph constructions---falls in the last category.
+This is the result the paper rests on, and it is worth stating in the form the
+test actually supports: the architectural differences on this dataset are
+neither demonstrated nor shown to be absent.
+
+The single equivalence is between a GRU and a Transformer temporal encoder,
+which differ by $+0.0003$ F1 over five seeds with $p_{\mathrm{TOST}} = 0.0161$.
+It is the only comparison anywhere in the study tight enough to place inside a
+bound of $0.02$ F1. The comparison of either against the LSTM is not: at
+$+0.0012$ and $+0.0015$ F1 the point estimates are just as small, but the
+intervals are wider and the correct statement is that the design cannot
+separate them.
+
+\textbf{The smallest bound column is the practical one.} Under repeated
+cross-validation on the merged graph, the tightest comparison---fixed
+concatenation against the temporal-only control---would support an equivalence
+claim at $\delta = 0.0262$. On the trip-instance graph the corresponding
+figure is $0.0352$. A reader who considers differences below three F1 points
+practically irrelevant can therefore read these results as establishing
+equivalence; a reader who does not, cannot. We report the number rather than
+choosing for them.
+
+The fixed-partition fusion family is a separate case. Its smallest attainable
+bound is $0.4787$, two orders of magnitude larger than anywhere else, because
+three of its four operators include runs that collapse and a mean difference
+over a bimodal distribution carries almost no information. The collapse is the
+finding there, not the mean, and Section~\ref{sec:collapse_class} treats it as
+such.
+
+\subsubsection{Transductive and Inductive Settings}
+\label{sec:inductive}
+Table~\ref{tab:provenance} records that the graph is supplied in full during
+training, so message passing runs over nodes belonging to held-out trips. No
+test label is ever used, but the topology and the node features of test
+segments do contribute to the representation. This is a transductive setting,
+and a detector moved to an unseen road would not have it.
+
+The cost is measurable, so we measured it. For each fold, the nodes that
+belong \emph{only} to test trips are isolated and their feature rows zeroed
+before training; a segment that also appears in a training or validation trip
+is left alone, because it is genuinely part of the training data. At inference
+the full graph is restored, which is what makes the setting inductive rather
+than merely degraded: the model must generalise to segments it never saw.
+Isolating rather than deleting keeps the node indices stable, so both settings
+train the same architecture with the same parameter count.
+
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds = 10 runs per
+  cell]}~ Cost of hiding the test segments during training. Between $595$ and
+  $657$ nodes per fold are isolated and their features zeroed while training;
+  the full graph is restored for inference.}
+  \label{tab:inductive}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    \textbf{Configuration} & \textbf{Transductive} & \textbf{Inductive}
+    & \textbf{$\Delta$} & \textbf{95\% CI} & \textbf{Holm $p$} \\ \midrule
+    Weighted-sum hybrid & $0.8831 \pm 0.0412$ & $0.9013 \pm 0.0315$ & $+0.0182$ & $[-0.0328, +0.0691]$ & $0.882$ \\
+    Gated hybrid (proposed) & $0.8908 \pm 0.0429$ & $0.8723 \pm 0.0584$ & $-0.0186$ & $[-0.0728, +0.0356]$ & $0.882$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+Neither configuration shows a measurable cost, and the two point estimates
+have opposite signs: the weighted-sum hybrid scores $+0.0182$ F1 in the
+inductive setting and the gated hybrid $-0.0186$. Both intervals span zero
+comfortably. Given Section~\ref{sec:graph_controls}, this is what one would
+expect---if neither the node features nor the message passing carries
+measurable signal, then hiding some of the nodes cannot cost anything
+measurable either.
+
+The result closes the leakage question in one direction only. It shows that
+the transductive setting is not inflating the reported numbers on this
+dataset. It does not show that a model trained here would transfer to a
+different road network, which is a separate question and a separate
+experiment.
+
 \subsection{Effect Sizes and the Distribution Across Trips}
 \label{sec:effect_sizes}
 A pooled difference is a single number, and a reader is entitled to ask whether it summarises a consistent effect or averages over trips that disagree. Fig.~\ref{fig:per_trip} shows the per-trip differences behind the three comparisons that matter most, and Table~\ref{tab:effect_sizes} gives standardised effect sizes for them.

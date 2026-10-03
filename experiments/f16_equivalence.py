@@ -235,6 +235,16 @@ def main():
     out["families"]["fixed_fusion_all_pairs_exploratory"] = f3_all
     show("SABIT BOLME — dort fuzyon, tum ciftler [KESIFSEL, aile 6]", f3_all)
 
+    # Zamansal eksende tum ciftler: makalenin "LSTM, GRU ve Transformer
+    # birbirinden 0,0015 F1 icinde" ifadesi bir ESDEGERLIK imasi tasiyor ve
+    # o ima referans ailesinde degil, GRU-Transformer ciftinde sinaniyor.
+    f4t_all = family_fixed("F4_benchmark.json", runs_f4,
+                           "zamansal kodlayicilar, tum ciftler",
+                           subset=temporal)
+    out["families"]["fixed_temporal_all_pairs_exploratory"] = f4t_all
+    show("SABIT BOLME — zamansal kodlayicilar, tum ciftler [KESIFSEL, aile 10]",
+         f4t_all)
+
     # ---------------------------------------------------------------- ozet
     print("\n" + "=" * 100)
     print("OZET — kac karsilastirma hangi sonuca dustu")

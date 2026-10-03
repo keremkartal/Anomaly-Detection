@@ -1828,6 +1828,652 @@
           "verdict": "KARARSIZ (cokme)"
         }
       }
+    },
+    "fixed_temporal_all_pairs_exploratory": {
+      "source": "F4_benchmark.json",
+      "uncertainty": "paired_t_seeds_only",
+      "label": "zamansal kodlayicilar, tum ciftler",
+      "reference": null,
+      "family_size": 10,
+      "n_collapsed_runs": {
+        "T:lstm": 0,
+        "T:gru": 0,
+        "T:stgcn": 0,
+        "T:wavenet": 0,
+        "T:transformer": 0
+      },
+      "comparisons": {
+        "T:gru_vs_T:lstm": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": -0.0012494891575116408,
+            "se": 0.011633700593935857,
+            "t": -0.10740255410758509,
+            "p_value": 0.9196410815579543,
+            "ci_lo": -0.03354982022688158,
+            "ci_hi": 0.031050841911858293,
+            "significant": false,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.011633700593935859,
+            "mean_diff": -0.0012494891575116408,
+            "sd_diff": 0.026013745357920257,
+            "p_lower": 0.09115541594326057,
+            "p_upper": 0.07089749659965766,
+            "p_tost": 0.09115541594326057,
+            "ci_lo_90": -0.02605075638178023,
+            "ci_hi_90": 0.023551778066756946,
+            "equivalent": false,
+            "delta_min": 0.02605075638178023,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8700888087501923,
+            "mean_b": 0.8713382979077039,
+            "observed_diff": -0.0012494891575115519,
+            "p_value": 0.9047619047619048,
+            "alternative": "two-sided",
+            "significant": false,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:gru": 0,
+            "T:lstm": 0
+          },
+          "holm": {
+            "p_raw": 0.9196410815579543,
+            "p_holm": 1.0,
+            "rank": 9,
+            "n_family": 10,
+            "significant": false
+          },
+          "holm_exact": {
+            "p_raw": 0.9047619047619048,
+            "p_holm": 1.0,
+            "rank": 9,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "KARARSIZ"
+        },
+        "T:gru_vs_T:stgcn": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.038705301577033335,
+            "se": 0.004724170996722818,
+            "t": 8.193035688988271,
+            "p_value": 0.001208996618046343,
+            "ci_lo": 0.025588900137064864,
+            "ci_hi": 0.051821703017001806,
+            "significant": true,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.004724170996722818,
+            "mean_diff": 0.038705301577033335,
+            "sd_diff": 0.010563567486005157,
+            "p_lower": 0.00012055736597545513,
+            "p_upper": 0.9916576055994295,
+            "p_tost": 0.9916576055994295,
+            "ci_lo_90": 0.028634092819612232,
+            "ci_hi_90": 0.04877651033445444,
+            "equivalent": false,
+            "delta_min": 0.04877651033445444,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8700888087501923,
+            "mean_b": 0.8313835071731589,
+            "observed_diff": 0.038705301577033446,
+            "p_value": 0.007936507936507936,
+            "alternative": "two-sided",
+            "significant": true,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": true
+          },
+          "n_collapsed": {
+            "T:gru": 0,
+            "T:stgcn": 0
+          },
+          "holm": {
+            "p_raw": 0.001208996618046343,
+            "p_holm": 0.010880969562417088,
+            "rank": 2,
+            "n_family": 10,
+            "significant": true
+          },
+          "holm_exact": {
+            "p_raw": 0.007936507936507936,
+            "p_holm": 0.07936507936507936,
+            "rank": 1,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "FARKLI"
+        },
+        "T:gru_vs_T:transformer": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.0002974838032092419,
+            "se": 0.006115478484428906,
+            "t": 0.04864440353550233,
+            "p_value": 0.9635346715247793,
+            "ci_lo": -0.016681806500825846,
+            "ci_hi": 0.017276774107244333,
+            "significant": false,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.006115478484428906,
+            "mean_diff": 0.0002974838032092419,
+            "sd_diff": 0.013674625606120424,
+            "p_lower": 0.014702519737806665,
+            "p_upper": 0.01611351457575222,
+            "p_tost": 0.01611351457575222,
+            "ci_lo_90": -0.01273977935067029,
+            "ci_hi_90": 0.013334746957088773,
+            "equivalent": true,
+            "delta_min": 0.013334746957088773,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8700888087501923,
+            "mean_b": 0.8697913249469831,
+            "observed_diff": 0.00029748380320926415,
+            "p_value": 0.9603174603174603,
+            "alternative": "two-sided",
+            "significant": false,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:gru": 0,
+            "T:transformer": 0
+          },
+          "holm": {
+            "p_raw": 0.9635346715247793,
+            "p_holm": 1.0,
+            "rank": 10,
+            "n_family": 10,
+            "significant": false
+          },
+          "holm_exact": {
+            "p_raw": 0.9603174603174603,
+            "p_holm": 1.0,
+            "rank": 10,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "ESDEGER"
+        },
+        "T:gru_vs_T:wavenet": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.01657125128347885,
+            "se": 0.006197075088232112,
+            "t": 2.674043971961337,
+            "p_value": 0.05557165388542974,
+            "ci_lo": -0.0006345875117864143,
+            "ci_hi": 0.03377709007874412,
+            "significant": false,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.006197075088232112,
+            "mean_diff": 0.01657125128347885,
+            "sd_diff": 0.01385708115895751,
+            "p_lower": 0.0020626803213268383,
+            "p_upper": 0.30476773704731147,
+            "p_tost": 0.30476773704731147,
+            "ci_lo_90": 0.003360036672006286,
+            "ci_hi_90": 0.029782465894951413,
+            "equivalent": false,
+            "delta_min": 0.029782465894951413,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8700888087501923,
+            "mean_b": 0.8535175574667134,
+            "observed_diff": 0.016571251283478916,
+            "p_value": 0.03968253968253968,
+            "alternative": "two-sided",
+            "significant": true,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:gru": 0,
+            "T:wavenet": 0
+          },
+          "holm": {
+            "p_raw": 0.05557165388542974,
+            "p_holm": 0.2778582694271487,
+            "rank": 6,
+            "n_family": 10,
+            "significant": false
+          },
+          "holm_exact": {
+            "p_raw": 0.03968253968253968,
+            "p_holm": 0.1984126984126984,
+            "rank": 6,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "KARARSIZ"
+        },
+        "T:lstm_vs_T:stgcn": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.03995479073454498,
+            "se": 0.007761482966013566,
+            "t": 5.147829468865853,
+            "p_value": 0.006754586401750407,
+            "ci_lo": 0.01840545934448052,
+            "ci_hi": 0.061504122124609435,
+            "significant": true,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.007761482966013566,
+            "mean_diff": 0.03995479073454498,
+            "sd_diff": 0.017355203518213024,
+            "p_lower": 0.000756095088831174,
+            "p_upper": 0.9690434296950465,
+            "p_tost": 0.9690434296950465,
+            "ci_lo_90": 0.023408498216319927,
+            "ci_hi_90": 0.05650108325277003,
+            "equivalent": false,
+            "delta_min": 0.05650108325277003,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8713382979077039,
+            "mean_b": 0.8313835071731589,
+            "observed_diff": 0.039954790734545,
+            "p_value": 0.007936507936507936,
+            "alternative": "two-sided",
+            "significant": true,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": true
+          },
+          "n_collapsed": {
+            "T:lstm": 0,
+            "T:stgcn": 0
+          },
+          "holm": {
+            "p_raw": 0.006754586401750407,
+            "p_holm": 0.047282104812252854,
+            "rank": 4,
+            "n_family": 10,
+            "significant": true
+          },
+          "holm_exact": {
+            "p_raw": 0.007936507936507936,
+            "p_holm": 0.07936507936507936,
+            "rank": 2,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "FARKLI"
+        },
+        "T:lstm_vs_T:transformer": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.0015469729607208826,
+            "se": 0.009925997211352833,
+            "t": 0.1558506342266081,
+            "p_value": 0.8836997651393246,
+            "ci_lo": -0.026012013410946694,
+            "ci_hi": 0.029105959332388458,
+            "significant": false,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.009925997211352835,
+            "mean_diff": 0.0015469729607208826,
+            "sd_diff": 0.022195204509058285,
+            "p_lower": 0.047864251506306014,
+            "p_upper": 0.0682744681238494,
+            "p_tost": 0.0682744681238494,
+            "ci_lo_90": -0.01961373229538894,
+            "ci_hi_90": 0.022707678216830705,
+            "equivalent": false,
+            "delta_min": 0.022707678216830705,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8713382979077039,
+            "mean_b": 0.8697913249469831,
+            "observed_diff": 0.001546972960720816,
+            "p_value": 0.8571428571428571,
+            "alternative": "two-sided",
+            "significant": false,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:lstm": 0,
+            "T:transformer": 0
+          },
+          "holm": {
+            "p_raw": 0.8836997651393246,
+            "p_holm": 1.0,
+            "rank": 8,
+            "n_family": 10,
+            "significant": false
+          },
+          "holm_exact": {
+            "p_raw": 0.8571428571428571,
+            "p_holm": 1.0,
+            "rank": 8,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "KARARSIZ"
+        },
+        "T:lstm_vs_T:wavenet": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.01782074044099049,
+            "se": 0.007664430111870573,
+            "t": 2.325122700693682,
+            "p_value": 0.08068216925873678,
+            "ci_lo": -0.0034591290272431817,
+            "ci_hi": 0.03910060990922416,
+            "significant": false,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.007664430111870573,
+            "mean_diff": 0.01782074044099049,
+            "sd_diff": 0.01713818673893892,
+            "p_lower": 0.003923554501946401,
+            "p_upper": 0.3951332527704152,
+            "p_tost": 0.3951332527704152,
+            "ci_lo_90": 0.0014813497379740082,
+            "ci_hi_90": 0.03416013114400697,
+            "equivalent": false,
+            "delta_min": 0.03416013114400697,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8713382979077039,
+            "mean_b": 0.8535175574667134,
+            "observed_diff": 0.017820740440990468,
+            "p_value": 0.11904761904761904,
+            "alternative": "two-sided",
+            "significant": false,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:lstm": 0,
+            "T:wavenet": 0
+          },
+          "holm": {
+            "p_raw": 0.08068216925873678,
+            "p_holm": 0.3227286770349471,
+            "rank": 7,
+            "n_family": 10,
+            "significant": false
+          },
+          "holm_exact": {
+            "p_raw": 0.11904761904761904,
+            "p_holm": 0.47619047619047616,
+            "rank": 7,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "KARARSIZ"
+        },
+        "T:stgcn_vs_T:transformer": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": -0.03840781777382409,
+            "se": 0.004447867292218413,
+            "t": -8.635108749988774,
+            "p_value": 0.0009890432822101535,
+            "ci_lo": -0.05075707714587329,
+            "ci_hi": -0.026058558401774894,
+            "significant": true,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.004447867292218413,
+            "mean_diff": -0.03840781777382409,
+            "sd_diff": 0.009945733620298294,
+            "p_lower": 0.9928033917997731,
+            "p_upper": 9.710426362173991e-05,
+            "p_tost": 0.9928033917997731,
+            "ci_lo_90": -0.04788998936674733,
+            "ci_hi_90": -0.028925646180900856,
+            "equivalent": false,
+            "delta_min": 0.04788998936674733,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8313835071731589,
+            "mean_b": 0.8697913249469831,
+            "observed_diff": -0.03840781777382418,
+            "p_value": 0.007936507936507936,
+            "alternative": "two-sided",
+            "significant": true,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": true
+          },
+          "n_collapsed": {
+            "T:stgcn": 0,
+            "T:transformer": 0
+          },
+          "holm": {
+            "p_raw": 0.0009890432822101535,
+            "p_holm": 0.009890432822101534,
+            "rank": 1,
+            "n_family": 10,
+            "significant": true
+          },
+          "holm_exact": {
+            "p_raw": 0.007936507936507936,
+            "p_holm": 0.07936507936507936,
+            "rank": 3,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "FARKLI"
+        },
+        "T:stgcn_vs_T:wavenet": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": -0.022134050293554485,
+            "se": 0.003355106189873466,
+            "t": -6.597123620218186,
+            "p_value": 0.00273509669162112,
+            "ci_lo": -0.03144931845184751,
+            "ci_hi": -0.012818782135261464,
+            "significant": true,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.0033551061898734664,
+            "mean_diff": -0.022134050293554485,
+            "sd_diff": 0.007502245512287387,
+            "p_lower": 0.7203448255862124,
+            "p_upper": 0.00011568429333715613,
+            "p_tost": 0.7203448255862124,
+            "ci_lo_90": -0.029286622642220882,
+            "ci_hi_90": -0.014981477944888088,
+            "equivalent": false,
+            "delta_min": 0.029286622642220882,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8313835071731589,
+            "mean_b": 0.8535175574667134,
+            "observed_diff": -0.02213405029355453,
+            "p_value": 0.015873015873015872,
+            "alternative": "two-sided",
+            "significant": true,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:stgcn": 0,
+            "T:wavenet": 0
+          },
+          "holm": {
+            "p_raw": 0.00273509669162112,
+            "p_holm": 0.02188077353296896,
+            "rank": 3,
+            "n_family": 10,
+            "significant": true
+          },
+          "holm_exact": {
+            "p_raw": 0.015873015873015872,
+            "p_holm": 0.1111111111111111,
+            "rank": 4,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "FARKLI"
+        },
+        "T:transformer_vs_T:wavenet": {
+          "n_paired": 5,
+          "test": {
+            "n": 5,
+            "mean_diff": 0.016273767480269607,
+            "se": 0.005006794886131719,
+            "t": 3.250336362958703,
+            "p_value": 0.03136576070942112,
+            "ci_lo": 0.0023726763259398244,
+            "ci_hi": 0.03017485863459939,
+            "significant": true,
+            "inference_scope": "ayni bolmede baska tohumlar; yeni veriye genellemez"
+          },
+          "tost": {
+            "n_runs": 5,
+            "delta": 0.02,
+            "alpha": 0.05,
+            "se_kind": "naive",
+            "se": 0.005006794886131719,
+            "mean_diff": 0.016273767480269607,
+            "sd_diff": 0.011195533714788845,
+            "p_lower": 0.0009632712142019642,
+            "p_upper": 0.2490392431039511,
+            "p_tost": 0.2490392431039511,
+            "ci_lo_90": 0.005600047892473,
+            "ci_hi_90": 0.02694748706806621,
+            "equivalent": false,
+            "delta_min": 0.02694748706806621,
+            "note": "esdegerlik <=> (1-2a) GA tamamen (-delta, +delta) icinde; delta_min = esdegerligin ilan edilebilecegi en kucuk sinir"
+          },
+          "exact_perm": {
+            "n_a": 5,
+            "n_b": 5,
+            "n_permutations": 252,
+            "mean_a": 0.8697913249469831,
+            "mean_b": 0.8535175574667134,
+            "observed_diff": 0.016273767480269652,
+            "p_value": 0.031746031746031744,
+            "alternative": "two-sided",
+            "significant": true,
+            "p_min_possible": 0.007936507936507936,
+            "complete_separation": false
+          },
+          "n_collapsed": {
+            "T:transformer": 0,
+            "T:wavenet": 0
+          },
+          "holm": {
+            "p_raw": 0.03136576070942112,
+            "p_holm": 0.1881945642565267,
+            "rank": 5,
+            "n_family": 10,
+            "significant": false
+          },
+          "holm_exact": {
+            "p_raw": 0.031746031746031744,
+            "p_holm": 0.19047619047619047,
+            "rank": 5,
+            "n_family": 10,
+            "significant": false
+          },
+          "verdict": "KARARSIZ"
+        }
+      }
     }
   },
   "tally": {
@@ -1851,6 +2497,11 @@
     "fixed_fusion_all_pairs_exploratory": {
       "KARARSIZ": 3,
       "KARARSIZ (cokme)": 3
+    },
+    "fixed_temporal_all_pairs_exploratory": {
+      "KARARSIZ": 5,
+      "FARKLI": 4,
+      "ESDEGER": 1
     }
   },
   "control_passed": true,
