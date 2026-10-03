@@ -22,17 +22,27 @@ def load_raw() -> pd.DataFrame:
     df = pd.read_csv(C.RAW_TRAJECTORY)
     df = df.drop(columns=[c for c in ["Unnamed: 0"] if c in df.columns])
 
-    n0 = len(df)
-    lo, hi = C.SPEED_RANGE
-    df = df[(df["speed"] >= lo) & (df["speed"] <= hi)].copy()
-    n_speed = n0 - len(df)
+    if getattr(C, "DATASET_NEW_FORMAT", False):
+        # Revizyon kumeleri kendi on islemelerini sart kosuyor; makalenin
+        # §IV-C filtreleri onlar icin gecerli degil. Ortak kuyruk (yon acisi,
+        # etiket sutunlari) asagida ikisi icin de calisir.
+        from .datasets import clean_new_dataset
+        cleaned = clean_new_dataset(df)
+        cleaning = cleaned.attrs.get("cleaning", {})
+        df = cleaned
+    else:
+        n0 = len(df)
+        lo, hi = C.SPEED_RANGE
+        df = df[(df["speed"] >= lo) & (df["speed"] <= hi)].copy()
+        n_speed = n0 - len(df)
 
-    lo, hi = C.PERCENT_RANGE
-    df = df[(df["percent"] >= lo) & (df["percent"] <= hi)].copy()
-    n_percent = n0 - n_speed - len(df)
+        lo, hi = C.PERCENT_RANGE
+        df = df[(df["percent"] >= lo) & (df["percent"] <= hi)].copy()
+        n_percent = n0 - n_speed - len(df)
 
-    df.attrs["cleaning"] = {"initial": n0, "dropped_speed": n_speed,
-                            "dropped_percent": n_percent, "remaining": len(df)}
+        cleaning = {"initial": n0, "dropped_speed": n_speed,
+                    "dropped_percent": n_percent, "remaining": len(df)}
+    df.attrs["cleaning"] = cleaning
 
     # yön açısını sürekli temsile çevir
     df["bearing"] = df["bearing"] % 360
@@ -42,6 +52,8 @@ def load_raw() -> pd.DataFrame:
 
     df["anomaly_type"] = df["anomaly"].astype(int)
     df["anomaly_binary"] = (df["anomaly"] > 0).astype(int)
+    # `attrs` bazi pandas islemlerinde dusuyor; dondurmeden once geri koy
+    df.attrs["cleaning"] = cleaning
     return df
 
 

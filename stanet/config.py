@@ -30,7 +30,14 @@ TARGET_COL = "anomaly_binary"
 # GNN düğüm öznitelikleri (makale Tablo 4 sırası)
 GNN_NUM_COLS = ["length_log", "max_speed", "rarity_score",
                 "betweenness", "closeness", "node_degree", "lanes"]
-GNN_BIN_COLS = ["tunnel", "traffic_light"]
+GNN_BIN_COLS_ALL = ["tunnel", "traffic_light"]
+GNN_BIN_COLS = list(GNN_BIN_COLS_ALL)
+
+# Hangi veri kumesi kullaniliyor. Protokol damgasina girer: veri degisirse
+# damga degisir ve sonuclar birbirine karisamaz (bkz. stanet/datasets.py).
+DATASET_NAME = "original"
+DATASET_NEW_FORMAT = False
+DROP_TUNNEL_FEATURE = False
 
 # ---------------------------------------------------------------- split
 SPLIT_SEED = 42                 # orijinal makale ile aynı

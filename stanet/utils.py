@@ -127,6 +127,16 @@ def protocol_stamp(**extra) -> dict:
         "cuda": torch.version.cuda,
         **extra,
     }
+    # Veri kumesi alanlari damgaya YALNIZCA varsayilandan saptiklarinda
+    # girer. Sebebi geriye donuk uyumluluk: damga bir onbellek anahtari ve
+    # butun mevcut kosular orijinal veriyle, bu alanlar yokken uretildi.
+    # Her zaman eklemek 700 kosuyu hicbir sey degismemisken gecersiz kilardi.
+    # Aradigimiz garanti "veri farkliysa damga farkli" ve bu kosullu ekleme
+    # onu da sagliyor.
+    if C.DATASET_NAME != "original":
+        stamp["dataset"] = C.DATASET_NAME
+    if C.DROP_TUNNEL_FEATURE:
+        stamp["drop_tunnel_feature"] = True
     # Ozet SEED LISTESINI ICERMEZ: tek bir kosu (konfig+seed) seed sayisindan
     # bagimsiz olarak yeniden kullanilabilsin diye. Seed listesi ayri alanda
     # tutulur ve tablo duzeyinde ayrica karsilastirilir.

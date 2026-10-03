@@ -1,0 +1,1967 @@
+{
+  "n_datasets": 36,
+  "datasets": {
+    "hamburg_baseline_n0_5_a1": {
+      "rows_raw": 139084,
+      "rows_clean": 139084,
+      "cleaning": {
+        "initial": 139084,
+        "remaining": 139084,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.13430732506974202,
+      "subtypes": {
+        "0": 120404,
+        "1": 2242,
+        "2": 4983,
+        "3": 351,
+        "4": 9690,
+        "5": 264,
+        "6": 83,
+        "7": 68,
+        "8": 97,
+        "9": 902
+      },
+      "leak": {
+        "n_tunnel_rows": 245,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.27161862527716185,
+        "type9_share_of_anomalies": 0.048286937901498926,
+        "tunnel_share_of_anomalies": 0.013115631691648822
+      },
+      "label_rule": {
+        "n_over_limit": 2325,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9643010752688173
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.3417336952265977,
+        "accel_sd": 0.9516777754605548,
+        "speed_sd": 15.134895638150853
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_0_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "0_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n0_5_a15": {
+      "rows_raw": 159592,
+      "rows_clean": 159588,
+      "cleaning": {
+        "initial": 159592,
+        "remaining": 159588,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 4,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.198260520841166,
+      "subtypes": {
+        "0": 127948,
+        "1": 5037,
+        "2": 15051,
+        "3": 883,
+        "4": 7630,
+        "5": 737,
+        "6": 179,
+        "7": 188,
+        "8": 183,
+        "9": 1752
+      },
+      "leak": {
+        "n_tunnel_rows": 233,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.1329908675799087,
+        "type9_share_of_anomalies": 0.05537294563843236,
+        "tunnel_share_of_anomalies": 0.00736409608091024
+      },
+      "label_rule": {
+        "n_over_limit": 5303,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9498397133697907
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.298247567684894,
+        "accel_sd": 1.1640919060089294,
+        "speed_sd": 14.305807692775266
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_0_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "0_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n0_5_a5": {
+      "rows_raw": 150708,
+      "rows_clean": 150707,
+      "cleaning": {
+        "initial": 150708,
+        "remaining": 150707,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.17248701122044763,
+      "subtypes": {
+        "0": 124712,
+        "1": 4706,
+        "2": 11485,
+        "3": 787,
+        "4": 6430,
+        "5": 662,
+        "6": 215,
+        "7": 195,
+        "8": 204,
+        "9": 1311
+      },
+      "leak": {
+        "n_tunnel_rows": 230,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.17543859649122806,
+        "type9_share_of_anomalies": 0.05043277553375649,
+        "tunnel_share_of_anomalies": 0.008847855356799385
+      },
+      "label_rule": {
+        "n_over_limit": 4953,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9501312335958005
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.961226112626669,
+        "accel_sd": 1.1025827414192266,
+        "speed_sd": 15.170975603935092
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_0_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "0_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n1_0_a1": {
+      "rows_raw": 132831,
+      "rows_clean": 132830,
+      "cleaning": {
+        "initial": 132831,
+        "remaining": 132830,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.0862455770533765,
+      "subtypes": {
+        "0": 121374,
+        "1": 1972,
+        "2": 5275,
+        "3": 334,
+        "4": 2468,
+        "5": 312,
+        "6": 78,
+        "7": 75,
+        "8": 88,
+        "9": 854
+      },
+      "leak": {
+        "n_tunnel_rows": 241,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.2822014051522248,
+        "type9_share_of_anomalies": 0.07454608938547486,
+        "tunnel_share_of_anomalies": 0.021037011173184357
+      },
+      "label_rule": {
+        "n_over_limit": 2050,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9619512195121951
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.3232717506023475,
+        "accel_sd": 0.9503394236418221,
+        "speed_sd": 15.62908464422751
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_1_0_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "1_0",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n1_0_a15": {
+      "rows_raw": 165023,
+      "rows_clean": 165019,
+      "cleaning": {
+        "initial": 165023,
+        "remaining": 165019,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 2,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 2,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.20532787133602798,
+      "subtypes": {
+        "0": 131136,
+        "1": 4445,
+        "2": 16347,
+        "3": 806,
+        "4": 9650,
+        "5": 676,
+        "6": 191,
+        "7": 220,
+        "8": 201,
+        "9": 1347
+      },
+      "leak": {
+        "n_tunnel_rows": 222,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.16481069042316257,
+        "type9_share_of_anomalies": 0.039754449133783905,
+        "tunnel_share_of_anomalies": 0.006551958209131423
+      },
+      "label_rule": {
+        "n_over_limit": 4764,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.93303946263644
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.264982272275048,
+        "accel_sd": 1.1656991780055317,
+        "speed_sd": 13.688359537591046
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_1_0_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "1_0",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n1_0_a5": {
+      "rows_raw": 162568,
+      "rows_clean": 162566,
+      "cleaning": {
+        "initial": 162568,
+        "remaining": 162566,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 2,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.1962833556832302,
+      "subtypes": {
+        "0": 130657,
+        "1": 3613,
+        "2": 14383,
+        "3": 614,
+        "4": 11056,
+        "5": 488,
+        "6": 189,
+        "7": 169,
+        "8": 141,
+        "9": 1256
+      },
+      "leak": {
+        "n_tunnel_rows": 213,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.1695859872611465,
+        "type9_share_of_anomalies": 0.03936193550408976,
+        "tunnel_share_of_anomalies": 0.006675232692970635
+      },
+      "label_rule": {
+        "n_over_limit": 3817,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.946554886036154
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.002314459974183,
+        "accel_sd": 1.1259463775237168,
+        "speed_sd": 13.811677497161265
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_1_0_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "1_0",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n1_5_a1": {
+      "rows_raw": 145962,
+      "rows_clean": 145961,
+      "cleaning": {
+        "initial": 145962,
+        "remaining": 145961,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.14432622412836305,
+      "subtypes": {
+        "0": 124895,
+        "1": 2048,
+        "2": 6063,
+        "3": 326,
+        "4": 11444,
+        "5": 267,
+        "6": 87,
+        "7": 73,
+        "8": 48,
+        "9": 710
+      },
+      "leak": {
+        "n_tunnel_rows": 228,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.3211267605633803,
+        "type9_share_of_anomalies": 0.03370359821513339,
+        "tunnel_share_of_anomalies": 0.01082312731415551
+      },
+      "label_rule": {
+        "n_over_limit": 2135,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9592505854800937
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.465164318713918,
+        "accel_sd": 0.9858960523425051,
+        "speed_sd": 16.139339441255775
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_1_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "1_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n1_5_a15": {
+      "rows_raw": 164413,
+      "rows_clean": 164408,
+      "cleaning": {
+        "initial": 164413,
+        "remaining": 164408,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 4,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.21297625419687607,
+      "subtypes": {
+        "0": 129393,
+        "1": 4828,
+        "2": 17456,
+        "3": 901,
+        "4": 9050,
+        "5": 734,
+        "6": 181,
+        "7": 182,
+        "8": 217,
+        "9": 1466
+      },
+      "leak": {
+        "n_tunnel_rows": 226,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.15416098226466576,
+        "type9_share_of_anomalies": 0.04186777095530487,
+        "tunnel_share_of_anomalies": 0.006454376695701842
+      },
+      "label_rule": {
+        "n_over_limit": 5056,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9549050632911392
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.315137303745243,
+        "accel_sd": 1.1661533565705313,
+        "speed_sd": 13.460802887640689
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_1_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "1_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "hamburg_baseline_n1_5_a5": {
+      "rows_raw": 160212,
+      "rows_clean": 160208,
+      "cleaning": {
+        "initial": 160212,
+        "remaining": 160208,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 4,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.18227554179566563,
+      "subtypes": {
+        "0": 131006,
+        "1": 3374,
+        "2": 11813,
+        "3": 575,
+        "4": 11187,
+        "5": 554,
+        "6": 164,
+        "7": 129,
+        "8": 109,
+        "9": 1297
+      },
+      "leak": {
+        "n_tunnel_rows": 307,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.23670007710100233,
+        "type9_share_of_anomalies": 0.04441476611191014,
+        "tunnel_share_of_anomalies": 0.010512978563112115
+      },
+      "label_rule": {
+        "n_over_limit": 3581,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9421949176207763
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.033961343703339,
+        "accel_sd": 1.129441588606363,
+        "speed_sd": 13.527844084768821
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_baseline_temporal_data\\hamburg_baseline_noise_1_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_BASELINE\\hamburg_GNN_DATA_BASELINE.csv",
+        "city": "hamburg",
+        "imputation": "baseline",
+        "noise": "1_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n0_5_a1": {
+      "rows_raw": 148585,
+      "rows_clean": 148584,
+      "cleaning": {
+        "initial": 148585,
+        "remaining": 148584,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.11952161740160448,
+      "subtypes": {
+        "0": 130825,
+        "1": 2061,
+        "2": 5713,
+        "3": 339,
+        "4": 8126,
+        "5": 297,
+        "6": 87,
+        "7": 85,
+        "8": 60,
+        "9": 991
+      },
+      "leak": {
+        "n_tunnel_rows": 348,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.3511604439959637,
+        "type9_share_of_anomalies": 0.0558026915929951,
+        "tunnel_share_of_anomalies": 0.01959569795596599
+      },
+      "label_rule": {
+        "n_over_limit": 2148,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9594972067039106
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.2906710830401926,
+        "accel_sd": 0.9579527764374388,
+        "speed_sd": 15.097700863951419
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_0_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "0_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n0_5_a15": {
+      "rows_raw": 174995,
+      "rows_clean": 174993,
+      "cleaning": {
+        "initial": 174995,
+        "remaining": 174993,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 1,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.22868914756590264,
+      "subtypes": {
+        "0": 134974,
+        "1": 5177,
+        "2": 17075,
+        "3": 836,
+        "4": 14086,
+        "5": 752,
+        "6": 163,
+        "7": 188,
+        "8": 211,
+        "9": 1531
+      },
+      "leak": {
+        "n_tunnel_rows": 210,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.13716525146962769,
+        "type9_share_of_anomalies": 0.038256828006696816,
+        "tunnel_share_of_anomalies": 0.0052475074339688645
+      },
+      "label_rule": {
+        "n_over_limit": 5395,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9595922150139018
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.306111765211456,
+        "accel_sd": 1.1630032745569605,
+        "speed_sd": 13.184034926003335
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_0_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "0_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n0_5_a5": {
+      "rows_raw": 161283,
+      "rows_clean": 161283,
+      "cleaning": {
+        "initial": 161283,
+        "remaining": 161283,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.16478488123360802,
+      "subtypes": {
+        "0": 134706,
+        "1": 3830,
+        "2": 12299,
+        "3": 641,
+        "4": 7467,
+        "5": 504,
+        "6": 172,
+        "7": 179,
+        "8": 139,
+        "9": 1346
+      },
+      "leak": {
+        "n_tunnel_rows": 256,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.1901931649331352,
+        "type9_share_of_anomalies": 0.050645294803777705,
+        "tunnel_share_of_anomalies": 0.009632388907702148
+      },
+      "label_rule": {
+        "n_over_limit": 4072,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9405697445972495
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.964317545668765,
+        "accel_sd": 1.119332191475823,
+        "speed_sd": 13.348101715657414
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_0_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "0_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n1_0_a1": {
+      "rows_raw": 141675,
+      "rows_clean": 141675,
+      "cleaning": {
+        "initial": 141675,
+        "remaining": 141675,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.10467619551791071,
+      "subtypes": {
+        "0": 126845,
+        "1": 2160,
+        "2": 4102,
+        "3": 369,
+        "4": 6594,
+        "5": 271,
+        "6": 99,
+        "7": 113,
+        "8": 97,
+        "9": 1025
+      },
+      "leak": {
+        "n_tunnel_rows": 332,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.32390243902439025,
+        "type9_share_of_anomalies": 0.06911665542818611,
+        "tunnel_share_of_anomalies": 0.022387053270397844
+      },
+      "label_rule": {
+        "n_over_limit": 2270,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9515418502202643
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.249721373080064,
+        "accel_sd": 0.9438786658820074,
+        "speed_sd": 16.05610789071277
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_1_0_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "1_0",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n1_0_a15": {
+      "rows_raw": 175374,
+      "rows_clean": 175371,
+      "cleaning": {
+        "initial": 175374,
+        "remaining": 175371,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 1,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 2,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.2131538281699939,
+      "subtypes": {
+        "0": 137990,
+        "1": 4339,
+        "2": 16661,
+        "3": 786,
+        "4": 12992,
+        "5": 679,
+        "6": 203,
+        "7": 153,
+        "8": 165,
+        "9": 1403
+      },
+      "leak": {
+        "n_tunnel_rows": 233,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.1660727013542409,
+        "type9_share_of_anomalies": 0.037532436264412404,
+        "tunnel_share_of_anomalies": 0.006233113078836843
+      },
+      "label_rule": {
+        "n_over_limit": 4598,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9436711613745107
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.308495397057321,
+        "accel_sd": 1.1669830869833608,
+        "speed_sd": 12.836243201370841
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_1_0_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "1_0",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n1_0_a5": {
+      "rows_raw": 160887,
+      "rows_clean": 160887,
+      "cleaning": {
+        "initial": 160887,
+        "remaining": 160887,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.1603609987133827,
+      "subtypes": {
+        "0": 135087,
+        "1": 3657,
+        "2": 10806,
+        "3": 687,
+        "4": 8514,
+        "5": 483,
+        "6": 171,
+        "7": 114,
+        "8": 172,
+        "9": 1196
+      },
+      "leak": {
+        "n_tunnel_rows": 208,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.17391304347826086,
+        "type9_share_of_anomalies": 0.04635658914728682,
+        "tunnel_share_of_anomalies": 0.00806201550387597
+      },
+      "label_rule": {
+        "n_over_limit": 3856,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9483921161825726
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.9974554129371604,
+        "accel_sd": 1.1213578525416632,
+        "speed_sd": 13.27513061905403
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_1_0_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "1_0",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n1_5_a1": {
+      "rows_raw": 142850,
+      "rows_clean": 142850,
+      "cleaning": {
+        "initial": 142850,
+        "remaining": 142850,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.09879593979698985,
+      "subtypes": {
+        "0": 128737,
+        "1": 1833,
+        "2": 6040,
+        "3": 366,
+        "4": 4597,
+        "5": 295,
+        "6": 85,
+        "7": 91,
+        "8": 98,
+        "9": 708
+      },
+      "leak": {
+        "n_tunnel_rows": 213,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.3008474576271186,
+        "type9_share_of_anomalies": 0.05016651314390987,
+        "tunnel_share_of_anomalies": 0.015092467937362715
+      },
+      "label_rule": {
+        "n_over_limit": 1918,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9556830031282586
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.325653912695471,
+        "accel_sd": 0.9677413199407965,
+        "speed_sd": 15.888723104746042
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_1_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "1_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n1_5_a15": {
+      "rows_raw": 178726,
+      "rows_clean": 178725,
+      "cleaning": {
+        "initial": 178726,
+        "remaining": 178725,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.2568918729892293,
+      "subtypes": {
+        "0": 132812,
+        "1": 5209,
+        "2": 19462,
+        "3": 968,
+        "4": 16792,
+        "5": 777,
+        "6": 219,
+        "7": 214,
+        "8": 297,
+        "9": 1975
+      },
+      "leak": {
+        "n_tunnel_rows": 231,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.11696202531645569,
+        "type9_share_of_anomalies": 0.04301613921982881,
+        "tunnel_share_of_anomalies": 0.0050312547644458
+      },
+      "label_rule": {
+        "n_over_limit": 5525,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9428054298642534
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.317697898871249,
+        "accel_sd": 1.1595400245461762,
+        "speed_sd": 14.152981252774314
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_1_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "1_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "hamburg_knn_n1_5_a5": {
+      "rows_raw": 159439,
+      "rows_clean": 159438,
+      "cleaning": {
+        "initial": 159439,
+        "remaining": 159438,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 110,
+      "anomaly_rate": 0.14929941419235063,
+      "subtypes": {
+        "0": 135634,
+        "1": 3705,
+        "2": 11714,
+        "3": 635,
+        "4": 5716,
+        "5": 467,
+        "6": 187,
+        "7": 179,
+        "8": 128,
+        "9": 1073
+      },
+      "leak": {
+        "n_tunnel_rows": 225,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.2096924510717614,
+        "type9_share_of_anomalies": 0.04507645773819526,
+        "tunnel_share_of_anomalies": 0.009452192908754832
+      },
+      "label_rule": {
+        "n_over_limit": 3892,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9519527235354573
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.014465368376988,
+        "accel_sd": 1.1251583635422462,
+        "speed_sd": 13.212974678154081
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\hamburg_temporal_data\\hamburg_noise_1_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\hamburg_spatial_data\\hamburg_spatial_data_KNN\\hamburg_GNN_DATA_KNN.csv",
+        "city": "hamburg",
+        "imputation": "knn",
+        "noise": "1_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n0_5_a1": {
+      "rows_raw": 243761,
+      "rows_clean": 243752,
+      "cleaning": {
+        "initial": 243761,
+        "remaining": 243752,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 7,
+        "dropped_extreme_accel": 2,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.2224227903771046,
+      "subtypes": {
+        "0": 189536,
+        "1": 2347,
+        "2": 2549,
+        "3": 464,
+        "4": 8456,
+        "5": 345,
+        "6": 101,
+        "7": 120,
+        "8": 95,
+        "9": 39739
+      },
+      "leak": {
+        "n_tunnel_rows": 39038,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9823598983366466,
+        "type9_share_of_anomalies": 0.732975505385864,
+        "tunnel_share_of_anomalies": 0.7200457429541095
+      },
+      "label_rule": {
+        "n_over_limit": 3324,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.7060770156438027
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.637779563940065,
+        "accel_sd": 1.008877936618807,
+        "speed_sd": 22.132770522845263
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_0_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "0_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n0_5_a15": {
+      "rows_raw": 263506,
+      "rows_clean": 263484,
+      "cleaning": {
+        "initial": 263506,
+        "remaining": 263484,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 2,
+        "dropped_tunnel_mismatch": 15,
+        "dropped_extreme_accel": 5,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.264551168192376,
+      "subtypes": {
+        "0": 193779,
+        "1": 5744,
+        "2": 6736,
+        "3": 1123,
+        "4": 15270,
+        "5": 885,
+        "6": 199,
+        "7": 233,
+        "8": 271,
+        "9": 39244
+      },
+      "leak": {
+        "n_tunnel_rows": 37686,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9602996636428499,
+        "type9_share_of_anomalies": 0.5630012194247185,
+        "tunnel_share_of_anomalies": 0.5406498816440715
+      },
+      "label_rule": {
+        "n_over_limit": 8395,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.6842167957117332
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.780746991507862,
+        "accel_sd": 1.1716860806253204,
+        "speed_sd": 21.83982830322574
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_0_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "0_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n0_5_a5": {
+      "rows_raw": 255677,
+      "rows_clean": 255656,
+      "cleaning": {
+        "initial": 255677,
+        "remaining": 255656,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 17,
+        "dropped_extreme_accel": 4,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.24600244077979785,
+      "subtypes": {
+        "0": 192764,
+        "1": 4589,
+        "2": 4699,
+        "3": 721,
+        "4": 12440,
+        "5": 575,
+        "6": 153,
+        "7": 178,
+        "8": 162,
+        "9": 39375
+      },
+      "leak": {
+        "n_tunnel_rows": 38176,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9695492063492064,
+        "type9_share_of_anomalies": 0.6260732684602175,
+        "tunnel_share_of_anomalies": 0.6070088405520575
+      },
+      "label_rule": {
+        "n_over_limit": 7303,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.6283719019580994
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.401651131857382,
+        "accel_sd": 1.1398286367135346,
+        "speed_sd": 22.09287346393983
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_0_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "0_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n1_0_a1": {
+      "rows_raw": 235406,
+      "rows_clean": 235403,
+      "cleaning": {
+        "initial": 235406,
+        "remaining": 235403,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 3,
+        "dropped_extreme_accel": 0,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.2069132508931492,
+      "subtypes": {
+        "0": 186695,
+        "1": 2722,
+        "2": 2219,
+        "3": 424,
+        "4": 4434,
+        "5": 378,
+        "6": 145,
+        "7": 113,
+        "8": 102,
+        "9": 38171
+      },
+      "leak": {
+        "n_tunnel_rows": 37511,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9827093867071861,
+        "type9_share_of_anomalies": 0.7836700336700336,
+        "tunnel_share_of_anomalies": 0.7701198981686787
+      },
+      "label_rule": {
+        "n_over_limit": 3930,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.6926208651399491
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.7155082643230504,
+        "accel_sd": 1.0092272064929892,
+        "speed_sd": 23.88139057636011
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_1_0_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "1_0",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n1_0_a15": {
+      "rows_raw": 262137,
+      "rows_clean": 262122,
+      "cleaning": {
+        "initial": 262137,
+        "remaining": 262122,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 8,
+        "dropped_extreme_accel": 7,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.2751123522634498,
+      "subtypes": {
+        "0": 190009,
+        "1": 6619,
+        "2": 8479,
+        "3": 1158,
+        "4": 14353,
+        "5": 944,
+        "6": 277,
+        "7": 246,
+        "8": 338,
+        "9": 39699
+      },
+      "leak": {
+        "n_tunnel_rows": 37806,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9523161792488476,
+        "type9_share_of_anomalies": 0.5505110035638512,
+        "tunnel_share_of_anomalies": 0.5242605355483755
+      },
+      "label_rule": {
+        "n_over_limit": 8450,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.7833136094674557
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.704870085516462,
+        "accel_sd": 1.1707951124463658,
+        "speed_sd": 23.25150456231909
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_1_0_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "1_0",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n1_0_a5": {
+      "rows_raw": 258063,
+      "rows_clean": 257993,
+      "cleaning": {
+        "initial": 258063,
+        "remaining": 257993,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 66,
+        "dropped_extreme_accel": 4,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.23692115677557143,
+      "subtypes": {
+        "0": 196869,
+        "1": 4112,
+        "2": 6872,
+        "3": 727,
+        "4": 9429,
+        "5": 589,
+        "6": 215,
+        "7": 161,
+        "8": 170,
+        "9": 38849
+      },
+      "leak": {
+        "n_tunnel_rows": 37760,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9719683904347602,
+        "type9_share_of_anomalies": 0.6355768601531313,
+        "tunnel_share_of_anomalies": 0.6177606177606177
+      },
+      "label_rule": {
+        "n_over_limit": 5798,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.709210072438772
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.397183445552612,
+        "accel_sd": 1.1458198958619723,
+        "speed_sd": 21.62854207308333
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_1_0_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "1_0",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n1_5_a1": {
+      "rows_raw": 230051,
+      "rows_clean": 230044,
+      "cleaning": {
+        "initial": 230051,
+        "remaining": 230044,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 6,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.20716906330962773,
+      "subtypes": {
+        "0": 182386,
+        "1": 2799,
+        "2": 3108,
+        "3": 493,
+        "4": 3636,
+        "5": 368,
+        "6": 125,
+        "7": 87,
+        "8": 108,
+        "9": 36934
+      },
+      "leak": {
+        "n_tunnel_rows": 36171,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9793415281312612,
+        "type9_share_of_anomalies": 0.7749800663057619,
+        "tunnel_share_of_anomalies": 0.758970162407151
+      },
+      "label_rule": {
+        "n_over_limit": 4137,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.6765772298767223
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.745385380683083,
+        "accel_sd": 1.003328128460881,
+        "speed_sd": 25.84631843952967
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_1_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "1_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n1_5_a15": {
+      "rows_raw": 253354,
+      "rows_clean": 253340,
+      "cleaning": {
+        "initial": 253354,
+        "remaining": 253340,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 2,
+        "dropped_tunnel_mismatch": 9,
+        "dropped_extreme_accel": 3,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.234684613562801,
+      "subtypes": {
+        "0": 193885,
+        "1": 5251,
+        "2": 4843,
+        "3": 927,
+        "4": 10072,
+        "5": 748,
+        "6": 203,
+        "7": 196,
+        "8": 172,
+        "9": 37043
+      },
+      "leak": {
+        "n_tunnel_rows": 35560,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9599654455632644,
+        "type9_share_of_anomalies": 0.6230426372887058,
+        "tunnel_share_of_anomalies": 0.5980994029097637
+      },
+      "label_rule": {
+        "n_over_limit": 6566,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.7997258604934511
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.728188785239377,
+        "accel_sd": 1.17664241072754,
+        "speed_sd": 20.459911990582714
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_1_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "1_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_baseline_n1_5_a5": {
+      "rows_raw": 252142,
+      "rows_clean": 252128,
+      "cleaning": {
+        "initial": 252142,
+        "remaining": 252128,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 11,
+        "dropped_extreme_accel": 3,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.2541724838177434,
+      "subtypes": {
+        "0": 188044,
+        "1": 5170,
+        "2": 6763,
+        "3": 880,
+        "4": 13650,
+        "5": 681,
+        "6": 235,
+        "7": 137,
+        "8": 175,
+        "9": 36393
+      },
+      "leak": {
+        "n_tunnel_rows": 34930,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9597999615310636,
+        "type9_share_of_anomalies": 0.5678952624680107,
+        "tunnel_share_of_anomalies": 0.54506585107047
+      },
+      "label_rule": {
+        "n_over_limit": 7766,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.6657223796033994
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.4438680349253215,
+        "accel_sd": 1.1335589155856656,
+        "speed_sd": 23.18255177159608
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_baseline_temporal_data\\kocaeli_baseline_noise_1_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_BASELINE\\kocaeli_GNN_DATA_BASELINE.csv",
+        "city": "kocaeli",
+        "imputation": "baseline",
+        "noise": "1_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n0_5_a1": {
+      "rows_raw": 296245,
+      "rows_clean": 296238,
+      "cleaning": {
+        "initial": 296245,
+        "remaining": 296238,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 0,
+        "dropped_tunnel_mismatch": 4,
+        "dropped_extreme_accel": 3,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.20974689270113894,
+      "subtypes": {
+        "0": 234103,
+        "1": 3012,
+        "2": 5899,
+        "3": 494,
+        "4": 5790,
+        "5": 382,
+        "6": 148,
+        "7": 101,
+        "8": 134,
+        "9": 46175
+      },
+      "leak": {
+        "n_tunnel_rows": 45265,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9802923659989171,
+        "type9_share_of_anomalies": 0.7431399372334433,
+        "tunnel_share_of_anomalies": 0.728494407338859
+      },
+      "label_rule": {
+        "n_over_limit": 5004,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.6019184652278178
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.6644532398044336,
+        "accel_sd": 1.0194167112083623,
+        "speed_sd": 24.3896333196219
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_0_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "0_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n0_5_a15": {
+      "rows_raw": 343923,
+      "rows_clean": 343875,
+      "cleaning": {
+        "initial": 343923,
+        "remaining": 343875,
+        "dropped_negative_speed": 1,
+        "dropped_unlabelled_over_limit": 3,
+        "dropped_tunnel_mismatch": 39,
+        "dropped_extreme_accel": 5,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.3055325336241367,
+      "subtypes": {
+        "0": 238810,
+        "1": 8386,
+        "2": 20309,
+        "3": 1439,
+        "4": 24975,
+        "5": 1346,
+        "6": 341,
+        "7": 386,
+        "8": 357,
+        "9": 47526
+      },
+      "leak": {
+        "n_tunnel_rows": 45139,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9497748600765896,
+        "type9_share_of_anomalies": 0.452348546138105,
+        "tunnel_share_of_anomalies": 0.42962927711416743
+      },
+      "label_rule": {
+        "n_over_limit": 10324,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.8122820612165828
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.537526560370267,
+        "accel_sd": 1.1704013405589373,
+        "speed_sd": 22.931581040919678
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_0_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "0_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n0_5_a5": {
+      "rows_raw": 321129,
+      "rows_clean": 321110,
+      "cleaning": {
+        "initial": 321129,
+        "remaining": 321110,
+        "dropped_negative_speed": 2,
+        "dropped_unlabelled_over_limit": 6,
+        "dropped_tunnel_mismatch": 9,
+        "dropped_extreme_accel": 2,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.23956899504842577,
+      "subtypes": {
+        "0": 244182,
+        "1": 5597,
+        "2": 12075,
+        "3": 1024,
+        "4": 10167,
+        "5": 874,
+        "6": 234,
+        "7": 194,
+        "8": 289,
+        "9": 46474
+      },
+      "leak": {
+        "n_tunnel_rows": 45022,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9687567241898696,
+        "type9_share_of_anomalies": 0.6041233361064892,
+        "tunnel_share_of_anomalies": 0.5852485440931781
+      },
+      "label_rule": {
+        "n_over_limit": 7440,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.7522849462365592
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.283576250180931,
+        "accel_sd": 1.137470575366634,
+        "speed_sd": 23.321476527184902
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_0_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "0_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n1_0_a1": {
+      "rows_raw": 293170,
+      "rows_clean": 293165,
+      "cleaning": {
+        "initial": 293170,
+        "remaining": 293165,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 4,
+        "dropped_tunnel_mismatch": 0,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.2152542083809459,
+      "subtypes": {
+        "0": 230060,
+        "1": 2999,
+        "2": 6290,
+        "3": 487,
+        "4": 8277,
+        "5": 440,
+        "6": 75,
+        "7": 114,
+        "8": 157,
+        "9": 44266
+      },
+      "leak": {
+        "n_tunnel_rows": 43491,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9824922062079248,
+        "type9_share_of_anomalies": 0.7014658109500039,
+        "tunnel_share_of_anomalies": 0.6891846921797005
+      },
+      "label_rule": {
+        "n_over_limit": 3248,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.9233374384236454
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.708140044108397,
+        "accel_sd": 1.035309336908134,
+        "speed_sd": 25.182345827336707
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_1_0_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "1_0",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n1_0_a15": {
+      "rows_raw": 324889,
+      "rows_clean": 324872,
+      "cleaning": {
+        "initial": 324889,
+        "remaining": 324872,
+        "dropped_negative_speed": 1,
+        "dropped_unlabelled_over_limit": 6,
+        "dropped_tunnel_mismatch": 9,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.26706826073038,
+      "subtypes": {
+        "0": 238109,
+        "1": 7386,
+        "2": 16608,
+        "3": 1184,
+        "4": 13625,
+        "5": 991,
+        "6": 259,
+        "7": 216,
+        "8": 380,
+        "9": 46114
+      },
+      "leak": {
+        "n_tunnel_rows": 43952,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9531161903109685,
+        "type9_share_of_anomalies": 0.531493839539896,
+        "tunnel_share_of_anomalies": 0.5065753835160149
+      },
+      "label_rule": {
+        "n_over_limit": 8513,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.8676142370492188
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.499269515171831,
+        "accel_sd": 1.175390460387542,
+        "speed_sd": 22.636867240140763
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_1_0_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "1_0",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n1_0_a5": {
+      "rows_raw": 316676,
+      "rows_clean": 316664,
+      "cleaning": {
+        "initial": 316676,
+        "remaining": 316664,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 5,
+        "dropped_tunnel_mismatch": 6,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.2533000277897077,
+      "subtypes": {
+        "0": 236453,
+        "1": 5982,
+        "2": 13405,
+        "3": 1148,
+        "4": 13170,
+        "5": 887,
+        "6": 229,
+        "7": 227,
+        "8": 198,
+        "9": 44965
+      },
+      "leak": {
+        "n_tunnel_rows": 43251,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9618814633603914,
+        "type9_share_of_anomalies": 0.5605839598060116,
+        "tunnel_share_of_anomalies": 0.5392153195945694
+      },
+      "label_rule": {
+        "n_over_limit": 8023,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.7456063816527484
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.317660145050904,
+        "accel_sd": 1.136840306776105,
+        "speed_sd": 23.213572673072928
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_1_0_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "1_0",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n1_5_a1": {
+      "rows_raw": 288275,
+      "rows_clean": 287950,
+      "cleaning": {
+        "initial": 288275,
+        "remaining": 287950,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 1,
+        "dropped_tunnel_mismatch": 323,
+        "dropped_extreme_accel": 1,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.22434797707935406,
+      "subtypes": {
+        "0": 223349,
+        "1": 3176,
+        "2": 7335,
+        "3": 579,
+        "4": 8758,
+        "5": 484,
+        "6": 139,
+        "7": 113,
+        "8": 109,
+        "9": 43908
+      },
+      "leak": {
+        "n_tunnel_rows": 43088,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9813245877744374,
+        "type9_share_of_anomalies": 0.6796798811163914,
+        "tunnel_share_of_anomalies": 0.6669865791551214
+      },
+      "label_rule": {
+        "n_over_limit": 4331,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.733317940429462
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 3.6697046551185326,
+        "accel_sd": 1.0058520485575635,
+        "speed_sd": 26.823910732295683
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_1_5_anomaly_1\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "1_5",
+        "prevalence": "1",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n1_5_a15": {
+      "rows_raw": 357580,
+      "rows_clean": 357256,
+      "cleaning": {
+        "initial": 357580,
+        "remaining": 357256,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 9,
+        "dropped_tunnel_mismatch": 308,
+        "dropped_extreme_accel": 7,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.3048514230691717,
+      "subtypes": {
+        "0": 248346,
+        "1": 7628,
+        "2": 23051,
+        "3": 1421,
+        "4": 30668,
+        "5": 1242,
+        "6": 323,
+        "7": 375,
+        "8": 355,
+        "9": 43847
+      },
+      "leak": {
+        "n_tunnel_rows": 41375,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9436221406253563,
+        "type9_share_of_anomalies": 0.4025984758057111,
+        "tunnel_share_of_anomalies": 0.37990083555229087
+      },
+      "label_rule": {
+        "n_over_limit": 9585,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.7958268127282212
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.549168215553647,
+        "accel_sd": 1.1732678995665007,
+        "speed_sd": 23.252410466089906
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_1_5_anomaly_15\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "1_5",
+        "prevalence": "15",
+        "new_format": "True"
+      }
+    },
+    "kocaeli_knn_n1_5_a5": {
+      "rows_raw": 315803,
+      "rows_clean": 315780,
+      "cleaning": {
+        "initial": 315803,
+        "remaining": 315780,
+        "dropped_negative_speed": 0,
+        "dropped_unlabelled_over_limit": 3,
+        "dropped_tunnel_mismatch": 18,
+        "dropped_extreme_accel": 2,
+        "note": "yeni kumelerin README'sinde sart kosulan filtre; tunnel ve etiket kurallari karsi ornekleri SILIYOR, duzeltmiyor"
+      },
+      "n_trips": 90,
+      "anomaly_rate": 0.24199125973779215,
+      "subtypes": {
+        "0": 239364,
+        "1": 6425,
+        "2": 14457,
+        "3": 1029,
+        "4": 9808,
+        "5": 908,
+        "6": 252,
+        "7": 227,
+        "8": 255,
+        "9": 43055
+      },
+      "leak": {
+        "n_tunnel_rows": 41022,
+        "p_anomaly9_given_tunnel": 1.0,
+        "p_tunnel_given_anomaly9": 0.9527813262106608,
+        "type9_share_of_anomalies": 0.5634291247906198,
+        "tunnel_share_of_anomalies": 0.5368247487437185
+      },
+      "label_rule": {
+        "n_over_limit": 7945,
+        "p_anomalous_given_over_limit": 1.0,
+        "p_type1_given_over_limit": 0.8086847073631215
+      },
+      "noise_proxy": {
+        "speed_diff_sd_mean": 4.283515897201414,
+        "accel_sd": 1.1321526043146275,
+        "speed_sd": 24.37505180636195
+      },
+      "meta": {
+        "trajectory": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\TEMPORAL\\kocaeli_temporal_data\\kocaeli_noise_1_5_anomaly_5\\sentetic_data.csv",
+        "graph": "C:\\Users\\Kerem\\Desktop\\makale-yeni-adnan\\yeniveriseti\\DATASETS_REVİSİON-20261003T203912Z-1-001\\DATASETS_REVİSİON\\SPATIAL\\kocaeli_spatial_data\\kocaeli_spatial_data_KNN\\kocaeli_GNN_DATA_KNN.csv",
+        "city": "kocaeli",
+        "imputation": "knn",
+        "noise": "1_5",
+        "prevalence": "5",
+        "new_format": "True"
+      }
+    }
+  },
+  "summary_leak": {
+    "p_anomaly9_given_tunnel": {
+      "min": 1.0,
+      "median": 1.0,
+      "max": 1.0
+    },
+    "tunnel_share_of_anomalies": {
+      "kocaeli": {
+        "min": 0.37990083555229087,
+        "max": 0.7701198981686787
+      },
+      "hamburg": {
+        "min": 0.0050312547644458,
+        "max": 0.022387053270397844
+      }
+    },
+    "verdict": "tunnel bir graf dugum ozniteligidir; bu baginti grafa erisen her modele anomalilerin bir kismini bedava verir"
+  },
+  "summary_prevalence": {
+    "1": {
+      "min": 0.0862455770533765,
+      "max": 0.22434797707935406,
+      "mean": 0.16447725514244227
+    },
+    "15": {
+      "min": 0.198260520841166,
+      "max": 0.3055325336241367,
+      "mean": 0.2472583205451259
+    },
+    "5": {
+      "min": 0.14929941419235063,
+      "max": 0.2541724838177434,
+      "mean": 0.2081206305656436
+    }
+  },
+  "summary_noise": {
+    "by_level": {
+      "0_5": {
+        "speed_diff_sd": 4.039003458926627,
+        "accel_sd": 1.0921934955375443
+      },
+      "1_0": {
+        "speed_diff_sd": 4.040739347137449,
+        "accel_sd": 1.0956322419542677
+      },
+      "1_5": {
+        "speed_diff_sd": 4.074325926235631,
+        "accel_sd": 1.0965610593967832
+      }
+    },
+    "between_level_spread": 0.03532246730900468,
+    "within_level_sd": 0.4402767910375717,
+    "axis_effective": false
+  }
+}

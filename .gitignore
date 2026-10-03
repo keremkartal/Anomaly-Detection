@@ -116,9 +116,17 @@ songelen/
 A1_SONUC.md
 B_BULGULAR.md
 KARAR_KAPISI_2.md
+EKIBE_ISTEK.md
 
 # Model agirliklari. Metrik ve tahmin onbellegi (json + npz) tablolari birebir
 # yeniden uretmeye yeter ve izlenir; agirliklar yalnizca cikarim anindaki
 # duyarlilik deneyleri (gurultu, kenar silme) icin gerekir, kosu basina ~870 KB
 # tutar ve gerektiginde yeniden uretilir.
 results/_runs/**/*.pt
+
+# Revizyon icin uretilen veri kumeleri (815 MB, 36 yorunge + 4 graf).
+# Depoya girmiyor: boyutu buyuk ve icinde henuz cozulmemis bir etiket
+# sizintisi var (bkz. results/F27_new_data_audit.json). Duzeltilmis surum
+# geldiginde Zenodo'ya ayrica konacak.
+yeniveriseti/
+gercekveri/
