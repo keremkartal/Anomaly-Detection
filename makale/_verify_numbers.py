@@ -455,6 +455,13 @@ STALE_PHRASES = [
     (r"95\.13", "eski etiket tavani (test etiketli) — yeni: 94.58"),
     (r"93\.45", "eski etiket tavani (test etiketli) — yeni: 92.84"),
     (r"the primary setting of the accuracy tables", "graf artik secilmiyor"),
+    # FAZ C/D: yapilan isler icin "yapilmadi" diyen cumleler
+    (r"sensitivity analysis over these defaults was not performed",
+     "imputasyon duyarliligi YAPILDI (tab:imputation)"),
+    (r"over one city network", "artik iki ag var (sec:independent_network)"),
+    (r"It occurred in none of ten cross-validated runs",
+     "500 kosuda 8 cokme var (tab:collapse)"),
+    (r"disappears on a graph construction where", "graf gerekcesi gecersiz"),
 ]
 
 

@@ -2107,7 +2107,11 @@ Whether the same conclusion holds on field-collected trajectories is an open que
 \subsection{Threats to Validity}
 \label{sec:threats}
 
-\textbf{Synthetic data.} All findings are obtained on simulated trajectories over one city network. No real sensor data, verified incident record, or prospective stream is involved, and no claim about real-world detection performance is made.
+\textbf{Synthetic data.} All findings are obtained on simulated trajectories. No real sensor data, verified incident record, or prospective stream is involved, and no claim about real-world detection performance is made.
+
+\textbf{One generator.} The four datasets of Section~\ref{sec:four_datasets} span two road networks and two imputation strategies, but a single simulator produced all of them, with the same anomaly taxonomy and the same kinematic definitions. The replication therefore eliminates an explanation specific to one topology; it does not eliminate one specific to how these anomalies are defined. Since most subtypes are threshold functions of the kinematic channels, a generator whose anomalies depended more strongly on road context might well give the spatial branch something to do. That experiment is not in this paper, and it is the one we would run next.
+
+\textbf{Generator parameters.} The transition probabilities behind the behavioural model were not available to us. Section~\ref{sec:markov} recovers the realised transition frequencies from the released trajectories so that the data's behaviour is documented, but how those probabilities were chosen or calibrated is not, and a reader cannot regenerate an equivalent dataset from the description alone.
 
 \textbf{Label--input dependence.} Most anomaly subtypes are threshold functions of the model's own inputs (Section~\ref{sec:reference_points}). Conclusions about \emph{relative} architectural merit are unaffected, since all configurations face the same task, but absolute performance figures reflect a partly self-referential problem and should not be compared to results on independently labelled data.
 
@@ -2115,7 +2119,11 @@ Whether the same conclusion holds on field-collected trajectories is an open que
 
 \textbf{Encoder adaptation.} STGCN, DCRNN, and Graph WaveNet are represented by their core operators rather than their full published architectures. This is necessary given the task mismatch, but the results should be read as evidence about those operators in this setting rather than as a benchmark of the published systems.
 
-\textbf{Imputation dependence.} Roughly half of the lane counts and speed limits are author-defined defaults, which directly affects the node features available to the spatial branch. A sensitivity analysis over these defaults was not performed.
+\textbf{Imputation dependence.} Roughly half of the lane counts and speed limits are author-defined defaults, which directly affects the node features available to the spatial branch. Four treatments of those defaults were compared (Section~\ref{sec:sensitivity}) and none differs measurably, including removing the two attributes entirely; a second fill strategy on regenerated data behaves the same way (Section~\ref{sec:four_datasets}). The dependence is therefore bounded rather than eliminated: attributes that carry no measurable signal cannot be sensitive to how they were filled, and the bound would have to be re-established on data where they do carry signal.
+
+\textbf{A label determined by a graph feature.} In the datasets delivered for this revision, every record on a tunnel segment carries the signal-freeze label, and the prescribed preprocessing enforces this by deleting the exceptions (Section~\ref{sec:tunnel_leak}). Because the tunnel flag is a node attribute, a graph-enabled model can read that label off a single input. We removed the attribute and report both settings, but the condition is a property of the released data rather than something we introduced, and any reuse of those datasets should handle it.
+
+\textbf{Deleted counterexamples.} The same prescribed filter removes records that exceed the speed limit without carrying the corresponding label, rather than relabelling them. This makes the published generation rule exactly true of the cleaned data by construction, which overstates how deterministic the labelling function is (Section~\ref{sec:cleaning_conflict}).
 
 % =====================================================================
 % BOLUM VIII — SONUC
