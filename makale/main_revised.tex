@@ -124,7 +124,7 @@ The literature most relevant to this study covers both anomaly-detection models 
 \subsection{Temporal, Spatial, and Spatio-Temporal Anomaly Models}
 Early traffic anomaly detection studies were predominantly driven by temporal modeling, where recurrent architectures such as LSTM-based networks were used to capture abrupt variations in velocity, acceleration, and short-term driving behavior. These models remain effective when anomalies are primarily reflected in kinematic changes, but they often overlook whether a maneuver is contextually plausible for the surrounding road environment. In parallel, graph-based and spatially aware methods improved structural understanding by modeling road connectivity, segment interactions, and topological constraints. Such approaches are better suited to representing where risky conditions may emerge, yet they can miss the sequential behavioral evolution that distinguishes a routine slowdown from a truly hazardous event.
 
-Recent studies increasingly bridge these two views through spatio-temporal learning, though not always on the same task. Huang et al. \cite{huang_multivariate_2024} combine Dynamic GAT and Informer components to capture long-range temporal dependencies together with adaptive relational structure, for anomaly detection in generic multivariate time series rather than road traffic. Duan et al. \cite{sun_framework_2025} extend this direction through a multimodal deep-fusion framework with heterogeneous graph neural networks. Nguyen et al. \cite{nguyen_spatiotemporal_2026} further show that graph-based spatio-temporal integration can effectively represent coupled speed--volume patterns in urban traffic environments, in a forecasting rather than a detection setting. Taken together, these studies confirm that anomaly detection benefits from combining behavioral evolution with structural context; how much weight each modality should receive, however, is usually settled by architectural configuration rather than measured directly.
+Recent studies increasingly bridge these two views through spatio-temporal learning, though not always on the same task. Huang et al. \cite{huang_multivariate_2024} combine Dynamic GAT and Informer components to capture long-range temporal dependencies together with adaptive relational structure, for anomaly detection in generic multivariate time series rather than road traffic. Duan et al. \cite{sun_framework_2025} extend this direction through a multimodal deep-fusion framework with heterogeneous graph neural networks. Nguyen et al. \cite{nguyen_spatiotemporal_2026} further show that graph-based spatio-temporal integration can effectively represent coupled speed--volume patterns in urban traffic environments, in a forecasting rather than a detection setting. Taken together, these studies report that anomaly detection benefits from combining behavioral evolution with structural context; how much weight each modality should receive, however, is usually settled by architectural configuration rather than measured directly.
 
 \subsection{Fusion Strategies and Context Integration}
 A second research direction focuses on how information from temporal and spatial branches should be fused. Liang et al. \cite{liang_anomaly_2025} adopt a lightweight spatio-temporal architecture that emphasizes compact feature fusion; their setting is \emph{network} traffic in IoT deployments rather than road traffic, and we cite it for the fusion mechanism, not for the task. Cui et al. \cite{cui_lane-flow-learning_2026} use a spatial--temporal attention design for lane-aware trajectory prediction. These studies show that attention and feature-level coupling improve representation quality, yet the relative contribution of temporal and spatial cues is still largely determined by architectural configuration rather than by an explicit, empirically validated comparison against simpler fusion operators.
@@ -930,7 +930,7 @@ The sample-wise gate ranks \textbf{last of four}. Two aspects of this result mat
 
 This collapse is reproducible in the strongest sense available to us. The earlier version of this study observed it at seed $45$ under a different cuDNN configuration ($\mathrm{F1}=0.0833$). The experiments reported here were re-run from scratch under the protocol of Section~\ref{sec:protocol_note}, and the collapse recurred \emph{at the same seed} with a comparable magnitude. It is a property of the operator and this initialization, not an artifact of a particular backend setting.
 
-\textbf{The learned optimum is a constant.} In the static weighted-sum variant, the single learnable scalar converged to $\{0.519, 0.522, 0.518, 0.498, 0.497\}$ across the five seeds---that is, to approximately equal weighting in every run. The data does not call for a sample-dependent mixing weight. A one-parameter static weight outperforms the $4{,}161$-parameter adaptive gate, and does so with an order of magnitude lower seed variance ($\pm 0.0188$ versus $\pm 0.3488$).
+\textbf{The learned optimum is a constant.} In the static weighted-sum variant, the single learnable scalar converged to $\{0.519, 0.522, 0.518, 0.498, 0.497\}$ across the five seeds---that is, to approximately equal weighting in every run. The data does not call for a sample-dependent mixing weight. The one-parameter static weight also scores higher on this partition, though that difference is not resolvable here (Section~\ref{sec:equivalence_results}); what is resolvable is the spread. Its seed standard deviation is $\pm 0.0188$ against $\pm 0.3488$ for the adaptive gate, a factor of eighteen, and a difference in stability of that size is visible where a difference in means is not.
 
 Paired single-run tests are the wrong instrument for this comparison. On the median seed the test does not separate the gated model from concatenation ($p = 1.000$) or from cross-attention ($p = 0.727$), and its difference from the static weighted sum is $-0.0379$ with interval $[-0.0708, -0.0119]$; none of these single-partition numbers reflects the $0.35$ standard deviation that is the substantive finding. Across-seed instability is not visible to a test that examines one seed. This is itself an argument for the multi-seed protocol of Section~\ref{sec:repeatability}.
 
@@ -955,7 +955,7 @@ Table~\ref{tab:fusion_cost} answers a question the ranking alone leaves open: wh
 \subsection{Gate Behavior}
 \label{sec:gate_behaviour}
 
-Section~\ref{sec:fusion_module} established that gating can only outperform concatenation through genuinely sample-dependent behavior. Fig.~\ref{fig:gate} examines whether such behavior is observed, by measuring the class-conditional shift $\bar{g}_{\text{anomalous}} - \bar{g}_{\text{normal}}$ across seeds.
+Section~\ref{sec:fusion_module} established that gating can only outperform concatenation through genuinely sample-dependent behavior. Fig.~\ref{fig:gate} examines whether such behavior is observed, by measuring the class-conditional shift $\bar{g}_{\text{anomalous}} - \bar{g}_{\text{normal}}$ across seeds.  % IDDIA-OK: kosullu mantik cumlesi, 'gecer' demiyor
 
 \begin{figure*}[!t]
   \centering
@@ -1228,7 +1228,7 @@ at epoch two, far more negative than the $-0.0009$ of the collapsed run, and
 both reach $\mathrm{F1} \approx 0.86$. The sign is not what decides the
 outcome; the escape is.
 
-This confirms the mechanism the earlier version proposed---the gate remains
+This supports the mechanism the earlier version proposed---the gate remains
 attached to an uninformative spatial branch---and replaces an inference drawn
 from two runs with a separation measured across ten. The failure is not a
 property of the proposed operator. It is what can happen when a fusion stage
@@ -1657,7 +1657,7 @@ also where the hybrid becomes unstable: its two worst cells, $0.7826$ and
 $0.6246$, both carry standard deviations above $0.2$.
 
 \subsubsection{Were the baselines under-tuned?}
-A comparison in which only the proposed model is tuned proves little. The
+A comparison in which only the proposed model is tuned proves little. The  % IDDIA-OK: 'az sey kanitlar' diyor, iddia degil
 learning rate was therefore searched over $\{5 \times 10^{-4}, 10^{-3},
 2 \times 10^{-3}\}$ for \emph{every} configuration including the reference,
 with selection on validation F1 alone---the test partition plays no part in
@@ -1774,7 +1774,7 @@ Section~\ref{sec:graph_construction} noted that the graph can be built from trip
     \end{tabular}}
 \end{table}
 
-Merging duplicate nodes substantially improves the \emph{standalone} discriminative power of the spatial branch (ROC-AUC $0.5910 \rightarrow 0.7115$), confirming that the duplicate structure degrades message passing. Its F1 nonetheless remains near $0.07$, consistent with the label-ambiguity ceiling of Section~\ref{sec:graph_construction}: several sequences with different labels map to the same node, so no threshold yields good precision and recall simultaneously.
+Merging duplicate nodes substantially improves the \emph{standalone} discriminative power of the spatial branch (ROC-AUC $0.5910 \rightarrow 0.7115$), which is consistent with the duplicate structure degrading message passing. Its F1 nonetheless remains near $0.07$, consistent with the label-ambiguity ceiling of Section~\ref{sec:graph_construction}: several sequences with different labels map to the same node, so no threshold yields good precision and recall simultaneously.
 
 Neither construction is designated primary (Section~\ref{sec:graph_construction}); both are reported throughout. With the fusion operator held fixed, the hybrid is stronger on the trip-instance graph ($0.8713$ versus $0.8413$ for weighted sum), consistent with its higher per-node label purity. The row that repays closer reading is the last one. \textbf{The gated operator does not collapse on the merged graph}: it attains $0.8493 \pm 0.0274$ there, against $0.6953 \pm 0.3488$ on the trip-instance graph, and records the highest ROC-AUC in the table. This locates the collapse mechanism precisely. The gate fails when it locks onto a spatial branch that carries almost no standalone signal (ROC-AUC $0.5910$, barely above chance); on the merged graph the same branch reaches $0.7115$, and locking onto it is no longer catastrophic. The instability of Section~\ref{sec:fusion_ablation} is therefore not a property of gating in the abstract but of gating over an uninformative modality---which is a sharper and more transferable statement than the one we could make from the fixed graph alone.
 

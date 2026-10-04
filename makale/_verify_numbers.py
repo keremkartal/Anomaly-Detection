@@ -469,6 +469,60 @@ def check_stale_phrases():
     print()
 
 
+# ====================================================== E5. ASIRI IDDIA DILI
+# Makalenin merkezi bulgusu "bu tasarim bu buyuklukteki farklari cozemiyor".
+# Ustunluk ya da kesinlik iddia eden bir kelime metne geri sizdiginde kendi
+# bulgumuzla celisiriz. Bunlari bir kez temizledik; kontrol geri gelmelerini
+# engelliyor.
+#
+# Bir isaret su durumlarda GECERLIDIR:
+#   * yakininda cozulebilir bir sonuca atif varsa (Holm, p =, interval, CI)
+#   * baskasinin iddiasini aktardigi belliyse (reported, earlier version,
+#     previous version, claimed)
+#   * `% IDDIA-OK` yorumu varsa
+OVERCLAIM = [
+    (r"\boutperform(s|ed|ing)?\b", "ustunluk"),
+    (r"\b(significantly|markedly|substantially)\s+(better|worse|superior)", "asiri nitelik"),
+    (r"\b(clearly|obviously|evidently|undoubtedly)\b", "kesinlik zarfi"),
+    (r"\b(proves|proven)\b", "ispat"),
+    (r"\b(superior|inferior)\s+to\b", "ustunluk"),
+    (r"\bstate[- ]of[- ]the[- ]art\b", "SOTA"),
+    (r"\bconfirms?\s+(that|the)\b", "dogrulama"),
+]
+OVERCLAIM_OK = [
+    r"Holm", r"p\s*=", r"p\s*<", r"interval", r"CI\b", r"\\ref\{sec:equivalence",
+    r"reported", r"earlier version", r"previous version", r"claimed",
+    r"% IDDIA-OK", r"would", r"cannot", r"does not", r"not resolvable",
+]
+
+
+def check_overclaim():
+    print("E5. ASIRI IDDIA DILI (ustunluk iddialari cozulebilir mi)")
+    lines = tex.split("\n")
+    flagged, supported = [], 0
+    for i, line in enumerate(lines):
+        if line.strip().startswith("%"):
+            continue
+        for pat, lab in OVERCLAIM:
+            m = re.search(pat, line, re.IGNORECASE)
+            if not m:
+                continue
+            window = "\n".join(lines[max(0, i - 1):i + 3])
+            if any(re.search(ok, window, re.IGNORECASE) for ok in OVERCLAIM_OK):
+                supported += 1
+            else:
+                flagged.append((i + 1, lab, m.group(0), line.strip()[:95]))
+            break
+    print(f"    gerekceli ustunluk ifadesi : {supported}")
+    if flagged:
+        print(f"{FAIL} {len(flagged)} gerekcesiz asiri iddia:")
+        for ln, lab, hit, ctx in flagged:
+            print(f"      satir {ln:4d} [{lab}] \"{hit}\"  {ctx}")
+        failures.append(f"{len(flagged)} asiri iddia cozulebilir bir sonuca baglanmamis")
+    else:
+        print(f"{OK} ustunluk iddialarinin hepsi gerekceli")
+    print()
+
 # ==================================================== E4. ESDEGERLIK DILI
 # Anlamsiz bir p degerinden esdegerlik cikarmak, bu makalenin duzeltmek
 # zorunda kaldigi hatalardan biriydi ve metne geri sizmasi kolaydir: bir
@@ -670,6 +724,7 @@ if __name__ == "__main__":
     check_stale_phrases()
     check_claims()
     check_equivalence_language()
+    check_overclaim()
     check_placeholders()
     print("=" * 78)
     if failures:

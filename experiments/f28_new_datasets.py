@@ -160,7 +160,16 @@ def main():
         print("kullanim: f28_new_datasets.py <veri_kumesi> [...] "
               "[--no-tunnel-control]")
         return 1
-    settings = [False] if "--no-tunnel-control" in sys.argv else [False, True]
+    # Varsayilan: iki kurulum (sizintinin bedelini olcmek icin).
+    # --tunnel-out-only : yalnizca sizintisiz kurulum. Imputasyon
+    #   karsilastirmasinda bunu kullaniyoruz, cunku orada olculmek istenen
+    #   sey doldurma stratejisi; sizmis bir oznitelik olcumu bulandirir.
+    if "--tunnel-out-only" in sys.argv:
+        settings = [True]
+    elif "--no-tunnel-control" in sys.argv:
+        settings = [False]
+    else:
+        settings = [False, True]
 
     device = get_device()
     out = {"device": str(device), "seeds": SEEDS, "delta": DELTA,
@@ -185,7 +194,7 @@ def main():
         out["datasets"][name] = rec
 
         # iki kurulum arasindaki fark = sizintinin bedeli
-        if len(settings) == 2:
+        if settings == [False, True]:
             print("  " + "-" * 92)
             print("  SIZINTININ BEDELI (tunnel_in eksi tunnel_out)")
             print("    %-18s %10s %10s %9s" % ("konfig", "tunnel_in", "tunnel_out", "fark"))
