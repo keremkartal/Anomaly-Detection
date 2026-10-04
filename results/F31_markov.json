@@ -1,0 +1,163 @@
+{
+  "source": "lstm_data.csv",
+  "eps": 0.1,
+  "stop_speed_kmh": 1.0,
+  "states": [
+    "stop",
+    "decelerate",
+    "constant",
+    "accelerate"
+  ],
+  "regimes": {
+    "free-flow": [
+      1,
+      3
+    ],
+    "transition": [
+      4,
+      6
+    ],
+    "congested": [
+      7,
+      9
+    ]
+  },
+  "excludes_anomalous_rows": true,
+  "caveat": "bunlar urerecin parametreleri degil, GERCEKLESEN gecis davranisidir; anomali senaryolari, hiz limitleri ve sensor gurultusu araya girer",
+  "regime_speed_mean": {
+    "free-flow": 57.80840590756814,
+    "transition": 52.88354140874418,
+    "congested": 25.043349397112962
+  },
+  "matrices": {
+    "free-flow": {
+      "stop": {
+        "stop": 0.0,
+        "decelerate": 0.0,
+        "constant": 0.0,
+        "accelerate": 1.0
+      },
+      "decelerate": {
+        "stop": 0.0,
+        "decelerate": 0.02903570338724443,
+        "constant": 0.0026853829722306988,
+        "accelerate": 0.9682789136405249
+      },
+      "constant": {
+        "stop": 0.0,
+        "decelerate": 0.07607811228641172,
+        "constant": 0.644833197721725,
+        "accelerate": 0.2790886899918633
+      },
+      "accelerate": {
+        "stop": 0.0,
+        "decelerate": 0.5021946790873925,
+        "constant": 0.005755111707586642,
+        "accelerate": 0.4920502092050209
+      },
+      "_n_transitions": 194678
+    },
+    "transition": {
+      "stop": {
+        "stop": 1.0,
+        "decelerate": 0.0,
+        "constant": 0.0,
+        "accelerate": 0.0
+      },
+      "decelerate": {
+        "stop": 0.0,
+        "decelerate": 0.046543895055499496,
+        "constant": 0.0020812310797174573,
+        "accelerate": 0.951374873864783
+      },
+      "constant": {
+        "stop": 0.0,
+        "decelerate": 0.3333333333333333,
+        "constant": 0.4675925925925926,
+        "accelerate": 0.19907407407407407
+      },
+      "accelerate": {
+        "stop": 0.0,
+        "decelerate": 0.45965655873095024,
+        "constant": 0.002960700595256646,
+        "accelerate": 0.5373827406737931
+      },
+      "_n_transitions": 48301
+    },
+    "congested": {
+      "stop": {
+        "stop": 0.9613022113022113,
+        "decelerate": 0.0,
+        "constant": 0.0,
+        "accelerate": 0.0386977886977887
+      },
+      "decelerate": {
+        "stop": 0.007985015772870663,
+        "decelerate": 0.17123422712933753,
+        "constant": 0.0012815457413249212,
+        "accelerate": 0.8194992113564669
+      },
+      "constant": {
+        "stop": 0.0,
+        "decelerate": 0.6637168141592921,
+        "constant": 0.20353982300884957,
+        "accelerate": 0.13274336283185842
+      },
+      "accelerate": {
+        "stop": 0.0,
+        "decelerate": 0.47318742257093976,
+        "constant": 0.004837472715474013,
+        "accelerate": 0.5219751047135862
+      },
+      "_n_transitions": 28836
+    }
+  },
+  "state_shares": {
+    "free-flow": {
+      "stop": 5.136687247660239e-05,
+      "decelerate": 0.33665848221165207,
+      "constant": 0.012625977254748868,
+      "accelerate": 0.6506641736611225
+    },
+    "transition": {
+      "stop": 0.002939897724684789,
+      "decelerate": 0.3282747769197325,
+      "constant": 0.004471957102337425,
+      "accelerate": 0.6643133682532453
+    },
+    "congested": {
+      "stop": 0.05645720626994035,
+      "decelerate": 0.3517824941045915,
+      "constant": 0.003918712720210848,
+      "accelerate": 0.5878415869052573
+    },
+    "overall": {
+      "stop": 0.006548571638798448,
+      "decelerate": 0.33677317293011794,
+      "constant": 0.010253297279399592,
+      "accelerate": 0.6464249581516841
+    }
+  },
+  "eps_sensitivity": {
+    "0.05": {
+      "free-flow": 0.007186225459476675,
+      "transition": 0.002650048653236993,
+      "congested": 0.0032598141212373424
+    },
+    "0.10": {
+      "free-flow": 0.012625977254748868,
+      "transition": 0.004471957102337425,
+      "congested": 0.003918712720210848
+    },
+    "0.25": {
+      "free-flow": 0.018209556292955547,
+      "transition": 0.0055899463779217826,
+      "congested": 0.004126785961991955
+    },
+    "0.50": {
+      "free-flow": 0.06320179989521157,
+      "transition": 0.05184157677894868,
+      "congested": 0.04289776668053821
+    }
+  }
+}

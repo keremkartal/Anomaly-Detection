@@ -461,6 +461,79 @@ We therefore do not select a graph at all. Both constructions are treated as \te
 
 The label-purity figures quoted above are now computed from training labels alone and are reported as a descriptive property of the data, not as grounds for a choice. The structural trade-off remains worth stating: the merged graph is the faithful representation of the physical road network, while the trip-instance graph distributes sequences over more nodes and raises per-node label purity at the cost of duplicating each road once per traversal, which inflates the average degree and weakens message passing between genuinely adjacent roads.
 
+\subsubsection{Recovering the Transition Behaviour}
+\label{sec:markov}
+The generator's state-transition probabilities were not available to us. What
+can be documented is the behaviour they produced, and that is recoverable from
+the released trajectories. Each one-second step of every non-anomalous record
+is assigned to one of the four states---anomalous records are excluded because
+an anomaly scenario overrides the Markov process---using
+$v < 1.0$~km/h for \emph{stop} and
+$|a| > 0.10$~m/s$^2$ to separate \emph{acceleration} and
+\emph{deceleration} from \emph{constant speed}. Transitions are counted only
+between consecutive seconds within a trip.
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Record level, non-anomalous steps only]}~ Transition
+  probabilities recovered from the released data, by traffic regime. Rows are
+  the current state, columns the next. The final column is the share of steps
+  spent in each state.}
+  \label{tab:markov}
+  \renewcommand{\arraystretch}{1.15}
+  \footnotesize
+  \begin{tabular}{@{}llccccc@{}}
+    \toprule
+    \textbf{Regime} & \textbf{From} & \textbf{Stop} & \textbf{Decel.}
+    & \textbf{Const.} & \textbf{Accel.} & \textbf{Occupancy} \\ \midrule
+    \multirow{4}{*}{free-\allowbreak flow} & Stop & $0.000$ & $0.000$ & $0.000$ & $1.000$ & $0.0001$ \\
+     & Decel. & $0.000$ & $0.029$ & $0.003$ & $0.968$ & $0.3367$ \\
+     & Const. & $0.000$ & $0.076$ & $0.645$ & $0.279$ & $0.0126$ \\
+     & Accel. & $0.000$ & $0.502$ & $0.006$ & $0.492$ & $0.6507$ \\
+    \cmidrule(l){2-7}
+    \multirow{4}{*}{transition} & Stop & $1.000$ & $0.000$ & $0.000$ & $0.000$ & $0.0029$ \\
+     & Decel. & $0.000$ & $0.047$ & $0.002$ & $0.951$ & $0.3283$ \\
+     & Const. & $0.000$ & $0.333$ & $0.468$ & $0.199$ & $0.0045$ \\
+     & Accel. & $0.000$ & $0.460$ & $0.003$ & $0.537$ & $0.6643$ \\
+    \cmidrule(l){2-7}
+    \multirow{4}{*}{congested} & Stop & $0.961$ & $0.000$ & $0.000$ & $0.039$ & $0.0565$ \\
+     & Decel. & $0.008$ & $0.171$ & $0.001$ & $0.819$ & $0.3518$ \\
+     & Const. & $0.000$ & $0.664$ & $0.204$ & $0.133$ & $0.0039$ \\
+     & Accel. & $0.000$ & $0.473$ & $0.005$ & $0.522$ & $0.5878$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+Two properties are worth stating because neither is visible from the model
+description. First, the regimes behave as intended: mean speed falls from
+$57.8$ to
+$25.0$~km/h between free-flow and congested conditions, and
+the share of steps spent stopped rises from
+$0.0001$ to
+$0.0565$.
+
+Second, the \emph{constant speed} state is almost unused. Across all regimes
+it accounts for $0.0103$ of steps, against
+$0.6464$ accelerating and $0.3368$ decelerating. This is not an
+artefact of the threshold: widening it fivefold, from $0.05$ to
+$0.50$~m/s$^2$, raises the free-flow share only from
+$0.0072$ to $0.0632$. The simulated vehicle is
+in near-continuous alternation between accelerating and decelerating: from a
+decelerating step in free-flow, $0.968$ of transitions go to an
+accelerating one. A four-state description is therefore generous; the
+realised process is close to two-state with an absorbing stop in congestion.
+
+\textbf{What this is and is not.} These are the transition frequencies the
+released data exhibits, not the parameters the simulator was given. Three
+things separate them: anomaly scenarios suspend the Markov process and are
+excluded here, speed limits and acceleration bounds constrain which
+transitions are reachable, and sensor noise enters the state assignment
+through the acceleration channel. We report them because reproducibility
+requires knowing how the data behaves, and because a reader can check them
+against any regenerated dataset. How the underlying probabilities were chosen
+or calibrated remains undocumented, and we record that as a limitation rather
+than infer it.
+
 \subsection{Data Cleaning and Feature Engineering}
 Records with implausible sensor readings were removed before sequence construction. Of $293{,}168$ generated records, $60$ carry a speed outside $[0,200]$~km/h and $8{,}186$ a road gradient outside $[-50\%,50\%]$; one record violates both, so the union is $8{,}245$ records ($2.81\%$), leaving $284{,}923$:
 \begin{equation}
