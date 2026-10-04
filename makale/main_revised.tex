@@ -1481,6 +1481,228 @@ dataset. It does not show that a model trained here would transfer to a
 different road network, which is a separate question and a separate
 experiment.
 
+\subsection{Sensitivity to Prevalence, Noise, and Imputation}
+\label{sec:sensitivity}
+Three properties of the dataset could plausibly carry the results: how often
+anomalies occur, how much sensor noise the inputs carry, and how the missing
+road attributes were filled in. Each is varied here.
+
+\subsubsection{Anomaly prevalence}
+Rather than subsample windows, which would add resampling noise and break the
+trip structure, prevalence is varied in closed form. True and false positive
+rates are computed within class and are therefore invariant to prevalence, so
+precision and F1 at any rate $\pi$ follow exactly:
+$\mathrm{precision} = \pi\,\mathrm{TPR} / (\pi\,\mathrm{TPR} + (1-\pi)\,\mathrm{FPR})$
+with recall unchanged. These are not estimates; they are the same model at the
+same threshold under a different class balance. The threshold is held at the
+value each run selected on its own validation data, which is the realistic
+case: a deployed detector is not recalibrated for a prevalence it does not know.
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds, closed form]}~
+  F1 at prevalences other than the observed one. Fold test partitions range
+  from $3.40\%$ to $10.49\%$ anomalous, averaging $7.04\%$.}
+  \label{tab:prevalence}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    \textbf{Configuration} & $\pi = 1\%$ & $3\%$ & $8\%$ & $15\%$ & $25\%$
+    & \textbf{ROC-AUC} \\ \midrule
+    Gated hybrid & $0.759$ & $0.857$ & $0.895$ & $0.907$ & $0.912$ & $0.9676$ \\
+    Weighted-sum hybrid & $0.730$ & $0.837$ & $0.885$ & $0.900$ & $0.907$ & $0.9759$ \\
+    Temporal only & $0.775$ & $0.858$ & $0.889$ & $0.898$ & $0.903$ & $0.9423$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+F1 falls substantially as anomalies become rarer---by roughly $0.15$ between
+$8\%$ and $1\%$---which is expected, since precision depends on the class
+balance while ROC-AUC, also tabulated, does not change at all. The point for
+this paper is the second one: \emph{the ordering of the configurations does
+not change at any prevalence}. The conclusion that no fusion operator is
+distinguishable is not an artefact of the prevalence this dataset happens to
+have.
+
+\subsubsection{Sensor noise}
+Noise is applied at inference to trained models. Because acceleration in this
+dataset is the first difference of speed (Section~\ref{sec:dataset_split}),
+perturbing speed propagates into acceleration; adding independent noise to
+both would present a combination the generator cannot produce.
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Inference-time perturbation, threshold held fixed]}~ F1 of
+  the weighted-sum hybrid under speed noise of increasing magnitude
+  ($\sigma$ in km/h).}
+  \label{tab:noise}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    \textbf{Noise model} & $\sigma = 0$ & $0.5$ & $1$ & $2$ & $5$ & $10$ \\ \midrule
+    White noise on speed & $0.904$ & $0.902$ & $0.899$ & $0.783$ & $0.145$ & $0.034$ \\
+    AR(1) noise on speed, $\rho = 0.9$ & $0.904$ & $0.902$ & $0.900$ & $0.890$ & $0.767$ & $0.448$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+The two rows differ by an order of magnitude at the same $\sigma$, and the
+difference is a property of the differencing rather than of the model. White
+noise at one-second sampling produces acceleration noise of roughly
+$2$~m/s$^2$ after differencing, which is the size of the anomaly thresholds
+themselves, so the acceleration channel is destroyed and F1 falls to $0.145$
+at $\sigma = 5$. Real GPS speed error is correlated in time; under an AR(1)
+model with $\rho = 0.9$ the same $\sigma$ costs $0.137$ F1 and $2$~km/h costs
+nothing measurable. Reporting only the white-noise curve would understate
+robustness; reporting only the correlated one would overstate it.
+
+Bearing noise has no effect at all: F1 moves from 0.904 at
+$0^{\circ}$ to 0.905 at $10^{\circ}$. The anomaly definitions are
+kinematic, and the detector runs on speed and acceleration; the heading
+channel carries no detection signal here, and the paper should not imply
+otherwise.
+
+\subsubsection{Imputation of road attributes}
+Roughly half of the node attributes are filled rather than measured: the lane
+count comes from a default for $46.2\%$ of segments and the speed limit for
+$49.9\%$. A model could in principle be learning the fill pattern rather than
+the road.
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds = 10 runs per
+  row]}~ Four treatments of the imputed road attributes, each trained from
+  scratch. Differences are paired against the released data and corrected for
+  overlapping training sets.}
+  \label{tab:imputation}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Treatment} & \textbf{Node features} & \textbf{F1 (mean $\pm$ s.d.)}
+    & \textbf{$\Delta$ vs released} & \textbf{95\% CI} \\ \midrule
+    As released & $17$ & $0.8831 \pm 0.0412$ & --- & --- \\
+    Plus imputation indicators & $19$ & $0.8764 \pm 0.0480$ & $-0.0067$ & $[-0.0533, +0.0399]$ \\
+    Road-type median instead of default & $17$ & $0.8792 \pm 0.0547$ & $-0.0039$ & $[-0.0764, +0.0686]$ \\
+    Speed limit and lanes removed & $15$ & $0.8719 \pm 0.0502$ & $-0.0112$ & $[-0.0685, +0.0460]$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+None of the three alternatives differs measurably. Adding explicit indicators
+for what was imputed does not help, so the fill pattern is not carrying signal
+the model was exploiting. Replacing the defaults with the median over
+OSM-sourced segments of the same road type does not help either, so the
+conclusion does not depend on the fill rule. And removing the speed limit and
+lane count entirely costs $0.0112$ F1 with an interval spanning zero, which
+bounds how much those two attributes contribute at all. This is consistent
+with Section~\ref{sec:graph_controls}: attributes that carry no measurable
+signal cannot be sensitive to how they were filled.
+
+\subsection{Window Length, Stride, and Baseline Tuning}
+\label{sec:window_baseline}
+
+\subsubsection{Window length and stride}
+Every result above uses $\tau = 50$ with stride $10$. The choice affects two
+things at once: how much history the model sees, and how dependent the
+observations are. Eight combinations were run, each written to its own
+protocol stamp so that cells cannot be confused with one another. The trip
+count is $90$ in every cell, so trip-level comparisons remain valid across
+them; the window count is not, and is reported.
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 1 seed per cell]}~
+  Window length and stride. $\dagger$ marks the setting used throughout the
+  rest of the paper. The last two columns are the spatial branch's
+  contribution, paired within run and corrected for overlapping training sets.}
+  \label{tab:window_stride}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}cccccccc@{}}
+    \toprule
+    $\tau$ & \textbf{Stride} & \textbf{Overlap} & \textbf{Test windows}
+    & \textbf{LSTM + GAT} & \textbf{Temporal only}
+    & \textbf{$\Delta$ spatial} & \textbf{$p$} \\ \midrule
+    $25$ & $10$ & $60\%$ & $28{,}321$ & $0.8990 \pm 0.0384$ & $0.8721 \pm 0.0674$ & $+0.0269$ & $0.537$ \\
+    $25$ & $25$ & $0\%$ & $11{,}350$ & $0.7826 \pm 0.2188$ & $0.8694 \pm 0.0460$ & $-0.0868$ & $0.579$ \\
+    $50$ & $10$$^{\dagger}$ & $80\%$ & $28{,}090$ & $0.8865 \pm 0.0360$ & $0.8871 \pm 0.0468$ & $-0.0006$ & $0.981$ \\
+    $50$ & $25$ & $50\%$ & $11{,}260$ & $0.8519 \pm 0.0485$ & $0.8591 \pm 0.0529$ & $-0.0072$ & $0.647$ \\
+    $50$ & $50$ & $0\%$ & $5{,}654$ & $0.7957 \pm 0.0694$ & $0.8441 \pm 0.0569$ & $-0.0483$ & $0.354$ \\
+    $100$ & $10$ & $90\%$ & $27{,}640$ & $0.8706 \pm 0.0536$ & $0.9066 \pm 0.0400$ & $-0.0360$ & $0.321$ \\
+    $100$ & $25$ & $75\%$ & $11{,}080$ & $0.8424 \pm 0.0599$ & $0.8625 \pm 0.0553$ & $-0.0201$ & $0.694$ \\
+    $100$ & $50$ & $50\%$ & $5{,}564$ & $0.6246 \pm 0.3594$ & $0.6984 \pm 0.2448$ & $-0.0739$ & $0.846$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+The spatial branch's contribution is negative in seven of the eight cells and
+significant in none. The conclusion of Section~\ref{sec:graph_controls}
+therefore does not depend on the windowing: it holds at overlaps from $0\%$ to
+$90\%$ and at history lengths from $25$ to $100$ steps.
+
+Two patterns are worth recording. Accuracy is not monotone in overlap---the
+best temporal-only cell is $\tau = 100$ with stride $10$ at
+$0.9066 \pm 0.0400$, and the worst is $\tau = 100$ with stride $50$ at
+$0.6984 \pm 0.2448$---and the variance tracks the number of windows rather
+than the overlap. Cells with roughly $5{,}600$ test windows have standard
+deviations three to seven times larger than cells with $28{,}000$, which is
+what one expects when the estimate is built from fewer observations. This is
+also where the hybrid becomes unstable: its two worst cells, $0.7826$ and
+$0.6246$, both carry standard deviations above $0.2$.
+
+\subsubsection{Were the baselines under-tuned?}
+A comparison in which only the proposed model is tuned proves little. The
+learning rate was therefore searched over $\{5 \times 10^{-4}, 10^{-3},
+2 \times 10^{-3}\}$ for \emph{every} configuration including the reference,
+with selection on validation F1 alone---the test partition plays no part in
+the choice---and the selected setting then confirmed over five seeds. The
+learning rate is inside the protocol stamp, so each search point has its own
+run store and the points cannot be mixed.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{\textbf{[Fixed partition, 5 seeds at the selected rate]}~ Symmetric
+  learning-rate search. ``Moved'' indicates that the search selected something
+  other than the default $10^{-3}$.}
+  \label{tab:baseline_search}
+  \renewcommand{\arraystretch}{1.15}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Configuration} & \textbf{Rate} & \textbf{Moved}
+    & \textbf{F1} & \textbf{Epoch} \\ \midrule
+    LSTM + GAT (ref.) & $10^{-3}$ & no & $0.8713 \pm 0.0188$ & $19.4$ \\
+    GRU temporal & $10^{-3}$ & no & $0.8701 \pm 0.0102$ & $25.6$ \\
+    Transformer temporal & $10^{-3}$ & no & $0.8698 \pm 0.0081$ & $23.2$ \\
+    Graph WaveNet temporal & $10^{-3}$ & no & $0.8535 \pm 0.0114$ & $21.0$ \\
+    STGCN temporal & $10^{-3}$ & no & $0.8314 \pm 0.0058$ & $14.0$ \\
+    Chebyshev spatial & $10^{-3}$ & no & $0.8234 \pm 0.0389$ & $24.0$ \\
+    Diffusion spatial & $10^{-3}$ & no & $0.8181 \pm 0.0450$ & $30.4$ \\
+    Adaptive adjacency & $5 \times 10^{-4}$ & yes & $0.8113 \pm 0.0719$ & $8.2$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The search changes the picture very little, which is the useful outcome. Seven
+of the eight configurations keep the default rate; only adaptive adjacency
+moves, and it remains the weakest. No configuration exhausted the epoch
+budget, so none was stopped before converging. After tuning, the GRU and the
+Transformer finish within $0.0015$ F1 of the reference, and the three spatial
+alternatives remain between $0.0179$ and $0.0600$ below it.
+
+The comparison in Section~\ref{sec:equivalence_results} is therefore not an
+artefact of leaving competing operators at unfavourable settings. It also does
+not establish that these operators are weaker in general: each was adapted to
+this task and this input representation, and a different adaptation might
+behave differently.
+
 \subsection{Effect Sizes and the Distribution Across Trips}
 \label{sec:effect_sizes}
 A pooled difference is a single number, and a reader is entitled to ask whether it summarises a consistent effect or averages over trips that disagree. Fig.~\ref{fig:per_trip} shows the per-trip differences behind the three comparisons that matter most, and Table~\ref{tab:effect_sizes} gives standardised effect sizes for them.
