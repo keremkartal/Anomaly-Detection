@@ -1297,7 +1297,8 @@ Section~\ref{sec:scope}: on this dataset the task is solved from the kinematic
 channels, and the graph is not contributing to the solution. Whether that is a
 property of hybrid architectures or of a generator whose anomalies are defined
 almost entirely by kinematic thresholds is a question this dataset alone
-cannot settle, and we return to it among the limitations.
+cannot settle; Section~\ref{sec:independent_network} addresses the first half
+of it on a second road network.
 
 \subsection{Classical Baselines on Equal Footing}
 \label{sec:classic_cv}
@@ -1702,6 +1703,115 @@ artefact of leaving competing operators at unfavourable settings. It also does
 not establish that these operators are weaker in general: each was adapted to
 this task and this input representation, and a different adaptation might
 behave differently.
+
+\subsection{An Independent Road Network, and the Price of a Leaked Feature}
+\label{sec:independent_network}
+Every result to this point comes from one generator over one road network.
+A second generation campaign supplied datasets over a different network---110
+trips across 1{,}183 distinct physical roads in Hamburg, against 90 trips
+across 628 in Kocaeli, with an average node degree of $9.1$ against
+$11.5$---together with a regenerated Kocaeli. Both arrived with a prescribed
+preprocessing filter, and auditing them before use turned out to matter.
+
+\subsubsection{A label is determined by a graph feature}
+\label{sec:tunnel_leak}
+In all thirty-six delivered datasets, every record on a tunnel segment carries
+the signal-freeze label: $P(\text{anomaly }9 \mid \text{tunnel}) = 1.0000$
+after the prescribed filter, which removes the exceptions. The tunnel flag is
+a node attribute, so it enters the spatial branch directly. The share of
+anomalies this covers differs sharply between the two networks: $60.4\%$ of
+all anomalies in Kocaeli against $5.1\%$ in Hamburg.
+
+A model with graph access can therefore read a label off one binary input.
+Rather than discard the data or ignore the problem, we ran every configuration
+twice---with the tunnel attribute present, and with it removed from the node
+features---so that the difference measures what the leak is worth.
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds = 10 runs per
+  cell]}~ Both networks, with and without the leaking node attribute. The
+  temporal-only control has no spatial branch and is identical in both
+  settings by construction, which is the design's internal check.}
+  \label{tab:independent_network}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    & \multicolumn{2}{c}{\textbf{Hamburg}} & \multicolumn{2}{c}{\textbf{Kocaeli}} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    \textbf{Configuration} & \textbf{Leak removed} & \textbf{Leak present}
+    & \textbf{Leak removed} & \textbf{Leak present} \\ \midrule
+    Gated hybrid (proposed) & $0.8664 \pm 0.0383$ & $0.6435 \pm 0.2931$ & $0.8979 \pm 0.0736$ & $0.8951 \pm 0.0648$ \\
+    Weighted sum & $0.8693 \pm 0.0516$ & $0.8663 \pm 0.0596$ & $0.9247 \pm 0.0132$ & $0.9237 \pm 0.0120$ \\
+    Concatenation & $0.8841 \pm 0.0290$ & $0.8790 \pm 0.0324$ & $0.9227 \pm 0.0095$ & $0.9218 \pm 0.0098$ \\
+    Cross-attention & $0.8829 \pm 0.0300$ & $0.8246 \pm 0.1755$ & $0.9210 \pm 0.0115$ & $0.9238 \pm 0.0114$ \\
+    Temporal only & $0.8706 \pm 0.0482$ & $0.8706 \pm 0.0482$ & $0.9233 \pm 0.0142$ & $0.9233 \pm 0.0142$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\subsubsection{The finding replicates}
+On Hamburg with the leak removed, none of the twenty paired comparisons---ten
+within each graph construction---is significant after Holm correction, exactly
+as on the original data. One comparison is now \emph{equivalent} rather than
+merely undetermined: the weighted-sum hybrid against the temporal-only
+control differs by $-0.0014$ F1 with interval $[-0.0214, +0.0187]$, inside the
+pre-specified bound of $0.02$. This is the first point in the study where the
+spatial branch's contribution can be bounded rather than only left
+unresolved, and it comes from the network the model was not designed around.
+
+\subsubsection{What the leaked feature actually does}
+The leak does not inflate accuracy. On Kocaeli it changes nothing at all: the
+mean shift across the four configurations with a spatial branch is $-0.0005$
+F1, and the temporal-only control moves by exactly zero on every run, as it
+must, since the graph cannot reach it.
+
+On Hamburg the same feature is damaging. The proposed gated hybrid falls from
+$0.8664 \pm 0.0383$ to $0.6435 \pm 0.2931$---a sevenfold increase in spread
+and one collapsed run out of ten---and cross-attention falls from $0.8829$ to
+$0.8246$. The two fixed-weight operators and the control are unaffected.
+
+The asymmetry has a measurable explanation. Signal freeze is perfectly visible
+in the speed channel in both networks: consecutive speeds are identical in
+every instance, $P(\text{frozen} \mid \text{anomaly }9) = 1.0000$. What
+differs is the converse. In Kocaeli a frozen reading implies the label with
+probability 0.7686, so the temporal branch already
+has the class and the tunnel attribute is redundant. In Hamburg the same
+reading implies it with probability 0.1044, so the attribute
+carries something the temporal branch does not: the only reliable indicator of
+a rare class.
+
+That is precisely the condition under which
+Section~\ref{sec:collapse_class} predicts trouble. The operators that learn a
+mixing weight are pulled towards a spatial branch holding one perfect but rare
+signal, fail to escape to temporal dominance, and lose the run. The operators
+with a fixed weight cannot be pulled, and are not harmed.
+
+\textbf{The lesson generalises beyond this dataset.} A label that leaks
+through a graph feature is harmless when the same label is redundantly visible
+to the other branch, and harmful when it is not---and the harm appears as
+training instability rather than as inflated accuracy. An evaluation that
+looked only at mean F1 on Kocaeli would have found nothing wrong, and one that
+looked only at mean F1 on Hamburg would have concluded that the gating
+mechanism is unstable, when what is unstable is the combination of that
+mechanism with a leak. Neither reading is available without running both
+settings deliberately.
+
+\subsubsection{What this does not establish}
+Hamburg is a different road network, not a different generator: the same
+simulator, the same anomaly taxonomy, and the same kinematic definitions
+produced it. The replication therefore rules out an explanation specific to
+Kocaeli's topology, and does not rule out one specific to how these anomalies
+are defined. Two of the delivered axes could not be used for the sensitivity
+they were intended to supply---the nominal prevalence settings of $1\%$, $5\%$
+and $15\%$ yield realised rates averaging 16.4\%, 20.8\% and 24.7\%,
+all above the rate of the original data, and the noise multiplier produces a
+spread across its three levels of 0.0353 against a within-level
+standard deviation of 0.4403---the three levels sit closer together than runs within a single level, by a factor of 12.
+The prevalence and noise sensitivities reported in
+Section~\ref{sec:sensitivity} are therefore derived from the original data
+rather than from these.
 
 \subsection{Effect Sizes and the Distribution Across Trips}
 \label{sec:effect_sizes}

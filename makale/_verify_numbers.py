@@ -47,7 +47,9 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
          "F22_imputation", "F23_data_audit", "F24_model_audit",
          "F25_pooled_seed", "F26_repeated_analysis",
-         "F27_new_data_audit", "F29_collapse_mechanism")
+         "F27_new_data_audit", "F29_collapse_mechanism",
+         "F28_hamburg_knn_n0_5_a5", "F28_kocaeli_knn_n0_5_a5",
+         "F30_leak_diagnosis")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
 if missing:
@@ -66,7 +68,8 @@ def check_protocol():
     # ozetini alir. Ikisi de `baseline_protocol` altinda hangi damgadan
     # tureidigini soyler ve asagida ayrica denetlenir.
     NO_PROTOCOL = {"F23_data_audit", "F24_model_audit", "F27_new_data_audit",
-                   "F29_collapse_mechanism",
+                   "F29_collapse_mechanism", "F30_leak_diagnosis",
+                   "F28_hamburg_knn_n0_5_a5", "F28_kocaeli_knn_n0_5_a5",
                    "F20_window_stride", "F21_baseline_search"}
     stamps = {n: v.get("protocol", {}).get("hash")
               for n, v in J.items()

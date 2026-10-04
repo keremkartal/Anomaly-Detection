@@ -1,0 +1,152 @@
+{
+  "freeze_tolerance": 1e-09,
+  "cities": {
+    "kocaeli": {
+      "dataset": "kocaeli_knn_n0_5_a5",
+      "kinematics": {
+        "n_rows": 321129,
+        "anomaly_rate": 0.23959530282223032,
+        "type9_share_of_anomalies": 0.6040212630457104,
+        "p_tunnel_implies_type9": 0.9998001376829295,
+        "p_frozen_given_type9": 1.0,
+        "p_frozen_given_not_type9": 0.05093662958984908,
+        "p_type9_given_frozen": 0.7686226514951046
+      },
+      "leak_cost": {
+        "per_config": {
+          "hybrid_gat": -0.0010134239535188883,
+          "stanet_gated": -0.0028646477010623173,
+          "hybrid_concat": -0.0009461711095433145,
+          "hybrid_crossatt": 0.0028568791707260788,
+          "lstm_only": 0.0
+        },
+        "mean_spatial": -0.0004918408983496103,
+        "control": 0.0
+      },
+      "f1": {
+        "tunnel_in": {
+          "hybrid_gat": 0.9236972343472833,
+          "stanet_gated": 0.8950530812718819,
+          "hybrid_concat": 0.9217689057047576,
+          "hybrid_crossatt": 0.9238209206977274,
+          "lstm_only": 0.9232500904183386
+        },
+        "tunnel_out": {
+          "hybrid_gat": 0.9247106583008022,
+          "stanet_gated": 0.8979177289729442,
+          "hybrid_concat": 0.9227150768143009,
+          "hybrid_crossatt": 0.9209640415270013,
+          "lstm_only": 0.9232500904183386
+        }
+      },
+      "sd": {
+        "tunnel_in": {
+          "hybrid_gat": 0.012009028609749626,
+          "stanet_gated": 0.06483704868651857,
+          "hybrid_concat": 0.009814166537316581,
+          "hybrid_crossatt": 0.01143823444230556,
+          "lstm_only": 0.014239819764791547
+        },
+        "tunnel_out": {
+          "hybrid_gat": 0.013165220767088271,
+          "stanet_gated": 0.07355503532534176,
+          "hybrid_concat": 0.009504879660895691,
+          "hybrid_crossatt": 0.011528218533994149,
+          "lstm_only": 0.014239819764791547
+        }
+      },
+      "collapsed": {
+        "tunnel_in": {
+          "hybrid_gat": 0,
+          "stanet_gated": 0,
+          "hybrid_concat": 0,
+          "hybrid_crossatt": 0,
+          "lstm_only": 0
+        },
+        "tunnel_out": {
+          "hybrid_gat": 0,
+          "stanet_gated": 0,
+          "hybrid_concat": 0,
+          "hybrid_crossatt": 0,
+          "lstm_only": 0
+        }
+      }
+    },
+    "hamburg": {
+      "dataset": "hamburg_knn_n0_5_a5",
+      "kinematics": {
+        "n_rows": 161283,
+        "anomaly_rate": 0.16478488123360802,
+        "type9_share_of_anomalies": 0.050645294803777705,
+        "p_tunnel_implies_type9": 1.0,
+        "p_frozen_given_type9": 1.0,
+        "p_frozen_given_not_type9": 0.0721784202529746,
+        "p_type9_given_frozen": 0.10442203258339798
+      },
+      "leak_cost": {
+        "per_config": {
+          "hybrid_gat": -0.002970153896265648,
+          "stanet_gated": -0.22287815557394686,
+          "hybrid_concat": -0.005097316774662186,
+          "hybrid_crossatt": -0.058335902045481,
+          "lstm_only": 0.0
+        },
+        "mean_spatial": -0.07232038207258892,
+        "control": 0.0
+      },
+      "f1": {
+        "tunnel_in": {
+          "hybrid_gat": 0.866292464626032,
+          "stanet_gated": 0.6435334218097006,
+          "hybrid_concat": 0.8790227003494893,
+          "hybrid_crossatt": 0.8246089725736809,
+          "lstm_only": 0.8706237607400942
+        },
+        "tunnel_out": {
+          "hybrid_gat": 0.8692626185222977,
+          "stanet_gated": 0.8664115773836475,
+          "hybrid_concat": 0.8841200171241514,
+          "hybrid_crossatt": 0.8829448746191619,
+          "lstm_only": 0.8706237607400942
+        }
+      },
+      "sd": {
+        "tunnel_in": {
+          "hybrid_gat": 0.05957099267856045,
+          "stanet_gated": 0.2930786694686357,
+          "hybrid_concat": 0.03235284972381588,
+          "hybrid_crossatt": 0.17550140621338614,
+          "lstm_only": 0.04822404819243133
+        },
+        "tunnel_out": {
+          "hybrid_gat": 0.05156953717792275,
+          "stanet_gated": 0.03833909324252198,
+          "hybrid_concat": 0.02896299189964671,
+          "hybrid_crossatt": 0.03004430034995199,
+          "lstm_only": 0.04822404819243133
+        }
+      },
+      "collapsed": {
+        "tunnel_in": {
+          "hybrid_gat": 0,
+          "stanet_gated": 1,
+          "hybrid_concat": 0,
+          "hybrid_crossatt": 0,
+          "lstm_only": 0
+        },
+        "tunnel_out": {
+          "hybrid_gat": 0,
+          "stanet_gated": 0,
+          "hybrid_concat": 0,
+          "hybrid_crossatt": 0,
+          "lstm_only": 0
+        }
+      }
+    }
+  },
+  "verdict": {
+    "statement": "graf ozniteliginden sizan etiket, ayni etiket diger dalin girdilerinden de gorulebiliyorsa zararsiz; gorulemiyorsa zararli, ve zarar dogruluk sismesi degil egitim kararsizligi olarak gorunur",
+    "redundancy_kocaeli": 0.7686226514951046,
+    "redundancy_hamburg": 0.10442203258339798
+  }
+}
