@@ -1871,6 +1871,55 @@ mechanism is unstable, when what is unstable is the combination of that
 mechanism with a leak. Neither reading is available without running both
 settings deliberately.
 
+\subsubsection{Four datasets, one conclusion}
+\label{sec:four_datasets}
+
+\begin{table*}[!t]
+  \centering
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds; leaking
+  attribute removed in every cell]}~ Four datasets: two road networks and two
+  strategies for filling the missing road attributes. Verdicts are over the
+  ten pairwise comparisons within each dataset. The last two columns count
+  degenerate runs among the operators that learn a mixing weight and among
+  those that do not.}
+  \label{tab:four_datasets}
+  \renewcommand{\arraystretch}{1.2}
+  \footnotesize
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    \textbf{Dataset} & \textbf{Best F1} & \textbf{Different} & \textbf{Equiv.}
+    & \textbf{Undet.} & \textbf{Collapse, learned} & \textbf{Collapse, fixed} \\ \midrule
+    Kocaeli, dictionary fill & $0.9398$ & $0$ & $10$ & $0$ & $0/20$ & $0/30$ \\
+    Kocaeli, KNN fill & $0.9247$ & $0$ & $6$ & $4$ & $0/20$ & $0/30$ \\
+    Hamburg, dictionary fill & $0.8334$ & $0$ & $0$ & $10$ & $6/20$ & $0/30$ \\
+    Hamburg, KNN fill & $0.8841$ & $0$ & $2$ & $8$ & $0/20$ & $0/30$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\textbf{Nothing is resolvable in any of them.} Across the four datasets, zero
+of the forty pairwise comparisons is significant after Holm correction. What
+changes between them is how tightly the null can be bounded: ten of ten
+comparisons are equivalent at $\delta = 0.02$ on the cleanest dataset, six on
+the next, two on the third, and none on the noisiest. The conclusion is the
+same everywhere; the precision with which it can be stated is not.
+
+\textbf{The collapse pattern holds a third time.} Six runs collapse in the
+noisiest dataset, and all six belong to the two operators that learn a mixing
+weight---$6$ of $80$ against $0$ of $120$ across all four
+datasets combined. This now holds on the original data, on a regenerated
+Kocaeli, and on an independent network, under two fill strategies.
+
+\textbf{A caution about reading across columns.} The two fill strategies were
+not applied to one dataset; each was generated with its own trajectories, and
+because the speed-limit violation label depends on the speed limit, the labels
+differ between them as well. The F1 difference between a dictionary-filled and
+a KNN-filled dataset therefore cannot be read as an imputation effect. What is
+comparable is the set of within-dataset comparisons, which is what the table
+reports. The controlled imputation experiment is the one in
+Section~\ref{sec:sensitivity}, where four treatments are applied to the same
+data.
+
 \subsubsection{What this does not establish}
 Hamburg is a different road network, not a different generator: the same
 simulator, the same anomaly taxonomy, and the same kinematic definitions

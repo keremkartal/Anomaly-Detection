@@ -49,6 +49,7 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F25_pooled_seed", "F26_repeated_analysis",
          "F27_new_data_audit", "F29_collapse_mechanism",
          "F28_hamburg_knn_n0_5_a5", "F28_kocaeli_knn_n0_5_a5",
+         "F28_hamburg_baseline_n0_5_a5", "F28_kocaeli_baseline_n0_5_a5",
          "F30_leak_diagnosis", "F31_markov")
 J = {n: load(n) for n in NAMES}
 missing = [n for n, v in J.items() if v is None]
@@ -70,6 +71,8 @@ def check_protocol():
     NO_PROTOCOL = {"F23_data_audit", "F24_model_audit", "F27_new_data_audit",
                    "F29_collapse_mechanism", "F30_leak_diagnosis", "F31_markov",
                    "F28_hamburg_knn_n0_5_a5", "F28_kocaeli_knn_n0_5_a5",
+                   "F28_hamburg_baseline_n0_5_a5",
+                   "F28_kocaeli_baseline_n0_5_a5",
                    "F20_window_stride", "F21_baseline_search"}
     stamps = {n: v.get("protocol", {}).get("hash")
               for n, v in J.items()
@@ -548,6 +551,9 @@ EQUIVALENCE_CLAIMS = [
 EQUIVALENCE_SUPPORT = [
     r"sec:equivalence", r"TOST", r"two one-sided",
     r"p_\{\\mathrm\{TOST\}\}", r"% ESDEGERLIK-OK",
+    # Esdegerlik sinirini ADLANDIRAN bir cumle, tanim geregi teste baglidir:
+    # delta olmadan esdegerlik ifadesi kurulamaz.
+    r"\\delta", r"equivalence bound",
 ]
 
 
