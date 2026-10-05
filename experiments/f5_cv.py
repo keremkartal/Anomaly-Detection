@@ -20,6 +20,7 @@ REVIZYON (v2) — hakemin iki elestirisini kapatir:
       duzeltmesi kullaniyor (bkz. stanet/cluster_stats.py). Pencere duzeyindeki
       degerler karsilastirma icin ayrica raporlanir.
 """
+import os
 import sys
 from pathlib import Path
 
@@ -37,7 +38,11 @@ from stanet.stats import aggregate_seeds, bootstrap_diff, mcnemar
 from stanet.utils import get_device, init_console, protocol_stamp, save_json
 
 init_console()
-SEEDS = [42, 43]          # fold x seed = 10 gozlem / konfigurasyon
+# Hakem 3.7 "seed 45'i CV'ye dahil edin" diyor; tohum listesi ve cikti adi
+# ortam degiskeniyle gecilebilir, boylece iki tohumlu sonuclar bozulmadan
+# bes tohumlu surum ayri dosyaya yazilabilir.
+SEEDS = [int(x) for x in os.environ.get("F5_SEEDS", "42,43").split(",")]
+OUT_NAME = os.environ.get("F5_OUT", "F5_cv") + ".json"
 MERGE = False             # F2 karari: trip-instance graf
 
 # Dort fuzyonun tamami + uzamsal-dalsiz kontrol.
@@ -359,7 +364,7 @@ def main():
               f"{pm['f1']:>10.4f} {pm.get('roc_auc', float('nan')):>8.4f} "
               f"{cal['brier']:>8.4f} {cal['ece']:>7.4f}")
 
-    save_json(results, C.RESULTS_DIR / "F5_cv.json")
+    save_json(results, C.RESULTS_DIR / OUT_NAME)
     # A1: olasiliklarin yaninda IKILI tahminler de saklanir. Havuzlanmis
     # analizde artik tek bir esik yok; sonradan yapilacak her analiz ayni
     # fold-bazli ikili tahminleri kullanmali, yeniden esikleme yapmamali.
@@ -369,7 +374,7 @@ def main():
         trip=pooled[a_name][3].astype(str),
         **{f"p_{n}": v[1] for n, v in pooled.items()},
         **{f"b_{n}": v[4] for n, v in pooled.items()})
-    print(f"\nkaydedildi: {C.RESULTS_DIR / 'F5_cv.json'} (protokol {stamp['hash']})")
+    print(f"\nkaydedildi: {C.RESULTS_DIR / OUT_NAME} (protokol {stamp['hash']})")
 
 
 if __name__ == "__main__":

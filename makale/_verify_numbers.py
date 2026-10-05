@@ -39,9 +39,10 @@ def load(name):
 # bunlardan birinde gecmek zorunda. F10_repeated_cv tam kosum bitince
 # listeye girer; pilot simdiden burada cunku makalede aniliyor.
 NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
-         "F5_cv", "F6_efficiency", "F7_cluster_stats",
+         "F5_cv", "F5_cv_5seed", "F6_efficiency", "F7_cluster_stats",
          "F8_effects_subtypes",
          "F10_pilot", "F10_repeated_cv", "F11_classic_cv",
+         "F11_classic_cv_5seed", "F12_classic_vs_deep_5seed",
          "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
@@ -124,6 +125,9 @@ def check_protocol():
         # Ayrimin kendisi bir tasarim karari, tutarsizlik degil — ama CV
         # dosyalari kendi aralarinda, sabit-bolme dosyalari da kendi
         # aralarinda ayni seed listesini kullanmak zorunda.
+        # Bes tohumlu surumler ayri bir tohum setinde (42-46); kendi
+        # aralarinda tutarli olmalari yeterli, iki tohumlu arsivle
+        # ayni olmalari gerekmiyor.
         CV_FILES = {"F5_cv", "F10_repeated_cv", "F10_pilot", "F11_classic_cv",
                     "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
                     "F18_inductive", "F19_noise", "F20_window_stride",
@@ -137,6 +141,25 @@ def check_protocol():
                   f"{sorted(set(cv.values()))[0] if cv else '—'}")
         else:
             msg = f"seed listeleri uyusmuyor: {seeds}"
+            failures.append(msg)
+            print(f"{FAIL} {msg}")
+
+        # Hakem 3.7: cokmenin gorudugu tohum CV'ye DAHIL olmak zorunda.
+        # Makale bu iddiayi yaziyor, dolayisiyla kontrol edilebilir olmali.
+        prim = J.get("F5_cv_5seed")
+        if prim:
+            got = sorted(prim.get("config", {}).get("seeds", []))
+            want = [42, 43, 44, 45, 46]
+            if got == want:
+                print(f"{OK} birincil CV bes tohumda ve 45 dahil "
+                      f"({', '.join(map(str, got))})")
+            else:
+                msg = (f"birincil CV tohum listesi {got}, beklenen {want} "
+                       f"(hakem 3.7 seed 45'i CV'de istiyor)")
+                failures.append(msg)
+                print(f"{FAIL} {msg}")
+        else:
+            msg = "F5_cv_5seed yok — tab:cv'nin kaynagi bulunamadi"
             failures.append(msg)
             print(f"{FAIL} {msg}")
     print()
@@ -233,9 +256,12 @@ def check_numbers():
         if not ma.get("gate_is_two_layer") or not ma.get("gate_has_tanh"):
             failures.append("kapi kodda iki katmanli/tanh degil — Denklem 15 gecersiz")
 
-    f1b, f3, f4, f5, f6, f2 = (J[n] for n in
-                               ("F1b_fair", "F3_fusion", "F4_benchmark",
-                                "F5_cv", "F6_efficiency", "F2_graph"))
+    # tab:cv artik BES tohumlu kosudan besleniyor (hakem 3.7). Iki tohumlu
+    # surum arsiv; sayilari metinde aranmaz.
+    f1b, f3, f4, f6, f2 = (J[n] for n in
+                           ("F1b_fair", "F3_fusion", "F4_benchmark",
+                            "F6_efficiency", "F2_graph"))
+    f5 = J.get("F5_cv_5seed") or J["F5_cv"]
 
     if f1b:
         for k, lbl in (("hybrid_lstm_gat", "hibrit F1"),

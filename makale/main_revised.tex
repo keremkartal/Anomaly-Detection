@@ -724,9 +724,11 @@ one another but different trajectories with similar endpoints.
 The number to compare this against is the spread of the architectures
 themselves. Across the five configurations of the cross-validated fusion
 comparison (Table~\ref{tab:cv}), the gap between the best and the worst mean
-F1 is $0.0205$. \textbf{A single run's replication error with graph attention
-is therefore of the same order as the entire architectural spread, and its
-worst case exceeds it.} This is the quantitative form of the argument made in
+F1 is $0.0582$ over all runs, but three of the $125$ runs are degenerate and
+carry that gap by themselves; among runs that trained successfully the gap is
+$0.0095$. \textbf{A single run's replication error with graph attention is
+therefore four times the entire architectural spread, and even its median
+exceeds it.} This is the quantitative form of the argument made in
 the introduction: in this setting a one-run difference of one to three F1
 points is not evidence about an architecture, and the practice of reporting
 one is what the protocol of this study is designed to replace.
@@ -1044,36 +1046,36 @@ This is a correction to the interpretation offered in the earlier version of thi
 \subsection{Cross-Validated Evaluation and Subtype Stratification}
 \label{sec:cv}
 
-The fixed partition of Table~\ref{tab:dataset_split} contains 157 positive test instances drawn from 14 trips. Section~\ref{sec:trip_level} showed that this supports no inferential claim. We therefore repeat the entire evaluation---all four fusion operators and the spatial-branch control---under five-fold trip-grouped cross-validation crossed with two seeds, giving ten runs per configuration. Every sequence receives an out-of-fold test prediction, so all \textbf{90 trips} enter the analysis rather than 14, and fold-wise test prevalence ranges from $3.40\%$ to $10.49\%$. This is the primary evidence base of the paper.
+The fixed partition of Table~\ref{tab:dataset_split} contains 157 positive test instances drawn from 14 trips. Section~\ref{sec:trip_level} showed that this supports no inferential claim. We therefore repeat the entire evaluation---all four fusion operators and the spatial-branch control---under five-fold trip-grouped cross-validation crossed with five seeds ($42$--$46$), giving twenty-five runs per configuration. Reviewer~3 asked specifically that the seed at which the fixed partition collapsed be included here rather than left out of the cross-validated design, and it is. Every sequence receives an out-of-fold test prediction, so all \textbf{90 trips} enter the analysis rather than 14, and fold-wise test prevalence ranges from $3.40\%$ to $10.49\%$. This is the primary evidence base of the paper.
 
 \begin{table}[!htbp]
   \centering
-  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds]}~ Five-fold trip-grouped cross-validation crossed with two seeds (ten runs per configuration, all 28{,}090 sequences). Collapse counts runs with $\mathrm{F1} < 0.30$.}
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 5 seeds]}~ Five-fold trip-grouped cross-validation crossed with five seeds, $42$--$46$ (twenty-five runs per configuration, all 28{,}090 sequences). Collapse counts runs with $\mathrm{F1} < 0.30$. The pooled, Brier, and ECE columns are computed from one seed and are therefore unchanged from the two-seed design; the run columns are not.}
   \label{tab:cv}
   \renewcommand{\arraystretch}{1.2}
   \resizebox{\columnwidth}{!}{%
     \begin{tabular}{@{}lcccccc@{}}
       \toprule
       \textbf{Model} & \textbf{Run F1} & \textbf{Worst} & \textbf{Collapse} & \textbf{Pooled F1} & \textbf{Brier} & \textbf{ECE} \\ \midrule
-      Gated hybrid & $\bm{0.8908 \pm 0.0429}$ & $\bm{0.8385}$ & 0/10 & $0.8849$ & $0.0257$ & $0.0579$ \\
-      Cross-attention hybrid & $0.8894 \pm 0.0510$ & $0.8007$ & 0/10 & $0.8838$ & $0.0267$ & $0.0627$ \\
-      LSTM only (control) & $0.8839 \pm 0.0436$ & $0.8302$ & 0/10 & $\bm{0.8901}$ & $\bm{0.0208}$ & $0.0548$ \\
-      Weighted-sum hybrid & $0.8831 \pm 0.0412$ & $0.8062$ & 0/10 & $0.8891$ & $0.0236$ & $\bm{0.0409}$ \\
-      Concatenation hybrid & $0.8703 \pm 0.0543$ & $0.7621$ & 0/10 & $0.8528$ & $0.0254$ & $0.0560$ \\ \bottomrule
+      LSTM only (control) & $\bm{0.8840 \pm 0.0380}$ & $\bm{0.8302}$ & 0/25 & $\bm{0.8901}$ & $\bm{0.0208}$ & $0.0548$ \\
+      Weighted-sum hybrid & $0.8816 \pm 0.0422$ & $0.8062$ & 0/25 & $0.8891$ & $0.0236$ & $\bm{0.0409}$ \\
+      Concatenation hybrid & $0.8794 \pm 0.0440$ & $0.7621$ & 0/25 & $0.8528$ & $0.0254$ & $0.0560$ \\
+      Gated hybrid & $0.8608 \pm 0.1464$ & $0.1875$ & 1/25 & $0.8849$ & $0.0257$ & $0.0579$ \\
+      Cross-attention hybrid & $0.8234 \pm 0.2111$ & $0.0869$ & 2/25 & $0.8838$ & $0.0267$ & $0.0627$ \\ \bottomrule
     \end{tabular}}
 \end{table}
 
-\textbf{The fusion ranking reverses.} On the fixed partition the gated operator finished last of four and collapsed in one of five seeds; across five trip partitions it finishes \emph{first} of four and collapses in none of ten runs. Its worst cross-validated run is $0.8385$, against $0.0715$ on the fixed partition. The concatenation operator, third on the fixed partition, is last here.
+\textbf{The fusion ranking depends on how many seeds are averaged.} The gated operator finished last of four on the fixed partition, \emph{first} of four when cross-validation was run over two seeds, and fourth of four over five. The temporal-only control, which has no spatial branch at all, finishes first. Three orderings from the same data, the same folds, and the same protocol---the only difference being how many seeds enter the mean. A study that reports a fusion ranking without stating how many seeds it averaged has not reported enough to be checked.
 
-Neither ordering should be reported as a result, and we report neither. At the trip level, gating differs from the weighted sum by $-0.0042$ ($95\%$ CI $[-0.0162, +0.0102]$, Holm $p = 1.000$), from cross-attention by $+0.0011$ ($95\%$ CI $[-0.0120, +0.0175]$, Holm $p = 1.000$), and from concatenation by $+0.0321$ ($95\%$ CI $[+0.0052, +0.0689]$, Holm $p = 0.099$). \textbf{No fusion operator is distinguishable from any other} once the correct unit and multiplicity correction are applied. The four configurations span $0.0205$ F1, against a within-configuration standard deviation of $0.04$--$0.05$.
+Neither ordering should be reported as a result, and we report neither. At the trip level, gating differs from the weighted sum by $-0.0042$ ($95\%$ CI $[-0.0162, +0.0102]$, Holm $p = 1.000$), from cross-attention by $+0.0011$ ($95\%$ CI $[-0.0120, +0.0175]$, Holm $p = 1.000$), and from concatenation by $+0.0321$ ($95\%$ CI $[+0.0052, +0.0689]$, Holm $p = 0.099$). \textbf{No fusion operator is distinguishable from any other} once the correct unit and multiplicity correction are applied. Over all twenty-five runs the four hybrids span $0.0582$ F1, which exceeds the $0.0414$ replication error of a single run and might be read as an architectural effect. It is not one. Three of the $125$ runs are degenerate, and all three belong to the two operators that learn a mixing weight; removing them leaves a span of $\bm{0.0095}$ F1---under a quarter of the replication error---and within-configuration standard deviations of $0.037$--$0.044$ for all five configurations alike. \textbf{The apparent architectural spread is the footprint of three failures, not a difference in what the operators learn when they train successfully.} The two-seed design could not see this: it produced no degenerate run at all, and so reported a tight ranking that the wider seed set dissolves.
 
 The comparison against concatenation is the closest to significance (uncorrected $p = 0.033$), and it is also the one most affected by the pooling correction of Section~\ref{sec:protocol_note}: concatenation's pooled F1 falls by $0.0244$ when each run is scored at its own threshold, more than any other variant. We note this rather than resting on it.
 
 This is the paper's central empirical statement, and it cuts in both directions. It does not vindicate the sample-wise gate: nothing here shows the gate helping. It equally does not condemn it: the fixed-partition result that placed it last, including its collapse, is not reproduced when five partitions are used instead of one. \textbf{What the data supports is that the choice of fusion operator in this setting is not resolvable}---and that a study reporting a ranking from a single partition, as the earlier version of this work did, would have reported one of two opposite orderings depending on which partition it happened to use.
 
-The collapse mode of Section~\ref{sec:fusion_ablation} remains a real and reproducible phenomenon; it recurred at the same seed across a full re-run under a different backend configuration. Ten cross-validated runs are too few to say more than that it is not systematic, and an earlier version of this paper said exactly that---\emph{none of ten} runs collapsed---which is a statement about ten runs rather than about the phenomenon. The repeated-partition campaign of Section~\ref{sec:repeated_cv} puts a rate on it instead, and the rate separates the operators cleanly (Table~\ref{tab:collapse}). It is not evidence that one operator is generally worse than another; it is evidence about a class of operators.
+The collapse mode of Section~\ref{sec:fusion_ablation} remains a real and reproducible phenomenon, and with five seeds it appears in the primary cross-validated table rather than only on the fixed partition: three of the fifty runs belonging to weight-learning operators are degenerate, against zero of seventy-five for the fixed-weight operators and the control. An earlier version of this paper reported that \emph{none of ten} runs collapsed, which was a statement about ten runs rather than about the phenomenon; those ten runs were two seeds, and neither was the seed at which the fixed partition had failed. The repeated-partition campaign of Section~\ref{sec:repeated_cv} puts a rate on it instead, and the rate separates the operators cleanly (Table~\ref{tab:collapse}). It is not evidence that one operator is generally worse than another; it is evidence about a class of operators.
 
-The spatial-branch control is equally instructive: removing the spatial branch entirely yields $0.8839 \pm 0.0436$, and no test reported here separates it from any hybrid variant. Following Section~\ref{sec:equivalence}, that is an undetermined comparison rather than a demonstration that the branch contributes nothing. On the fixed partition the same ablation appeared to cost $3.5$ F1 points
+The spatial-branch control is equally instructive: removing the spatial branch entirely yields $0.8840 \pm 0.0380$, the highest mean and the smallest standard deviation of the five, and no test reported here separates it from any hybrid variant. Following Section~\ref{sec:equivalence}, that is an undetermined comparison rather than a demonstration that the branch contributes nothing. On the fixed partition the same ablation appeared to cost $3.5$ F1 points
 at $p = 0.035$.  % ESKI-DEGER: geri cekilen v1 iddiasi, bilerek aniliyor
 We \textbf{withdraw that claim}. Section~\ref{sec:subtype} examines whether the spatial branch helps anywhere at all.
 
@@ -1385,7 +1387,7 @@ fold's test predictions, and with the trip as the unit of inference.
 
 \begin{table*}[!t]
   \centering
-  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds; identical
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 5 seeds; identical
   folds and threshold policy for every row]}~ Learned and classical models on
   equal footing. The last two columns compare each classical model with the
   proposed gated hybrid at the trip level, pooled over all 90 trips.}
@@ -1396,25 +1398,29 @@ fold's test predictions, and with the trip as the unit of inference.
     \toprule
     \textbf{Model} & \textbf{F1 (mean $\pm$ s.d.)} & \textbf{Pooled F1}
     & \textbf{$\Delta$ vs proposed} & \textbf{Holm $p$} \\ \midrule
-    Gated hybrid (proposed) & $0.8908 \pm 0.0429$ & $0.8849$ & --- & --- \\
-    Weighted-sum hybrid & $0.8831 \pm 0.0412$ & $0.8891$ & --- & --- \\
-    Cross-attention hybrid & $0.8894 \pm 0.0510$ & $0.8838$ & --- & --- \\
-    Concatenation hybrid & $0.8703 \pm 0.0543$ & $0.8528$ & --- & --- \\
-    Temporal only (no graph) & $0.8839 \pm 0.0436$ & $0.8901$ & --- & --- \\
+    Gated hybrid (proposed) & $0.8608 \pm 0.1464$ & $0.8849$ & --- & --- \\
+    Weighted-sum hybrid & $0.8816 \pm 0.0422$ & $0.8891$ & --- & --- \\
+    Cross-attention hybrid & $0.8234 \pm 0.2111$ & $0.8838$ & --- & --- \\
+    Concatenation hybrid & $0.8794 \pm 0.0440$ & $0.8528$ & --- & --- \\
+    Temporal only (no graph) & $0.8840 \pm 0.0380$ & $0.8901$ & --- & --- \\
     \midrule
-    LightGBM on window aggregates & $0.9180 \pm 0.0316$ & $0.9258$ & $+0.0409$ & $0.0002$ \\
-    XGBoost on window aggregates & $0.9108 \pm 0.0348$ & $0.9156$ & $+0.0307$ & $0.0002$ \\
-    Random forest on window aggregates & $0.9070 \pm 0.0312$ & $0.9106$ & $+0.0257$ & $0.0082$ \\
+    LightGBM on window aggregates & $\bm{0.9195 \pm 0.0307}$ & $\bm{0.9258}$ & $+0.0409$ & $0.0002$ \\
+    XGBoost on window aggregates & $0.9095 \pm 0.0327$ & $0.9156$ & $+0.0307$ & $0.0002$ \\
+    Random forest on window aggregates & $0.9082 \pm 0.0299$ & $0.9106$ & $+0.0257$ & $0.0082$ \\
     Three-threshold rule (zero parameters) & $0.8938 \pm 0.0375$ & $0.9020$ & $+0.0171$ & $0.2288$ \\
     \bottomrule
   \end{tabular}
 \end{table*}
 
 The ordering is not the one the architecture section would predict. Gradient
-boosting on window aggregates reaches $0.9180 \pm 0.0316$ against
-$0.8908 \pm 0.0429$ for the proposed gated hybrid, and the zero-parameter
-threshold rule reaches $0.8938 \pm 0.0375$, which is within the spread of
-every learned model in the table. Whatever the hybrid architecture is doing on
+boosting on window aggregates reaches $0.9195 \pm 0.0307$ against
+$0.8608 \pm 0.1464$ for the proposed gated hybrid, and the zero-parameter
+threshold rule reaches $0.8938 \pm 0.0375$---\textbf{a higher mean than every
+learned model in the table}, including the temporal-only control at
+$0.8840 \pm 0.0380$. The rule's margin over the learned models is not
+significant at the trip level ($+0.0171$, Holm $p = 0.2288$), so the claim
+here is not that thresholds win; it is that four hand-written thresholds and
+no training are inside the interval of everything that was trained. Whatever the hybrid architecture is doing on
 this dataset, four window statistics and a gradient-boosted tree ensemble do
 at least as well.
 

@@ -21,6 +21,7 @@ Ayrica TOST ile ESDEGERLIK sinanir: anlamsiz bir fark
 KULLANIM
   python experiments/f12_classic_vs_deep.py
 """
+import os
 import sys
 from pathlib import Path
 
@@ -35,7 +36,7 @@ from stanet.cluster_stats import (cluster_bootstrap_diff, cluster_permutation_te
 from stanet.utils import init_console, load_json, protocol_stamp, save_json
 
 init_console()
-OUT = C.RESULTS_DIR / "F12_classic_vs_deep.json"
+OUT = C.RESULTS_DIR / (os.environ.get("F12_OUT","F12_classic_vs_deep")+".json")
 
 # Esdegerlik siniri ONCEDEN belirlenmistir ve gerekcesi su:
 # F5'te derin modellerin kosular arasi standart sapmasi 0.041-0.054 F1
@@ -141,8 +142,8 @@ def trip_level(npz5, npz11):
 
 
 def main():
-    f5 = load_json(C.RESULTS_DIR / "F5_cv.json")
-    f11 = load_json(C.RESULTS_DIR / "F11_classic_cv.json")
+    f5 = load_json(C.RESULTS_DIR / (os.environ.get("F12_F5", "F5_cv") + ".json"))
+    f11 = load_json(C.RESULTS_DIR / (os.environ.get("F12_F11", "F11_classic_cv") + ".json"))
     npz5 = np.load(C.CACHE_DIR / "F5_pooled.npz")
     npz11 = np.load(C.RESULTS_DIR / "F11_pooled.npz")
 

@@ -19,6 +19,7 @@ de fold bazinda degerlendirilir cunku test kumeleri farklidir.
 KULLANIM
   python experiments/f11_classic_cv.py
 """
+import os
 import sys
 from pathlib import Path
 
@@ -40,8 +41,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from f5_cv import pooled_by_type, pooled_metrics          # noqa: E402  ayni esik politikasi
 
 init_console()
-OUT = C.RESULTS_DIR / "F11_classic_cv.json"
-SEEDS = [42, 43]                 # F5 ile ayni
+# F5 ile ayni tohum listesi; hakem 3.7 sonrasi bes tohum.
+SEEDS = [int(x) for x in os.environ.get("F11_SEEDS", "42,43").split(",")]
+OUT_NAME = os.environ.get("F11_OUT", "F11_classic_cv") + ".json"
+OUT = C.RESULTS_DIR / OUT_NAME
 TREES = ("xgboost", "lightgbm", "random_forest")
 RULES = ("dwell_only", "dwell_accel", "best", "all_rules")
 
