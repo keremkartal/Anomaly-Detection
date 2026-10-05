@@ -43,6 +43,7 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F8_effects_subtypes",
          "F10_pilot", "F10_repeated_cv", "F11_classic_cv",
          "F11_classic_cv_5seed", "F12_classic_vs_deep_5seed",
+         "F14_graph_controls_5seed",
          "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
@@ -162,6 +163,66 @@ def check_protocol():
             msg = "F5_cv_5seed yok — tab:cv'nin kaynagi bulunamadi"
             failures.append(msg)
             print(f"{FAIL} {msg}")
+    print()
+
+
+# ============================================ B2. CIKTI <-> KOSU DEPOSU
+def check_store_consistency():
+    """Deney JSON'lari kosu deposuyla ayni sayiyi mi soyluyor.
+
+    Ayni deneyi es zamanli iki kez baslatmak, iki surecin ayni anahtarlara
+    yazmasina ve her birinin kendi bellek degerlerini tutmasina yol acar.
+    Sonuc: tablo bir sayi, arsiv baska bir sayi gosterir. Bu kontrol onu
+    yakalar.
+    """
+    print("B2. CIKTI <-> KOSU DEPOSU (tablo sayilari arsivle ayni mi)")
+    import glob as _glob
+    KEY = {("lstm", "gat", "weighted_sum"): "hybrid_gat",
+           ("lstm", "gat", "gated"): "stanet_gated",
+           ("lstm", "gat", "concat"): "hybrid_concat",
+           ("lstm", "gat", "cross_attention"): "hybrid_crossatt",
+           ("lstm", "none", "weighted_sum"): "lstm_only"}
+    store = {}
+    for f in _glob.glob(str(res / "_runs" / "0902cd97ec17" / "*cv5*.json")):
+        try:
+            d = json.loads(Path(f).read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        sp = d.get("spec", {})
+        if sp.get("graph") != "trip_instance" or sp.get("ctrl"):
+            continue
+        if sp.get("rep") is not None:
+            continue
+        name = KEY.get((sp.get("temporal"), sp.get("spatial"), sp.get("fusion")))
+        if not name:
+            continue
+        store[(name, sp.get("fold"), d.get("seed"))] = d["metrics"]["f1"]
+
+    bad, checked = [], 0
+    src = J.get("F5_cv_5seed")
+    if not src:
+        print(f"{FAIL} F5_cv_5seed yok")
+        failures.append("F5_cv_5seed yok (B2)")
+        print()
+        return
+    for m, v in src.get("models", {}).items():
+        for r in v.get("runs", []):
+            k = (m, r.get("fold"), r.get("seed"))
+            if k not in store:
+                continue
+            checked += 1
+            if abs(store[k] - r["f1"]) > 1e-9:
+                bad.append((k, r["f1"], store[k]))
+    print(f"    karsilastirilan kosu : {checked}")
+    if bad:
+        msg = (f"{len(bad)} kosu deposuyla uyusmuyor — ayni deney es zamanli "
+               f"iki kez mi kostu?")
+        failures.append(msg)
+        print(f"{FAIL} {msg}")
+        for k, a, b in bad[:5]:
+            print(f"      {k[0]} fold{k[1]} s{k[2]}: tablo {a:.6f} / depo {b:.6f}")
+    else:
+        print(f"{OK}   her kosu kaydi kosu deposuyla birebir")
     print()
 
 
@@ -776,6 +837,7 @@ if __name__ == "__main__":
     print("=" * 78 + "\n")
     check_protocol()
     check_shared_run()
+    check_store_consistency()
     check_numbers()
     check_figures()
     check_figure_scale()
