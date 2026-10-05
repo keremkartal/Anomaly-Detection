@@ -472,6 +472,22 @@ def check_figure_scale():
 # ESKI bir ifadeyi yakalamaz. Tablo 11'in basligi "three seeds" derken tablo
 # bes tohumluydu ve C kontrolu bunu gormedi. Asagidakiler o bosluğu kapatir.
 STALE_PHRASES = [
+    # E-3: cokmenin "kayboldugu" iddiasi. tab:collapse: birlesik grafta
+    # 3/50, trip-instance 1/50 -- yani kaybolmuyor, DAHA SIK. Bu cumle
+    # bir kez farkli kelimelerle geri geldigi icin uc varyasyon birden.
+    (r"disappears when that branch is made more informative",
+     "cokme birlesik grafta DAHA SIK (3/50 vs 1/50)"),
+    (r"disappears when the spatial branch is made",
+     "cokme kaybolmuyor -- tab:collapse"),
+    (r"localizes the collapse",
+     "cokme bir grafa lokalize DEGIL; operator sinifina ait"),
+    # E-3: iki tohumluk fuzyon yelpazesi
+    (r"configurations span \$0\.0205\$ F1",
+     "yelpaze 5 tohumda 0.0582 / cokmeler haric 0.0095"),
+    (r"baselines that match the hybrid model",
+     "klasik model ANLAMLI kazaniyor: +0.0409, Holm p=0.0002"),
+    (r"crossed with two seeds",
+     "birincil CV bes tohum (hakem 3.7)"),
     (r"Encoder benchmark, three seeds", "Tablo 11 basligi: benchmark 5 tohum"),
     (r"three seeds for the encoder", "kodlayici benchmark 5 tohum"),
     (r"five for the fusion ablation, three", "tohum sayilari artik esit"),

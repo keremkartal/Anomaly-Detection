@@ -38,6 +38,7 @@ KULLANIM
   python experiments/f18_inductive.py --pilot
   python experiments/f18_inductive.py
 """
+import os
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -55,8 +56,9 @@ from stanet.runstore import get_or_train, make_spec
 from stanet.utils import get_device, init_console, protocol_stamp, save_json
 
 init_console()
-OUT = C.RESULTS_DIR / "F18_inductive.json"
-SEEDS = [42, 43]
+SEEDS = [int(x) for x in os.environ.get("F18_SEEDS", "42,43").split(",")]
+OUT_NAME = os.environ.get("F18_OUT", "F18_inductive") + ".json"
+OUT = C.RESULTS_DIR / OUT_NAME
 MERGE = False
 DELTA = 0.02
 CONFIGS = {

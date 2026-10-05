@@ -32,6 +32,7 @@ KULLANIM
   python experiments/f14_graph_controls.py --pilot   # 1 fold x 1 tohum
   python experiments/f14_graph_controls.py
 """
+import os
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -54,8 +55,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from f5_cv import pooled_by_type, pooled_metrics          # noqa: E402
 
 init_console()
-OUT = C.RESULTS_DIR / "F14_graph_controls.json"
-SEEDS = [42, 43]
+SEEDS = [int(x) for x in os.environ.get("F14_SEEDS", "42,43").split(",")]
+OUT_NAME = os.environ.get("F14_OUT", "F14_graph_controls") + ".json"
+OUT = C.RESULTS_DIR / OUT_NAME
 MERGE = False
 BASE = dict(temporal="lstm", spatial="gat", fusion="weighted_sum")
 CONTROL_SEED = 20260926        # oznitelik karistirma ve rastgele kenar icin
