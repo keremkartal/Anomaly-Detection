@@ -174,6 +174,15 @@ def check_locations(letter, labels, by_kind):
     sec_pat = re.compile(r"\b(?:Section|Sect\.?|Bolum|Bölüm)[~\s]*"
                          r"([IVXL]+(?:-[A-Z]\d*)?)", re.IGNORECASE)
     bad, good = [], 0
+    # Mektup numara yerine etiket tasiyor: {tab:cv}. Etiketin aux'ta
+    # var olmasi, numaranin dogru nesneyi gosterdigini sorgulamayi
+    # gereksiz kilar -- etiket nesnenin kendisi.
+    for m in re.finditer(r"\{((?:tab|fig|eq):[a-z_0-9]+)\}", letter):
+        lbl = m.group(1)
+        if lbl in labels:
+            good += 1
+        else:
+            bad.append((f"{{{lbl}}}", f"etiket {lbl} aux'ta yok"))
     for m in pat.finditer(letter):
         word, num = m.group(1).lower().rstrip("."), m.group(2)
         kind = kinds.get(word)
@@ -247,7 +256,8 @@ def check_answers(letter):
     if cur:
         blocks[cur] = "\n".join(buf)
     loc = re.compile(r"\b(Table|Tablo|Figure|Sekil|Şekil|Section|Bolum|Bölüm|"
-                     r"Equation|Denklem|page|sayfa)\b", re.IGNORECASE)
+                     r"Equation|Denklem|page|sayfa|Appendix)\b"
+                     r"|\{(?:tab|fig|eq):[a-z_0-9]+\}", re.IGNORECASE)
     empty = [k for k, v in blocks.items() if not loc.search(v)]
     print(f"    baslikli madde blogu: {len(blocks)}")
     if not blocks:
