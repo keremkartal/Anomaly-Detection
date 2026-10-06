@@ -48,6 +48,34 @@ LOC_RE = re.compile(
     r"|\bAppendix\s*([A-C])"
     r"|\bEquation\s*(\d+)")
 
+# Mektup numara TASIMAZ; {tab:cv} gibi etiket tasir ve numarasi buradan,
+# derlenmis aux'tan cozulur. Dokuz gonderme bir kez yanlis tabloyu
+# gosterdigi icin -- numaralari elle yazmistim ve sonradan tablo eklenince
+# kaymislardi -- artik elle numara yazilmiyor.
+AUX = ROOT / "makale" / "main_revised.aux"
+LABEL_RE = re.compile(r"\{((?:tab|fig|eq):[a-z_0-9]+)\}")
+_AUX_PAT = (r"newlabel\{((?:tab|fig|eq):[a-z_0-9]+)\}\{\{(?:"
+            + "\\\\" + r"mbox\s*\{)?([0-9]+)")
+KIND = {"tab": "Table", "fig": "Figure", "eq": "Equation"}
+
+
+def label_numbers():
+    if not AUX.exists():
+        return {}
+    aux = AUX.read_text(encoding="utf-8", errors="ignore")
+    return {m.group(1): m.group(2) for m in re.finditer(_AUX_PAT, aux)}
+
+
+def resolve(text, numbers, unresolved):
+    def rep(m):
+        lbl = m.group(1)
+        n = numbers.get(lbl)
+        if not n:
+            unresolved.add(lbl)
+            return "{" + lbl + "}"
+        return "%s %s" % (KIND[lbl.split(":")[0]], n)
+    return LABEL_RE.sub(rep, text)
+
 # Sonuclara gore yeniden yazilan ozet maddeleri.
 SUMMARY = [
     "Cross-validated threshold procedure corrected: each fold-seed run's test "
@@ -187,6 +215,9 @@ def fill(out_path):
     from docx import Document
 
     answers = parse_answers()
+    numbers = label_numbers()
+    unresolved = set()
+    answers = {k: resolve(v, numbers, unresolved) for k, v in answers.items()}
     doc = Document(str(TEMPLATE))
     body = doc.element.body
 
@@ -271,9 +302,41 @@ def fill(out_path):
                      cp.runs[0])
             n_chg += 1
 
+    # --- sablonun kendi iki cumlesi
+    # (a) sablon satir numarasi vaat ediyor; bizim gondermelerimiz bolum ve
+    #     tablo numarasi, dizgiden bagimsiz. Cumle bunu soylemeli.
+    # (b) sablon uydurma bir DOI ile bitiyor. Kavram DOI'si GERCEK ve kalici;
+    #     surum DOI'si release kesilince eklenecek. DOI uydurulmaz.
+    for p in doc.paragraphs:
+        t = p.text.strip()
+        if t.startswith("Below, reviewer comments are reproduced") and p.runs:
+            set_text(p, [
+                ("Below, reviewer comments are reproduced in grey boxes, "
+                 "followed by our response and the corresponding changes. "
+                 "References point to numbered sections, tables, figures and "
+                 "appendices of the revised manuscript rather than to line "
+                 "numbers, so that they remain valid under the journal's "
+                 "typesetting. All changes are highlighted ", False),
+                ("[specify: in blue / with tracked changes]", True),
+                (".", False)], p.runs[0])
+        elif t.startswith("We believe these revisions have substantially") and p.runs:
+            set_text(p, [
+                ("We believe these revisions have substantially strengthened "
+                 "the manuscript, and we thank the reviewers again for their "
+                 "time. The code, data, and result files of the revised "
+                 "version, together with the scripts that verify every number "
+                 "in the manuscript and in this letter against the stored "
+                 "result files, are archived under the concept identifier ",
+                 False),
+                ("doi:10.5281/zenodo.22637360", True),
+                (", which resolves to the most recent version. The version "
+                 "identifier for the revised snapshot (v3.0.0) is added once "
+                 "that release is deposited.", False)], p.runs[0])
+
     doc.save(str(out_path))
     return dict(note=removed_note, summary=n_sum, responses=n_resp,
-                changes=n_chg, missing=n_miss, comments=len(starts))
+                changes=n_chg, missing=n_miss, comments=len(starts),
+                labels=len(numbers), unresolved=sorted(unresolved))
 
 
 def main():
@@ -290,8 +353,15 @@ def main():
     print(f"  yazilan Changes satiri  : {st['changes']}")
     print(f"  yeniden yazilan ozet    : {st['summary']} / {len(SUMMARY)}")
     print(f"  NOTE paragrafi silindi  : {st['note']}")
+    print(f"  aux'tan okunan etiket   : {st['labels']}")
     if st["missing"]:
         print(f"  CEVABI BULUNAMAYAN      : {st['missing']}")
+    if st["unresolved"]:
+        print()
+        print(f"  COZULEMEYEN ETIKET      : {len(st['unresolved'])}")
+        for lbl in st["unresolved"]:
+            print(f"      {lbl}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
