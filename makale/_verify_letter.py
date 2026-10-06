@@ -37,7 +37,7 @@ sys.path.insert(0, str(ROOT))
 
 AUX = HERE / "main_revised.aux"
 RESULTS = ROOT / "results"
-DEFAULT_LETTER = HERE / "HAKEM_YANIT.md"
+DEFAULT_LETTER = HERE.parent / "HAKEM_YANIT.md"
 
 OK, FAIL = "  [OK]  ", "  [HATA]"
 failures = []
