@@ -40,6 +40,9 @@ TEMPLATE = ROOT / "yeniveriseti" / "Response_to_Reviewers_sensors-4582518.docx"
 LETTER_MD = ROOT / "HAKEM_YANIT.md"
 DEFAULT_OUT = ROOT / "Response_to_Reviewers_sensors-4582518_DOLDURULMUS.docx"
 
+# Bizim ekledigimiz icerigin rengi. Sablonun kendi metni siyah kalir.
+NEW_COLOR = "0070C0"
+
 ITEM_RE = re.compile(r"^###\s+([\d.,\s]+?)\s*—\s*(.*)$")
 LOC_RE = re.compile(
     r"\b(?:Section~?|Sections~?)\s*([IVX]+(?:-[A-Z]\d?)?)"
@@ -186,11 +189,22 @@ def flatten(body):
     return paras
 
 
-def set_text(par, segments, template_run):
-    """Paragrafin run'larini silip yenilerini sablon run bicimiyle yazar."""
+def set_text(par, segments, template_run, color=None):
+    """Paragrafin run'larini silip yenilerini sablon run bicimiyle yazar.
+
+    `color` verilirse o run'lar renklenir. Mektupta hocanin kendi yazdigi
+    metin siyah kalir, bizim ekledigimiz icerik mavi olur; boylece neyin
+    yeni oldugu bir bakista gorulur. Segment ucuncu bir eleman tasirsa
+    (bool) o eleman o parcanin renklenip renklenmeyecegini belirler --
+    "Response:" gibi sablon etiketleri siyah kalsin diye.
+    """
+    from docx.shared import RGBColor
+
     for r in list(par.runs):
         r._r.getparent().remove(r._r)
-    for text, bold in segments:
+    for seg in segments:
+        text, bold = seg[0], seg[1]
+        tint = seg[2] if len(seg) > 2 else True
         if not text:
             continue
         r = par.add_run(text)
@@ -200,6 +214,8 @@ def set_text(par, segments, template_run):
             r.font.size = template_run.font.size
         if template_run.font.name:
             r.font.name = template_run.font.name
+        if color and tint:
+            r.font.color.rgb = RGBColor.from_string(color)
     return par
 
 
@@ -236,8 +252,9 @@ def fill(out_path):
         if m and p.text.strip()[0].isdigit() and len(p.runs) and n_sum < len(SUMMARY):
             idx = int(m.group(1))
             if 1 <= idx <= len(SUMMARY) and idx == n_sum + 1:
-                set_text(p, [(f"{idx}. ", True),
-                             (SUMMARY[idx - 1], False)], p.runs[0])
+                set_text(p, [(f"{idx}. ", True, False),
+                             (SUMMARY[idx - 1], False)], p.runs[0],
+                         color=NEW_COLOR)
                 n_sum += 1
 
     # --- yorum bloklari
@@ -267,8 +284,9 @@ def fill(out_path):
         blocks = flatten(ans)
 
         # ilk paragraf: "Response: " + ilk blok
-        set_text(paras[first], [("Response: ", True)] + md_segments(blocks[0]),
-                 tmpl_run)
+        set_text(paras[first],
+                 [("Response: ", True, False)] + md_segments(blocks[0]),
+                 tmpl_run, color=NEW_COLOR)
 
         # Response ile Changes ARASINDAKI her sablon paragrafini sil.
         # (Yalnizca "Response:" ile baslayanlari silmek yetmiyor: sablonun
@@ -290,7 +308,7 @@ def fill(out_path):
         for blk in blocks[1:]:
             cur = cur.getnext()
             set_text(Paragraph(cur, paras[first]._parent),
-                     md_segments(blk), tmpl_run)
+                     md_segments(blk), tmpl_run, color=NEW_COLOR)
         n_resp += 1
 
         # --- Changes in the manuscript
@@ -298,8 +316,8 @@ def fill(out_path):
             cp = paras[chg_idx[0]]
             locs = locations(ans)
             txt = "; ".join(locs) + "." if locs else "see the response above."
-            set_text(cp, [("Changes in the manuscript: ", True), (txt, False)],
-                     cp.runs[0])
+            set_text(cp, [("Changes in the manuscript: ", True, False),
+                          (txt, False)], cp.runs[0], color=NEW_COLOR)
             n_chg += 1
 
     # --- sablonun kendi iki cumlesi
@@ -318,7 +336,7 @@ def fill(out_path):
                  "numbers, so that they remain valid under the journal's "
                  "typesetting. All changes are highlighted ", False),
                 ("[specify: in blue / with tracked changes]", True),
-                (".", False)], p.runs[0])
+                (".", False)], p.runs[0], color=NEW_COLOR)
         elif t.startswith("We believe these revisions have substantially") and p.runs:
             set_text(p, [
                 ("We believe these revisions have substantially strengthened "
@@ -331,7 +349,8 @@ def fill(out_path):
                 ("doi:10.5281/zenodo.22637360", True),
                 (", which resolves to the most recent version. The version "
                  "identifier for the revised snapshot (v3.0.0) is added once "
-                 "that release is deposited.", False)], p.runs[0])
+                 "that release is deposited.", False)], p.runs[0],
+                color=NEW_COLOR)
 
     doc.save(str(out_path))
     return dict(note=removed_note, summary=n_sum, responses=n_resp,
