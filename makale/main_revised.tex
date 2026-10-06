@@ -1533,7 +1533,7 @@ train the same architecture with the same parameter count.
 
 \begin{table*}[!t]
   \centering
-  \caption{\textbf{[Cross-validation, 5 folds $\times$ 2 seeds = 10 runs per
+  \caption{\textbf{[Cross-validation, 5 folds $\times$ 5 seeds = 25 runs per
   cell]}~ Cost of hiding the test segments during training. Between $595$ and
   $657$ nodes per fold are isolated and their features zeroed while training;
   the full graph is restored for inference.}
@@ -1544,16 +1544,23 @@ train the same architecture with the same parameter count.
     \toprule
     \textbf{Configuration} & \textbf{Transductive} & \textbf{Inductive}
     & \textbf{$\Delta$} & \textbf{95\% CI} & \textbf{Holm $p$} \\ \midrule
-    Weighted-sum hybrid & $0.8831 \pm 0.0412$ & $0.9013 \pm 0.0315$ & $+0.0182$ & $[-0.0328, +0.0691]$ & $0.882$ \\
-    Gated hybrid (proposed) & $0.8908 \pm 0.0429$ & $0.8723 \pm 0.0584$ & $-0.0186$ & $[-0.0728, +0.0356]$ & $0.882$ \\
+    Weighted-sum hybrid & $0.8839 \pm 0.0415$ & $0.8964 \pm 0.0362$ & $+0.0125$ & $[-0.0218, +0.0467]$ & $0.918$ \\
+    Gated hybrid (proposed) & $0.8589 \pm 0.1458$ & $0.8763 \pm 0.0478$ & $+0.0174$ & $[-0.1595, +0.1944]$ & $0.918$ \\
     \bottomrule
   \end{tabular}
 \end{table*}
 
-Neither configuration shows a measurable cost, and the two point estimates
-have opposite signs: the weighted-sum hybrid scores $+0.0182$ F1 in the
-inductive setting and the gated hybrid $-0.0186$. Both intervals span zero
-comfortably. Given Section~\ref{sec:graph_controls}, this is what one would
+Neither configuration shows a measurable cost, and both point estimates run
+the same way: the weighted-sum hybrid scores $+0.0125$ F1 in the inductive
+setting and the gated hybrid $+0.0174$, with both intervals spanning zero
+comfortably. Over two seeds the second of these was $-0.0186$, so the sign
+of the gated comparison reverses with the seed count as well. We report the
+five-seed numbers and note the reversal rather than choosing whichever sign
+suits the surrounding argument. One further asymmetry is worth recording
+without explaining: the gated operator's standard deviation is $0.1458$
+transductively and $0.0478$ inductively, because its one degenerate run
+falls in the transductive condition. A single run is not a mechanism, and we
+draw nothing from it. Given Section~\ref{sec:graph_controls}, this is what one would
 expect---if neither the node features nor the message passing carries
 measurable signal, then hiding some of the nodes cannot cost anything
 measurable either.
@@ -2181,6 +2188,137 @@ The synthetic dataset, its data card, the complete preprocessing and modelling c
 The repository contains two mechanisms that support the internal consistency of the tables reported here. First, every result file carries a \emph{protocol stamp}: a hash over the seed set, epoch budget, patience, batch size, learning rate, scheduler, dropout, checkpoint criterion, threshold rule, cuDNN flags, window length, stride, split seed, and library versions. Scripts that consume another script's results assert that the stamps match and abort otherwise. Second, configurations that appear in more than one table are trained once and cached under their protocol stamp, so those tables read the same run rather than two independently trained runs that are assumed to agree. Section~\ref{sec:protocol_note} describes why these mechanisms were introduced.
 
 Because several anomaly subtypes are defined as threshold functions of the model's input channels, a zero-parameter rule-based classifier is reported alongside all learned models as a reference point.
+
+\appendices
+\section{Realised Transition Behaviour of the Generator}
+\label{app:markov}
+Reviewer~1 asked how the transition probabilities of the behavioural model were selected or calibrated. They were not available to us, and we say so in Section~\ref{sec:markov} and again among the limitations. What can be documented is the behaviour the released trajectories actually exhibit, which is what a reader needs in order to know what the data contains. The tables below give the first-order transition frequencies between four kinematic states, estimated separately within each traffic regime and excluding rows carrying an anomaly label so that the injected scenarios do not contaminate the baseline behaviour.
+
+States are defined from the signed acceleration with a dead band of $\varepsilon = 0.10$~m/s$^2$ and a stop threshold of 1.0~km/h. \textbf{These are realised frequencies, not generator parameters:} speed limits, anomaly scenarios, and sensor noise all intervene between the two, so the matrices below should not be read as a specification of the simulator.
+
+\textbf{Free-flow regime} (mean speed $57.8$~km/h).
+
+\begin{table}[!t]
+  \centering
+  \footnotesize
+  \resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+  \toprule
+  \textbf{From} & \textbf{Stopped} & \textbf{Decelerating} & \textbf{Constant} & \textbf{Accelerating} & \textbf{Share} \\
+  \midrule
+    Stopped        & $0.0000$ & $0.0000$ & $0.0000$ & $1.0000$ & $0.0001$ \\
+    Decelerating   & $0.0000$ & $0.0290$ & $0.0027$ & $0.9683$ & $0.3367$ \\
+    Constant       & $0.0000$ & $0.0761$ & $0.6448$ & $0.2791$ & $0.0126$ \\
+    Accelerating   & $0.0000$ & $0.5022$ & $0.0058$ & $0.4921$ & $0.6507$ \\
+  \bottomrule
+\end{tabular}}
+\end{table}
+
+
+\vspace{1em}
+
+\textbf{Transition regime} (mean speed $52.9$~km/h).
+
+\begin{table}[!t]
+  \centering
+  \footnotesize
+  \resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+  \toprule
+  \textbf{From} & \textbf{Stopped} & \textbf{Decelerating} & \textbf{Constant} & \textbf{Accelerating} & \textbf{Share} \\
+  \midrule
+    Stopped        & $1.0000$ & $0.0000$ & $0.0000$ & $0.0000$ & $0.0029$ \\
+    Decelerating   & $0.0000$ & $0.0465$ & $0.0021$ & $0.9514$ & $0.3283$ \\
+    Constant       & $0.0000$ & $0.3333$ & $0.4676$ & $0.1991$ & $0.0045$ \\
+    Accelerating   & $0.0000$ & $0.4597$ & $0.0030$ & $0.5374$ & $0.6643$ \\
+  \bottomrule
+\end{tabular}}
+\end{table}
+
+
+\vspace{1em}
+
+\textbf{Congested regime} (mean speed $25.0$~km/h).
+
+\begin{table}[!t]
+  \centering
+  \footnotesize
+  \resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+  \toprule
+  \textbf{From} & \textbf{Stopped} & \textbf{Decelerating} & \textbf{Constant} & \textbf{Accelerating} & \textbf{Share} \\
+  \midrule
+    Stopped        & $0.9613$ & $0.0000$ & $0.0000$ & $0.0387$ & $0.0565$ \\
+    Decelerating   & $0.0080$ & $0.1712$ & $0.0013$ & $0.8195$ & $0.3518$ \\
+    Constant       & $0.0000$ & $0.6637$ & $0.2035$ & $0.1327$ & $0.0039$ \\
+    Accelerating   & $0.0000$ & $0.4732$ & $0.0048$ & $0.5220$ & $0.5878$ \\
+  \bottomrule
+\end{tabular}}
+\end{table}
+
+
+\vspace{1em}
+
+\textbf{The constant-speed state is almost never used.} Its share is $0.0126$ in free flow, $0.0045$ in transition, and $0.0039$ in congestion. This is a property of the generator rather than of the dead band: widening $\varepsilon$ from $0.05$ to $0.25$~m/s$^2$ moves the free-flow share only from $0.0072$ to $0.0182$. Trajectories alternate between accelerating and decelerating at almost every step, which is worth knowing before interpreting any model's use of the acceleration channel.
+
+\section{Configuration of the Adapted Operators}
+\label{app:operators}
+Reviewer~2 asked for the hyperparameter search spaces, early-stopping strategy, and initialization of the adapted operators. \textbf{No hyperparameter search was performed for any configuration, including our own.} Every operator runs under the single protocol of Section~\ref{sec:protocol}: Adam at learning rate $0.001$, batch size $64$, at most $50$ epochs, early stopping and checkpointing on validation F1 with patience $15$, the same scheduler and gradient clipping, and each model thresholded at its own validation-selected operating point. Parameters use the PyTorch and PyTorch~Geometric defaults under seeds $42$--$46$. Operator-specific settings follow the defaults of the originating papers and are listed below rather than tuned.
+
+\begin{table}[!t]
+  \centering
+  \footnotesize
+  \resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llc@{}}
+  \toprule
+  \textbf{Component} & \textbf{Setting} & \textbf{Value} \\
+  \midrule
+    LSTM (temporal) & hidden, layers, dropout & $128$, $2$, $0.2$ \\
+    GRU (temporal) & hidden, layers, dropout & $128$, $2$, $0.2$ \\
+    STGCN gated temporal conv. & kernel, blocks & $3$, $2$ \\
+    Graph WaveNet temporal & kernel, layers, dilation & $2$, $4$, $1$--$8$ \\
+    Transformer (temporal) & heads, layers, FFN & $4$, $2$, $256$ \\
+  \midrule
+    GAT (spatial) & hidden, out, heads & $32$, $64$, $2$ \\
+    STGCN Chebyshev conv. & order $K$ & $3$ \\
+    DCRNN diffusion conv. & diffusion steps $K$ & $2$ \\
+    Graph WaveNet adaptive adj. & embedding dim, $K$ & $10$, $2$ \\
+  \midrule
+    Projection (both branches) & output dim & $64$ \\
+    Classifier & hidden & $32$ \\
+    Sample-wise gate & $128 \rightarrow 32 \rightarrow 1$, tanh & $4{,}161$ params \\
+  \bottomrule
+\end{tabular}}
+\end{table}
+
+
+We note in the limitations that tuning could change the ordering, and that this applies with particular force to the adaptive-adjacency operator, whose seed-to-seed variance is the largest in the encoder benchmark and may reflect an untuned setting rather than a property of the operator.
+
+\section{The Two-Seed Cross-Validation}
+\label{app:two_seed}
+An earlier version of this analysis crossed the five trip-grouped folds with two seeds rather than five. Reviewer~3 asked that the seed at which the fixed partition collapsed be included in the cross-validated design before the absence of collapse there was attributed to the change of partition. It is now included, and the primary analysis of Section~\ref{sec:cv} uses all five seeds. We retain the two-seed results here rather than discarding them, because the difference between the two columns is the clearest single illustration of this paper's argument.
+
+\begin{table}[!t]
+  \centering
+  \footnotesize
+  \resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lcccc@{}}
+  \toprule
+  & \multicolumn{2}{c}{\textbf{Two seeds}} & \multicolumn{2}{c}{\textbf{Five seeds}} \\
+  \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+  \textbf{Model} & \textbf{F1} & \textbf{Coll.} & \textbf{F1} & \textbf{Coll.} \\
+  \midrule
+    LSTM only (control)      & $0.8839 \pm 0.0436$ & 0/10 & $0.8840 \pm 0.0380$ & 0/25 \\
+    Weighted-sum hybrid      & $0.8831 \pm 0.0412$ & 0/10 & $0.8839 \pm 0.0415$ & 0/25 \\
+    Concatenation hybrid     & $0.8703 \pm 0.0543$ & 0/10 & $0.8797 \pm 0.0441$ & 0/25 \\
+    Gated hybrid             & $0.8908 \pm 0.0429$ & 0/10 & $0.8589 \pm 0.1458$ & 1/25 \\
+    Cross-attention hybrid   & $0.8894 \pm 0.0510$ & 0/10 & $0.8558 \pm 0.1624$ & 1/25 \\
+  \bottomrule
+\end{tabular}}
+\end{table}
+
+
+Three things change. The ranking changes: the gated operator leads the two-seed table and is fourth of four in the five-seed one, where the control without a spatial branch leads. The degenerate failure mode becomes visible: the two-seed design produced none, so it could not have detected the phenomenon it was being used to rule out. And the spread widens from $0.0205$ to $0.0282$ F1 while the conclusion does not move at all---no comparison is resolvable in either column. \textbf{A reader who had only the left-hand pair of columns would have drawn a confident ordering from them.} That is the failure this study is about, and we record our own instance of it rather than only describing it in the abstract.
 
 % Kaynakca elle yazilmis bir thebibliography ortami olarak tutuluyor
 % (orijinal PDF'ten cikarilip atif anahtarlariyla eslestirildi; bkz. _build_refs.py).

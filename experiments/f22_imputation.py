@@ -42,6 +42,7 @@ KULLANIM
   python experiments/f22_imputation.py --pilot
   python experiments/f22_imputation.py
 """
+import os
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -64,8 +65,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from f5_cv import pooled_metrics                         # noqa: E402
 
 init_console()
-OUT = C.RESULTS_DIR / "F22_imputation.json"
-SEEDS = [42, 43]
+SEEDS = [int(x) for x in os.environ.get("F22_SEEDS", "42,43").split(",")]
+OUT = C.RESULTS_DIR / (os.environ.get("F22_OUT", "F22_imputation") + ".json")
 MERGE = False
 DELTA = 0.02
 DEFAULT_TAG = "varsayilan"
