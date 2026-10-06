@@ -169,6 +169,14 @@ def preprocess(tex, floats, secs):
     tex = re.sub(r"\\begin\{IEEEkeywords\}(.*?)\\end\{IEEEkeywords\}",
                  r"\n\n\\textbf{Keywords:} \1\n\n", tex, flags=re.S)
 
+    # Pandoc iki-kolonlu float'larin (table*, figure*) caption'ini SESSIZCE
+    # dusuruyor: 36 tablo basliginin 14'u kayboluyordu, tam olarak table*
+    # sayisi kadar. Word tek kolon oldugu icin ayrimin bir anlami da yok.
+    tex = tex.replace("\\begin{table*}", "\\begin{table}")
+    tex = tex.replace("\\end{table*}", "\\end{table}")
+    tex = tex.replace("\\begin{figure*}", "\\begin{figure}")
+    tex = tex.replace("\\end{figure*}", "\\end{figure}")
+
     tex, notes["resizebox"] = strip_resizebox(tex)
     tex, notes["unresolved"] = resolve_refs(tex, floats, secs)
 
@@ -233,8 +241,23 @@ def number_headings(docx_path, tex):
             continue
         p.runs[0].text = "%s. %s" % (num, p.runs[0].text)
         n += 1
+    # MDPI altyazilari "Table 1." / "Figure 1." diye numaralandirir; pandoc
+    # numara uretmiyor. Belge sirasina gore numaralandiriyoruz -- LaTeX de
+    # kaynak sirasina gore numaralandirdigi icin numaralar aux ile ayni
+    # olur, yani metindeki cozulmus gondermelerle tutarli.
+    counts = {"Table Caption": 0, "Image Caption": 0}
+    word = {"Table Caption": "Table", "Image Caption": "Figure"}
+    for p in d.paragraphs:
+        st = p.style.name
+        if st not in counts or not p.runs:
+            continue
+        if re.match(r"^(?:Table|Figure)\s+\d+\.", p.text):
+            continue
+        counts[st] += 1
+        p.runs[0].text = "%s %d. %s" % (word[st], counts[st], p.runs[0].text)
+
     d.save(str(docx_path))
-    return n, len(heads), len(seq)
+    return n, len(heads), len(seq), counts
 
 
 def main():
@@ -263,7 +286,7 @@ def main():
     finally:
         tmp.unlink(missing_ok=True)
 
-    nnum, nheads, nseq = number_headings(a.out, tex)
+    nnum, nheads, nseq, ncaps = number_headings(a.out, tex)
 
     from docx import Document
     d = Document(a.out)
@@ -274,6 +297,8 @@ def main():
     print(f"  tablo (docx)            : {len(d.tables)}  /  tex'te 36")
     print(f"  paragraf                : {len(d.paragraphs)}")
     print(f"  numaralanan baslik      : {nnum} / {nheads} (tex: {nseq})")
+    print(f"  numaralanan tablo basligi: {ncaps['Table Caption']}")
+    print(f"  numaralanan figur altyazisi: {ncaps['Image Caption']}")
     print(f"  kaynakca girdisi        : {notes['n_entries']}")
     print(f"  cozulen atif anahtari   : {notes['n_cites']}")
     if notes["cites"]:

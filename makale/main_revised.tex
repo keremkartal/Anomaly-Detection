@@ -2213,6 +2213,8 @@ States are defined from the signed acceleration with a dead band of $\varepsilon
 \textbf{Free-flow regime} (mean speed $57.8$~km/h).
 
 \begin{table}[!t]
+  \caption{\textbf{[Realised frequencies, free-flow regime, anomaly-labelled rows excluded]}~ First-order transitions between kinematic states. These are frequencies observed in the released trajectories, not generator parameters.}
+  \label{tab:markov_free}
   \centering
   \footnotesize
   \resizebox{\columnwidth}{!}{%
@@ -2234,6 +2236,8 @@ States are defined from the signed acceleration with a dead band of $\varepsilon
 \textbf{Transition regime} (mean speed $52.9$~km/h).
 
 \begin{table}[!t]
+  \caption{\textbf{[Realised frequencies, transition regime, anomaly-labelled rows excluded]}~ First-order transitions between kinematic states.}
+  \label{tab:markov_trans}
   \centering
   \footnotesize
   \resizebox{\columnwidth}{!}{%
@@ -2255,6 +2259,8 @@ States are defined from the signed acceleration with a dead band of $\varepsilon
 \textbf{Congested regime} (mean speed $25.0$~km/h).
 
 \begin{table}[!t]
+  \caption{\textbf{[Realised frequencies, congested regime, anomaly-labelled rows excluded]}~ First-order transitions between kinematic states.}
+  \label{tab:markov_cong}
   \centering
   \footnotesize
   \resizebox{\columnwidth}{!}{%
@@ -2280,6 +2286,8 @@ States are defined from the signed acceleration with a dead band of $\varepsilon
 Reviewer~2 asked for the hyperparameter search spaces, early-stopping strategy, and initialization of the adapted operators. \textbf{No hyperparameter search was performed for any configuration, including our own.} Every operator runs under the single protocol of Section~\ref{sec:protocol}: Adam at learning rate $0.001$, batch size $64$, at most $50$ epochs, early stopping and checkpointing on validation F1 with patience $15$, the same scheduler and gradient clipping, and each model thresholded at its own validation-selected operating point. Parameters use the PyTorch and PyTorch~Geometric defaults under seeds $42$--$46$. Operator-specific settings follow the defaults of the originating papers and are listed below rather than tuned.
 
 \begin{table}[!t]
+  \caption{\textbf{[Settings taken from the originating papers; no search was performed]}~ Operator-specific configuration of every component compared in this study.}
+  \label{tab:operator_config}
   \centering
   \footnotesize
   \resizebox{\columnwidth}{!}{%
@@ -2313,6 +2321,8 @@ We note in the limitations that tuning could change the ordering, and that this 
 An earlier version of this analysis crossed the five trip-grouped folds with two seeds rather than five. Reviewer~3 asked that the seed at which the fixed partition collapsed be included in the cross-validated design before the absence of collapse there was attributed to the change of partition. It is now included, and the primary analysis of Section~\ref{sec:cv} uses all five seeds. We retain the two-seed results here rather than discarding them, because the difference between the two columns is the clearest single illustration of this paper's argument.
 
 \begin{table}[!t]
+  \caption{\textbf{[Cross-validation, 5 folds; left pair two seeds, right pair five]}~ The same comparison under two seed budgets. The ranking, the degenerate runs, and the spread all differ.}
+  \label{tab:two_seed}
   \centering
   \footnotesize
   \resizebox{\columnwidth}{!}{%
