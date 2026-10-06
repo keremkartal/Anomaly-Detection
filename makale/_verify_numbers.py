@@ -227,6 +227,41 @@ def check_store_consistency():
     print()
 
 
+# ========================================== F. ARSIV SURUMU <-> MAKALE
+def check_archive_version():
+    """CITATION.cff surumu makalede anilan snapshot ile ayni mi."""
+    print("F. ARSIV SURUMU (CITATION.cff <-> makale)")
+    cff = res.parent / "CITATION.cff"
+    if not cff.exists():
+        print(f"{FAIL} CITATION.cff yok")
+        failures.append("CITATION.cff yok")
+        print()
+        return
+    txt = cff.read_text(encoding="utf-8")
+    m = re.search(r"^version:\s*(\S+)", txt, re.M)
+    cff_ver = m.group(1) if m else None
+    m2 = re.search(r"\\texttt\{v([\d.]+)\}", tex)
+    tex_ver = m2.group(1) if m2 else None
+    print(f"    CITATION.cff : v{cff_ver}")
+    print(f"    makale       : v{tex_ver}")
+    if cff_ver == tex_ver:
+        print(f"{OK}   surumler ayni")
+    else:
+        # Ayrisma MESRU, ama sebebi yazili olmali.
+        note = "version DOI is minted when that release is cut" in txt
+        if note:
+            print(f"{OK}   ayrisik ama CITATION.cff sebebini yaziyor: "
+                  f"v{cff_ver} release'i henuz kesilmedi")
+            print(f"         >> GONDERIM ONCESI: release'i kes, DOI'yi bas, "
+                  f"makalede v{tex_ver} -> v{cff_ver}")
+        else:
+            msg = (f"surum ayrisik ve sebebi yazili degil: "
+                   f"CITATION.cff v{cff_ver}, makale v{tex_ver}")
+            failures.append(msg)
+            print(f"{FAIL} {msg}")
+    print()
+
+
 # ======================================================== B. PAYLASILAN KOSU
 def check_shared_run():
     print("B. PAYLASILAN KOSU — lstm+gat+weighted_sum dort tabloda")
@@ -857,6 +892,7 @@ if __name__ == "__main__":
     check_protocol()
     check_shared_run()
     check_store_consistency()
+    check_archive_version()
     check_numbers()
     check_figures()
     check_figure_scale()

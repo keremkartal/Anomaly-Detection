@@ -5,13 +5,21 @@ abstract: >-
   Reproduction package for a controlled, multi-seed evaluation of the design
   choices underlying a hybrid LSTM + Graph Attention Network traffic anomaly
   detector. Contains the full experiment pipeline (encoder benchmark, fusion
-  ablation, graph-construction ablation, trip-grouped cross-validation,
-  trip-level cluster statistics, efficiency measurements), the synthetic
-  trajectory dataset generated over an OpenStreetMap-derived road network,
-  and every result file reported in the paper.
+  ablation, graph-construction ablation, trip-grouped cross-validation over
+  five seeds, repeated grouped partitions, graph ablations including edge
+  removal and random topology, classical and rule-based references, inductive
+  evaluation, equivalence testing, trip-level cluster statistics, efficiency
+  measurements), the synthetic trajectory dataset generated over an
+  OpenStreetMap-derived road network, three further generated datasets
+  spanning a second road network, and every result file reported in the paper.
+  Release v3.0.0 accompanies the revision: it adds the five-seed
+  cross-validated analysis, the repeated-partition campaign with the
+  Nadeau-Bengio correction for overlapping training sets, the replication
+  study across four datasets, and the verification scripts that check every
+  number in the manuscript and in the response letter against these files.
 type: software
 license: MIT
-version: 2.0.0
+version: 3.0.0
 doi: 10.5281/zenodo.22637361
 identifiers:
   - type: doi
@@ -19,8 +27,10 @@ identifiers:
     description: Concept DOI; resolves to the latest version.
   - type: doi
     value: 10.5281/zenodo.22637361
-    description: Version DOI for release v2.0.0.
-date-released: "2026-09-06"
+    description: Version DOI for release v2.0.0. The v3.0.0
+      version DOI is minted when that release is cut and is
+      added here and in the manuscript at the same time.
+date-released: "2026-10-06"
 repository-code: "https://github.com/keremkartal/Anomaly-Detection"
 keywords:
   - traffic anomaly detection
@@ -30,6 +40,8 @@ keywords:
   - ablation study
   - evaluation methodology
   - reproducibility
+  - equivalence testing
+  - cross-validation
 authors:
   - family-names: "Gültekin"
     given-names: "Ayhan"
