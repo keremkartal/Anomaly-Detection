@@ -44,6 +44,7 @@ NAMES = ("F1b_fair", "F2_graph", "F3_fusion", "F4_benchmark",
          "F10_pilot", "F10_repeated_cv", "F11_classic_cv",
          "F11_classic_cv_5seed", "F12_classic_vs_deep_5seed",
          "F14_graph_controls_5seed", "F18_inductive_5seed",
+         "F22_imputation_5seed", "F32_arch_vs_replication",
          "F12_classic_vs_deep", "F13_prevalence", "F14_graph_controls",
          "F15_reproducibility", "F16_equivalence", "F18_inductive",
          "F19_noise", "F20_window_stride", "F21_baseline_search",
@@ -323,6 +324,24 @@ def check_numbers():
                            ("F1b_fair", "F3_fusion", "F4_benchmark",
                             "F6_efficiency", "F2_graph"))
     f5 = J.get("F5_cv_5seed") or J["F5_cv"]
+
+    # F32: mimari yelpaze <-> replikasyon hatasi. Bu dort sayi makalenin
+    # merkez argumanini tasiyor ve elle hesaplanmis halleri bir sonuc
+    # dosyasinda GECMIYORDU; artik etiketli olarak denetleniyor.
+    f32 = J.get("F32_arch_vs_replication")
+    if f32:
+        chk("F32 fuzyon yelpazesi (tum)", f32["fusion_span_all_runs"])
+        chk("F32 fuzyon yelpazesi (dejenere haric)",
+            f32["fusion_span_excluding_degenerate"])
+        chk("F32 replikasyon hatasi", f32["replication_error_max"])
+        cw, nw = f32["collapse"]["weight_learning"]
+        cf, nf = f32["collapse"]["fixed_weight"]
+        for lbl, txt in ((f"F32 cokme ogrenen {cw}/{nw}", f"{cw}/{nw}"),
+                         (f"F32 cokme sabit {cf}/{nf}", f"{cf}/{nf}")):
+            checks.append((lbl, txt, txt in tex))
+        if not f32["ranking_changes_when_degenerate_excluded"]:
+            failures.append("F32: siralama dejenere kosular cikarilinca "
+                            "degismiyor — makale degistigini soyluyor")
 
     if f1b:
         for k, lbl in (("hybrid_lstm_gat", "hibrit F1"),

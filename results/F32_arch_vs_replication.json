@@ -1,0 +1,129 @@
+{
+  "protocol": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "max_epochs": 50,
+    "patience": 15,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "grad_clip": 1.0,
+    "scheduler": [
+      0.5,
+      3
+    ],
+    "dropout": 0.2,
+    "select_by": "val_f1",
+    "threshold_rule": "argmax_val_f1",
+    "cudnn_deterministic": false,
+    "cudnn_benchmark": true,
+    "sequence_length": 50,
+    "step_size": 10,
+    "split_seed": 42,
+    "legacy_pipeline": false,
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "hash": "0902cd97ec17"
+  },
+  "source": {
+    "cv": "F5_cv_5seed",
+    "replication": "F15_reproducibility"
+  },
+  "collapse_threshold": 0.3,
+  "models": {
+    "hybrid_gat": {
+      "n": 25,
+      "f1_mean": 0.8839270682020319,
+      "f1_sd": 0.0415231985162891,
+      "f1_min": 0.80623973727422,
+      "n_collapsed": 0,
+      "f1_mean_excl_degenerate": 0.8839270682020319,
+      "f1_sd_excl_degenerate": 0.0415231985162891,
+      "learns_weight": false
+    },
+    "stanet_gated": {
+      "n": 25,
+      "f1_mean": 0.8588610385085856,
+      "f1_sd": 0.14578798573241258,
+      "f1_min": 0.1874792977807221,
+      "n_collapsed": 1,
+      "f1_mean_excl_degenerate": 0.8868352777055799,
+      "f1_sd_excl_degenerate": 0.04199609072052317,
+      "learns_weight": true
+    },
+    "hybrid_concat": {
+      "n": 25,
+      "f1_mean": 0.8797456596098465,
+      "f1_sd": 0.04409579574002666,
+      "f1_min": 0.762119503945885,
+      "n_collapsed": 0,
+      "f1_mean_excl_degenerate": 0.8797456596098465,
+      "f1_sd_excl_degenerate": 0.04409579574002666,
+      "learns_weight": false
+    },
+    "hybrid_crossatt": {
+      "n": 25,
+      "f1_mean": 0.855769857238164,
+      "f1_sd": 0.16238192491925751,
+      "f1_min": 0.10097965335342879,
+      "n_collapsed": 1,
+      "f1_mean_excl_degenerate": 0.8872194490666948,
+      "f1_sd_excl_degenerate": 0.04138013242192659,
+      "learns_weight": true
+    },
+    "lstm_only": {
+      "n": 25,
+      "f1_mean": 0.8839736435540089,
+      "f1_sd": 0.03802050283900377,
+      "f1_min": 0.8301886792452831,
+      "n_collapsed": 0,
+      "f1_mean_excl_degenerate": 0.8839736435540089,
+      "f1_sd_excl_degenerate": 0.03802050283900377,
+      "learns_weight": false
+    }
+  },
+  "fusion_span_all_runs": 0.028157210963867918,
+  "fusion_span_excluding_degenerate": 0.00747378945684829,
+  "replication_error_max": 0.04143916601666486,
+  "replication_error_mean": 0.01954171059975156,
+  "replication_over_span_all": 1.471707054716488,
+  "replication_over_span_excluding_degenerate": 5.544599062620615,
+  "sd_range_excluding_degenerate": [
+    0.03802050283900377,
+    0.04409579574002666
+  ],
+  "collapse": {
+    "weight_learning": [
+      2,
+      50
+    ],
+    "fixed_weight": [
+      0,
+      75
+    ],
+    "total": [
+      2,
+      125
+    ]
+  },
+  "ranking_all_runs": [
+    "lstm_only",
+    "hybrid_gat",
+    "hybrid_concat",
+    "stanet_gated",
+    "hybrid_crossatt"
+  ],
+  "ranking_excluding_degenerate": [
+    "hybrid_crossatt",
+    "stanet_gated",
+    "lstm_only",
+    "hybrid_gat",
+    "hybrid_concat"
+  ],
+  "ranking_changes_when_degenerate_excluded": true,
+  "note": "Dejenere kosular cikarildiginda agirlik ogrenen operatorler en iyi ikiye cikiyor; yirmi beste bir basarisiz kosu her birini birincilikten sonlulua tasiyor."
+}
